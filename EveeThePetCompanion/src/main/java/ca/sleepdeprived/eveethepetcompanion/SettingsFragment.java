@@ -82,8 +82,7 @@ public class SettingsFragment extends Fragment {
 
     private void logoutUser() {
         // Clear login status
-        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getActivity());
-        preferences.edit().putBoolean(getString(R.string.isloggedin), false).apply();
+        sharedPreferences.edit().putBoolean(getString(R.string.isloggedin), false).apply();
 
         // Start login activity
         startLoginActivity();
