@@ -91,15 +91,6 @@ public class MainActivity extends AppCompatActivity {
                 new HelpFragment()).commit();
     }
 
-    public void logoutUser() {
-        // Clear login status
-        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
-        preferences.edit().putBoolean(getString(R.string.isloggedin), false).apply();
-
-        // Start login activity
-        startLoginActivity();
-    }
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

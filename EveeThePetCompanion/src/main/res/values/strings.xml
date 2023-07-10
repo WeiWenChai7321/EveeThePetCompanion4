@@ -113,11 +113,15 @@
     <string name="logout">LOGOUT</string>
     <string name="delete_account">DELETE ACCOUNT</string>
     <string name="action_logout">Logout</string>
-    <string name="admin" translatable="false">admin</string>
+    <string name="admin" translatable="false">admin@hotmail.com</string>
     <string name="loginpassword" translatable="false">password</string>
     <string name="permission_dialog_title">Permission Required</string>
     <string name="permission_dialog_message">You need to grant permission to write external storage in order to download images.</string>
     <string name="permission_dialog_positive_button">Grant Permission</string>
     <string name="permission_dialog_negative_button">Cancel</string>
+    <string name="remember_me">Remember Me</string>
+    <string name="saved_username">saved_username</string>
+    <string name="saved_password">saved_password</string>
+
 
 </resources>
