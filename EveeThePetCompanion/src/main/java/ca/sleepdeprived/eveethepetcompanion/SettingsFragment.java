@@ -33,6 +33,7 @@ public class SettingsFragment extends Fragment {
 
     private Switch lockOrientationSwitch;
     private Switch pushNotificationSwitch;
+    private SharedPreferences sharedPreferences;
 
     public SettingsFragment() {
     }
@@ -42,6 +43,7 @@ public class SettingsFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_settings, container, false);
         lockOrientationSwitch = view.findViewById(R.id.switch_lock_orientation);
         pushNotificationSwitch = view.findViewById(R.id.switch_push_notifications);
+        sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getActivity());
         return view;
     }
 
@@ -68,6 +70,8 @@ public class SettingsFragment extends Fragment {
                     Toast.makeText(getActivity(), getString(R.string.email_saved) + updatedEmail, Toast.LENGTH_SHORT).show();
                     emailEditText.setEnabled(false);
                     updateButton.setText(R.string.update);
+                    // Save the updated email in SharedPreferences
+                    sharedPreferences.edit().putString(getString(R.string.saved_email), updatedEmail).apply();
                 } else {
                     emailEditText.setEnabled(true);
                     updateButton.setText(R.string.save);
