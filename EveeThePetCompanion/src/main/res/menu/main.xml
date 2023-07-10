@@ -23,4 +23,11 @@
         android:title="@string/action_settings"
         app:actionLayout="@layout/menu_item"
         app:showAsAction="never"/>
+
+    <item
+        android:id="@+id/action_feedback"
+        android:orderInCategory="5"
+        android:title="@string/action_feedback"
+        app:actionLayout="@layout/menu_item"
+        app:showAsAction="never"/>
 </menu>

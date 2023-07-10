@@ -124,5 +124,6 @@
         <string name="google_logo_description">Continuer avec Google</string>
         <string name="lock_orientation">verrouiller_orientation</string>
         <string name="saved_email">email_enregistre</string>
+        <string name="action_feedback">Retour</string>
 
 </resources>
