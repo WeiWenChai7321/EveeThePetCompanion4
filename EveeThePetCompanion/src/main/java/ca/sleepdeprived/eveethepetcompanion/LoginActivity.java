@@ -49,9 +49,6 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     private boolean performLogin(String username, String password) {
-        // Replace with your login implementation
-        // Perform the necessary checks and return true if login is successful, false otherwise
-        // For example:
         boolean isLoggedIn = username.equals(getString(R.string.admin)) && password.equals(getString(R.string.loginpassword));
 
         if (isLoggedIn) {

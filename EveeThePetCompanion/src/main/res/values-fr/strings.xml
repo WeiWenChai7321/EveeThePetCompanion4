@@ -33,7 +33,7 @@
         <string name="push_notifications_enabled">Notifications push activées</string>
         <string name="screen_orientation_unlocked">Orientation de l\'écran déverrouillée</string>
         <string name="screen_orientation_locked_to_portrait">Orientation de l\'écran verrouillée sur portrait</string>
-        <string name="username">nom d \'utilisateur</string>
+        <string name="username">courrier électronique</string>
         <string name="password">mot de passe</string>
         <string name="login">Login</string>
         <string name="forgot_password">Mot de passe oublié?</string>
