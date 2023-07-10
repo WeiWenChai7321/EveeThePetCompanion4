@@ -1,0 +1,123 @@
+<!--Section: 0NA -->
+<!--Wei Wen Chai, N01447321 -->
+<!--John Aquino, N01303112 -->
+<!--Jennifer Nguyen, N01435464 -->
+<!--Ubay Abdulaziz, N01437353 -->
+
+<resources>
+    <string name="app_name">Evee the Pet Companion</string>
+    <string name="splashtext">"Evee is a remote-controlled pet monitoring device that allows you to check in on your furry friends when you're away from home!"</string>
+    <string name="dashboard_fragment">Dashboard</string>
+    <string name="stream_fragment">Stream</string>
+    <string name="highlights_fragment">Highlights</string>
+    <string name="action_help">\tHelp</string>
+    <string name="action_petprofile">Pet Profile</string>
+    <string name="action_login">Login</string>
+    <string name="action_settings">Settings</string>
+    <string name="permissiongranted">Write to external storage permission granted</string>
+    <string name="permissiondenied">Write to external storage permission denied</string>
+    <string name="image">image_</string>
+    <string name="jpg">.jpg</string>
+    <string name="image_saved">"Image saved: "</string>
+    <string name="failed_to_save_image">Failed to save image</string>
+    <string name="permission_not_granted">Permission not granted</string>
+    <string name="exit_app">Exit App</string>
+    <string name="are_you_sure_you_want_to_exit">Are you sure you want to exit?</string>
+    <string name="yes">Yes</string>
+    <string name="no">No</string>
+    <string name="isloggedin">isLoggedIn</string>
+    <string name="email_saved">"Email saved: "</string>
+    <string name="update">Update</string>
+    <string name="save">Save</string>
+    <string name="push_notifications_disabled">Push notifications disabled</string>
+    <string name="push_notifications_enabled">Push notifications enabled</string>
+    <string name="screen_orientation_unlocked">Screen orientation unlocked</string>
+    <string name="screen_orientation_locked_to_portrait">Screen orientation locked to portrait</string>
+    <string name="username">Username</string>
+    <string name="password">Password</string>
+    <string name="login">Login</string>
+    <string name="forgot_password">Forgot password?</string>
+    <string name="don_t_have_an_account_sign_up">Don\'t have an account? Sign up</string>
+    <string name="hi_chloe">Hi Chloe</string>
+    <string name="your_pets">Your Pets</string>
+    <string name="zoe">Zoe</string>
+    <string name="eat">Eat</string>
+    <string name="age_2_years">Age: 2 years</string>
+    <string name="colour_brown">Colour: Brown</string>
+    <string name="breed_unknown">Breed: Unknown</string>
+    <string name="plus">+</string>
+    <string name="reminders">Reminders</string>
+    <string name="vet_visits_july_1_2023">Vet Visits - July 1, 2023</string>
+    <string name="feeding_time_8_00_am">Feeding Time - 8:00 AM</string>
+    <string name="recently_taken">Recently Taken</string>
+    <string name="having_issues">Having Issues?</string>
+    <string name="knowledgebase">The knowledge base provides detailed information and instructions for using our app and Evee. It includes articles, guides, and troubleshooting tips to help you make the most out of the app and ensure a seamless monitoring experience.</string>
+    <string name="commonly_asked_questions">Commonly Asked Questions</string>
+    <string name="how_do_i_assemble_evee">How do I assemble Evee?</string>
+    <string name="howtopower">To assemble Evee, follow these steps:\n\n1. Attach the base to the wheels.\n2. Connect the motor to the base.\n3. Mount the camera on top of the motor.\n4. Connect the cables as shown in the user manual.\n5. Power on the robot and wait for it to initialize.</string>
+    <string name="howtoconnect">How to connect the pet monitoring robot to the app?</string>
+    <string name="connectanswer">To connect the pet monitoring robot to the app, follow these steps:\n\n1. Make sure your smartphone is connected to the same Wi-Fi network as the robot.\n2. Open the app and tap on the \'Connect\' button.\n3. The app will search for available robots.\n4. Select your robot from the list.\n5. Once connected, you can start monitoring your pet remotely.</string>
+    <string name="howtocontrol">How can I control Evee?</string>
+    <string name="controlanswer">To control Evee, use the directional buttons provided in the app:\n\n- Tap the \'Up\' button to move the robot forward.\n- Tap the \'Down\' button to move the robot backward.\n- Tap the \'Left\' button to turn the robot left.\n- Tap the \'Right\' button to turn the robot right.</string>
+    <string name="livefeedanswer">To view the live video feed, follow these steps:\n\n1. Open the app and make sure Evee is connected.\n2. Tap on the \'Live View\' button.\n3. The app will display the live video feed from the robot\'s camera.\n4. You can swipe or pinch to zoom, and tap the screen to take snapshots.</string>
+    <string name="howtolivefeed">How to view the live video feed?</string>
+    <string name="questions">Still have a question?</string>
+    <string name="contact_us">Contact Us</string>
+    <string name="highlights">Highlights</string>
+    <string name="videos">Videos</string>
+    <string name="photos">Photos</string>
+    <string name="download_all">Download All</string>
+    <string name="schedule">SCHEDULE</string>
+    <string name="hour">Hour</string>
+    <string name="mon">MON</string>
+    <string name="tue">TUE</string>
+    <string name="wed">WED</string>
+    <string name="thu">THU</string>
+    <string name="fri">FRI</string>
+    <string name="sun">SUN</string>
+    <string name="sat">SAT</string>
+    <string name="_12_am">12 AM</string>
+    <string name="blank" />
+    <string name="_1_am">1 AM</string>
+    <string name="_2_am">2 AM</string>
+    <string name="_3_am">3 AM</string>
+    <string name="_4_am">4 AM</string>
+    <string name="_5_am">5 AM</string>
+    <string name="_6_am">6 AM</string>
+    <string name="_7_am">7 AM</string>
+    <string name="_8_am">8 AM</string>
+    <string name="_9_am">9 AM</string>
+    <string name="_10_am">10 AM</string>
+    <string name="_11_am">11 AM</string>
+    <string name="_12_pm">12 PM</string>
+    <string name="_1_pm">1 PM</string>
+    <string name="_2_pm">2 PM</string>
+    <string name="_3_pm">3 PM</string>
+    <string name="_4_pm">4 PM</string>
+    <string name="_5_pm">5 PM</string>
+    <string name="_6_pm">6 PM</string>
+    <string name="_7_pm">7 PM</string>
+    <string name="_8_pm">8 PM</string>
+    <string name="_9_pm">9 PM</string>
+    <string name="_10_pm">10 PM</string>
+    <string name="_11_pm">11 PM</string>
+    <string name="edit">Edit</string>
+    <string name="vet_shots_june_15_2023">Vet Shots - June 15, 2023</string>
+    <string name="vet_visits_july_1">Vet Visits - July 1, 2023</string>
+    <string name="add_more_reminders">Add more reminders...</string>
+    <string name="settings">Settings</string>
+    <string name="chloe_c">Chloe C</string>
+    <string name="lock_screen_orientation">Lock Screen Orientation</string>
+    <string name="update_email">Update Email</string>
+    <string name="push_notifications">Push Notifications</string>
+    <string name="logout">LOGOUT</string>
+    <string name="delete_account">DELETE ACCOUNT</string>
+    <string name="action_logout">Logout</string>
+    <string name="admin" translatable="false">admin</string>
+    <string name="loginpassword" translatable="false">password</string>
+    <string name="permission_dialog_title">Permission Required</string>
+    <string name="permission_dialog_message">You need to grant permission to write external storage in order to download images.</string>
+    <string name="permission_dialog_positive_button">Grant Permission</string>
+    <string name="permission_dialog_negative_button">Cancel</string>
+
+</resources>

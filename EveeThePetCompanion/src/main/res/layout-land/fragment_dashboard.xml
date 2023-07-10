@@ -1,0 +1,193 @@
+<ScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:background="#F5F5F5">
+
+        <TextView
+            android:id="@+id/dashboard_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/hi_chloe"
+            android:textSize="24sp"
+            android:textStyle="bold"
+            android:layout_marginTop="12dp"
+            android:layout_gravity="center_horizontal" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/your_pets"
+            android:textSize="14sp"
+            android:textStyle="bold"
+            android:layout_marginTop="16dp" />
+
+        <HorizontalScrollView
+            android:id="@+id/pets_scrollview"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp">
+
+            <LinearLayout
+                android:id="@+id/pets_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <LinearLayout
+                    android:id="@+id/pet_info_card"
+                    android:layout_width="502dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginEnd="8dp"
+                    android:layout_weight="4"
+                    android:background="@drawable/card_background"
+                    android:orientation="horizontal"
+                    android:padding="8dp">
+
+                    <ImageView
+                        android:layout_width="261dp"
+                        android:layout_height="80dp"
+                        android:layout_gravity="center_vertical"
+                        android:src="@drawable/petpic" />
+
+                    <LinearLayout
+                        android:layout_width="160dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="8dp"
+                        android:layout_weight="1"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="8dp"
+                            android:text="@string/zoe"
+                            android:textSize="18sp"
+                            android:textStyle="bold" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="4dp"
+                            android:text="@string/age_2_years"
+                            android:textSize="12sp" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="4dp"
+                            android:text="@string/colour_brown"
+                            android:textSize="12sp" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="4dp"
+                            android:text="@string/breed_unknown"
+                            android:textSize="12sp" />
+
+                    </LinearLayout>
+
+                </LinearLayout>
+
+                <Button
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginTop="30dp"
+                    android:background="@drawable/round_button_background"
+                    android:gravity="center"
+                    android:padding="4dp"
+                    android:text="@string/plus"
+                    android:textColor="#FFFFFF"
+                    android:textSize="14sp" />
+
+            </LinearLayout>
+        </HorizontalScrollView>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/reminders"
+            android:textSize="14sp"
+            android:textStyle="bold"
+            android:layout_marginTop="16dp" />
+
+        <LinearLayout
+            android:id="@+id/reminders_card"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_marginTop="16dp"
+            android:background="@drawable/card_background"
+            android:padding="8dp">
+
+            <CheckBox
+                android:id="@+id/vet_visits_reminder"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/vet_visits_july_1_2023"
+                android:layout_marginTop="8dp" />
+
+            <CheckBox
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/feeding_time_8_00_am"
+                android:layout_marginTop="4dp" />
+
+        </LinearLayout>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/recently_taken"
+            android:textSize="14sp"
+            android:textStyle="bold"
+            android:layout_marginTop="16dp" />
+
+        <HorizontalScrollView
+            android:id="@+id/recent_images_scrollview"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp">
+
+            <LinearLayout
+                android:id="@+id/recent_images_layout"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <ImageView
+                    android:id="@+id/recent_image1"
+                    android:layout_width="150dp"
+                    android:layout_height="150dp"
+                    android:src="@drawable/photo_placeholder"
+                    android:scaleType="centerCrop"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginEnd="4dp" />
+
+                <ImageView
+                    android:id="@+id/recent_image2"
+                    android:layout_width="150dp"
+                    android:layout_height="150dp"
+                    android:src="@drawable/photo_placeholder"
+                    android:scaleType="centerCrop"
+                    android:layout_marginEnd="4dp" />
+
+                <ImageView
+                    android:id="@+id/recent_image3"
+                    android:layout_width="150dp"
+                    android:layout_height="150dp"
+                    android:src="@drawable/photo_placeholder"
+                    android:scaleType="centerCrop"
+                    android:layout_marginEnd="4dp" />
+
+            </LinearLayout>
+        </HorizontalScrollView>
+    </LinearLayout>
+</ScrollView>

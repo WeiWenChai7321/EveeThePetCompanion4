@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <item
+        android:id="@+id/action_help"
+        android:icon="@drawable/helpwhite"
+        android:orderInCategory="1"
+        android:title="@string/action_help"
+        app:showAsAction="always|withText"
+        app:actionLayout="@layout/custom_action_help" />
+
+    <item
+        android:id="@+id/action_petprofile"
+        android:orderInCategory="3"
+        android:title="@string/action_petprofile"
+        app:actionLayout="@layout/menu_item"
+        app:showAsAction="never"/>
+
+    <item
+        android:id="@+id/action_settings"
+        android:orderInCategory="4"
+        android:title="@string/action_settings"
+        app:actionLayout="@layout/menu_item"
+        app:showAsAction="never"/>
+
+    <item
+        android:id="@+id/action_logout"
+        android:orderInCategory="5"
+        android:title="@string/action_logout"
+        app:actionLayout="@layout/menu_item"
+        app:showAsAction="never"/>
+</menu>
