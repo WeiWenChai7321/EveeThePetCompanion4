@@ -36,50 +36,50 @@
         android:orientation="horizontal"
         android:gravity="top">
 
-        <ImageView
+        <ImageButton
             android:id="@+id/btn_obstacle_avoidance"
             android:layout_width="45dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:background="@color/primary_color"
             android:src="@drawable/obstacle_avoidance_button"
-            app:tint="@color/white" />
+            android:scaleType="fitCenter" />
 
-        <ImageView
+        <ImageButton
             android:id="@+id/btn_line_following"
             android:layout_width="23dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:background="@color/primary_color"
             android:src="@drawable/line_following_button"
-            app:tint="@color/white" />
+            android:scaleType="fitCenter" />
 
-        <ImageView
+        <ImageButton
             android:id="@+id/btn_treat"
             android:layout_width="66dp"
             android:layout_height="27dp"
             android:layout_weight="1"
             android:background="@color/primary_color"
             android:src="@drawable/treat_button"
-            app:tint="@color/white" />
+            android:scaleType="fitCenter" />
 
-        <ImageView
+        <ImageButton
             android:id="@+id/btn_record"
             android:layout_width="40dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:background="@color/primary_color"
             android:src="@drawable/record_button"
-            app:tint="@color/white" />
+            android:scaleType="fitCenter" />
 
-        <ImageView
+        <ImageButton
             android:id="@+id/btn_picture"
             android:layout_width="52dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:background="@color/primary_color"
             android:src="@drawable/picture_button"
-            app:tint="@color/white" />
+            android:scaleType="fitCenter" />
 
     </LinearLayout>
 
