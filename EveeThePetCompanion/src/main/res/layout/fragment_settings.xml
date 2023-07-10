@@ -140,6 +140,7 @@
             android:gravity="center">
 
             <Button
+                android:id="@+id/btn_delete"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/delete_account"
@@ -147,7 +148,15 @@
                 android:textSize="14sp"
                 android:layout_marginStart="8dp" />
 
-        </LinearLayout>
+            <Button
+                android:id="@+id/btn_logout"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/action_logout"
+                android:textAllCaps="true"
+                android:textSize="14sp"
+                android:layout_marginStart="8dp" />
 
+        </LinearLayout>
     </LinearLayout>
 </ScrollView>

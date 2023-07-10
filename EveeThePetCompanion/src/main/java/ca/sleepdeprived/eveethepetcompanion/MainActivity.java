@@ -81,10 +81,6 @@ public class MainActivity extends AppCompatActivity {
                         new HelpFragment()).commit();
                 return true;
 
-            case R.id.action_logout:
-                logoutUser();
-                return true;
-
             default:
                 return super.onOptionsItemSelected(item);
         }

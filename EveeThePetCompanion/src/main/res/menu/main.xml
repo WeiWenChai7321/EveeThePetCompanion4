@@ -23,11 +23,4 @@
         android:title="@string/action_settings"
         app:actionLayout="@layout/menu_item"
         app:showAsAction="never"/>
-
-    <item
-        android:id="@+id/action_logout"
-        android:orderInCategory="5"
-        android:title="@string/action_logout"
-        app:actionLayout="@layout/menu_item"
-        app:showAsAction="never"/>
 </menu>

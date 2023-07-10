@@ -7,12 +7,15 @@
 package ca.sleepdeprived.eveethepetcompanion;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
 import android.net.Uri;
 import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+
+import android.preference.PreferenceManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -46,8 +49,16 @@ public class SettingsFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         EditText emailEditText = view.findViewById(R.id.et_email);
         Button updateButton = view.findViewById(R.id.btn_update);
+        Button logoutButton = view.findViewById(R.id.btn_logout);
 
         super.onViewCreated(view, savedInstanceState);
+
+        logoutButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                logoutUser();
+            }
+        });
 
         updateButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -63,6 +74,26 @@ public class SettingsFragment extends Fragment {
                 }
             }
         });
+    }
+
+    private void logoutUser() {
+        // Clear login status
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getActivity());
+        preferences.edit().putBoolean(getString(R.string.isloggedin), false).apply();
+
+        // Start login activity
+        startLoginActivity();
+    }
+
+    private void startLoginActivity() {
+        Intent intent = new Intent(getActivity(), LoginActivity.class);
+        startActivity(intent);
+        getActivity().finish();
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
 
         lockOrientationSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
