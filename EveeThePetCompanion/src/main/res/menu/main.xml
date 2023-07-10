@@ -4,18 +4,18 @@
 
     <item
         android:id="@+id/action_help"
-        android:icon="@drawable/helpwhite"
         android:orderInCategory="1"
         android:title="@string/action_help"
-        app:showAsAction="always|withText"
-        app:actionLayout="@layout/custom_action_help" />
+        app:showAsAction="never"
+        app:actionLayout="@layout/menu_item" />
 
     <item
         android:id="@+id/action_petprofile"
+        android:icon="@drawable/petprofilewhite"
         android:orderInCategory="3"
         android:title="@string/action_petprofile"
-        app:actionLayout="@layout/menu_item"
-        app:showAsAction="never"/>
+        app:showAsAction="always|withText"
+        app:actionLayout="@layout/custom_action"/>
 
     <item
         android:id="@+id/action_settings"
