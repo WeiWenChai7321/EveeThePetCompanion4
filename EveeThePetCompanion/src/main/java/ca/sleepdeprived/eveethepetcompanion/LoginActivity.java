@@ -120,7 +120,6 @@ public class LoginActivity extends AppCompatActivity {
             Toast.makeText(this, "Invalid username or password", Toast.LENGTH_SHORT).show();
             return false;
         }
-
         // Set the isLoggedIn flag in SharedPreferences
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
         SharedPreferences.Editor editor = preferences.edit();
