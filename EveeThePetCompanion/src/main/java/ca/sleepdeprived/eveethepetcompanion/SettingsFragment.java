@@ -98,9 +98,19 @@ public class SettingsFragment extends Fragment {
     public void onResume() {
         super.onResume();
 
+        // Read the stored preferences and update the switches accordingly
+        boolean isOrientationLocked = sharedPreferences.getBoolean(getString(R.string.lock_orientation), false);
+        boolean isPushNotificationsEnabled = sharedPreferences.getBoolean(getString(R.string.push_notifications), false);
+
+        lockOrientationSwitch.setChecked(isOrientationLocked);
+        pushNotificationSwitch.setChecked(isPushNotificationsEnabled);
+
         lockOrientationSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                // Save the orientation preference in SharedPreferences
+                sharedPreferences.edit().putBoolean(getString(R.string.lock_orientation), isChecked).apply();
+
                 if (isChecked) {
                     // Lock screen orientation to portrait
                     getActivity().setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
@@ -116,6 +126,9 @@ public class SettingsFragment extends Fragment {
         pushNotificationSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                // Save the push notifications preference in SharedPreferences
+                sharedPreferences.edit().putBoolean(getString(R.string.push_notifications), isChecked).apply();
+
                 if (isChecked) {
                     Toast.makeText(getActivity(), R.string.push_notifications_enabled, Toast.LENGTH_SHORT).show();
                 } else {
@@ -125,3 +138,4 @@ public class SettingsFragment extends Fragment {
         });
     }
 }
+
