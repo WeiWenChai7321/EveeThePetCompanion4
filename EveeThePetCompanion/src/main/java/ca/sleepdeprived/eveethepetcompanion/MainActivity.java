@@ -40,12 +40,12 @@ public class MainActivity extends AppCompatActivity {
             ((MenuBuilder) menu).setOptionalIconsVisible(true);
         }
 
-        MenuItem actionHelpItem = menu.findItem(R.id.action_help);
-        View actionHelpView = actionHelpItem.getActionView();
-        actionHelpView.setOnClickListener(new View.OnClickListener() {
+        MenuItem actionPetProfileItem = menu.findItem(R.id.action_petprofile);
+        View actionPetProfileView = actionPetProfileItem.getActionView();
+        actionPetProfileView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                onOptionsItemSelected(actionHelpItem);
+                onOptionsItemSelected(actionPetProfileItem);
             }
         });
 
@@ -81,14 +81,20 @@ public class MainActivity extends AppCompatActivity {
                         new HelpFragment()).commit();
                 return true;
 
+            case R.id.action_feedback:
+                uncheckAllItems();
+                getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container,
+                        new FeedbackFragment()).commit();
+                return true;
+
             default:
                 return super.onOptionsItemSelected(item);
         }
     }
 
-    public void onHelpClicked(View view) {
+    public void onPetProfileClicked(View view) {
         getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container,
-                new HelpFragment()).commit();
+                new PetProfileFragment()).commit();
     }
 
     @Override
