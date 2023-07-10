@@ -126,5 +126,6 @@
     <string name="google_logo_description">Continue with Google</string>
     <string name="lock_orientation">lock_orientation</string>
     <string name="saved_email">saved_email</string>
+    <string name="mailto_chloeissleeping_gmail_com" translatable="false">mailto:chloeissleeping@gmail.com</string>
 
 </resources>

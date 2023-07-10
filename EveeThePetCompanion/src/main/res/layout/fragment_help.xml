@@ -97,6 +97,7 @@
             android:textColor="#454545"
             android:lineSpacingExtra="4dp"
             android:layout_marginBottom="24dp" />
+
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -111,10 +112,9 @@
             android:layout_height="wrap_content"
             android:text="@string/contact_us"
             android:id="@+id/contact_us_button"
-            android:layout_gravity="center_horizontal" />
+            android:layout_gravity="center_horizontal"
+            android:onClick="sendEmail" />
 
     </LinearLayout>
-
-
 
 </ScrollView>
