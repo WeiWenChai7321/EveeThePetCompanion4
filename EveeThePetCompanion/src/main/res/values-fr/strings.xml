@@ -121,5 +121,7 @@
         <string name="remember_me">Souviens-toi de moi</string>
         <string name="saved_username">nom_d_utilisateur_enregistré</string>
         <string name="saved_password">mot_de_passe_enregistré</string>
+        <string name="google_logo_description">Continuer avec Google</string>
+
 
 </resources>
