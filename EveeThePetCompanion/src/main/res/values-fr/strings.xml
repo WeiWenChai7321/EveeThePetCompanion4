@@ -122,6 +122,7 @@
         <string name="saved_username">nom_d_utilisateur_enregistré</string>
         <string name="saved_password">mot_de_passe_enregistré</string>
         <string name="google_logo_description">Continuer avec Google</string>
-
+        <string name="lock_orientation">verrouiller_orientation</string>
+        <string name="saved_email">email_enregistre</string>
 
 </resources>
