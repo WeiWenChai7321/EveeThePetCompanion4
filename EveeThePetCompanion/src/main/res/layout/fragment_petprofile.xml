@@ -1433,12 +1433,20 @@
                     android:id="@+id/vet_shots_reminder"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="@string/vet_shots_june_15_2023" />
+                    android:text="@string/vet_shots_june_15_2023"
+                    android:layout_marginTop="@dimen/margin_8"
+                    android:visibility="visible"
+                    android:tag="vet_shots_reminder" />
+
                 <CheckBox
                     android:id="@+id/vet_visits_reminder"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="@string/vet_visits_july_1" />
+                    android:text="@string/vet_visits_july_1"
+                    android:layout_marginTop="@dimen/margin_8"
+                    android:visibility="visible"
+                    android:tag="vet_visits_reminder" />
+
 
             </LinearLayout>
 

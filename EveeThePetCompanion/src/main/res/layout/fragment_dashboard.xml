@@ -41,7 +41,7 @@
 
                 <LinearLayout
                     android:id="@+id/pet_info_card"
-                    android:layout_width="338dp"
+                    android:layout_width="271dp"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="@dimen/margin_8"
                     android:layout_marginEnd="@dimen/margin_8"
@@ -51,7 +51,7 @@
                     android:padding="@dimen/padding_8">
 
                     <ImageView
-                        android:layout_width="@dimen/pet_image_width"
+                        android:layout_width="107dp"
                         android:layout_height="@dimen/pet_image_height"
                         android:layout_gravity="center_vertical"
                         android:src="@drawable/petpic" />
@@ -133,13 +133,18 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="@string/vet_visits_july_1_2023"
-                android:layout_marginTop="@dimen/margin_8" />
+                android:layout_marginTop="@dimen/margin_8"
+                android:visibility="visible"
+                android:tag="vet_visits_reminder" />
 
             <CheckBox
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="@string/feeding_time_8_00_am"
-                android:layout_marginTop="@dimen/margin_4" />
+                android:layout_marginTop="@dimen/margin_4"
+                android:visibility="visible"
+                android:tag="feeding_time_reminder" />
+
 
         </LinearLayout>
 
