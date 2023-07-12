@@ -1411,52 +1411,6 @@
                 android:text="@string/edit"
                 android:layout_gravity="center_horizontal" />
 
-            <TextView
-                android:id="@+id/reminders_text"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="@string/reminders"
-                android:textSize="14sp"
-                android:textStyle="bold"
-                android:background="@drawable/back"
-                android:padding="8dp"
-                android:layout_marginTop="16dp"
-                android:gravity="center" />
-
-            <LinearLayout
-                android:id="@+id/reminders_layout"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:padding="8dp">
-                <CheckBox
-                    android:id="@+id/vet_shots_reminder"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="@string/vet_shots_june_15_2023"
-                    android:layout_marginTop="@dimen/margin_8"
-                    android:visibility="visible"
-                    android:tag="vet_shots_reminder" />
-
-                <CheckBox
-                    android:id="@+id/vet_visits_reminder"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="@string/vet_visits_july_1"
-                    android:layout_marginTop="@dimen/margin_8"
-                    android:visibility="visible"
-                    android:tag="vet_visits_reminder" />
-
-
-            </LinearLayout>
-
-            <EditText
-                android:id="@+id/edit_text_reminder"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:hint="@string/add_more_reminders"
-                android:inputType="text" />
-
         </LinearLayout>
 
     </RelativeLayout>
