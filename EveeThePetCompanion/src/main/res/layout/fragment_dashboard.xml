@@ -39,74 +39,10 @@
                 android:layout_height="wrap_content"
                 android:orientation="horizontal">
 
-                <LinearLayout
-                    android:id="@+id/pet_info_card"
-                    android:layout_width="271dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="@dimen/margin_8"
-                    android:layout_marginEnd="@dimen/margin_8"
-                    android:layout_weight="4"
-                    android:background="@drawable/card_background"
-                    android:orientation="horizontal"
-                    android:padding="@dimen/padding_8">
-
-                    <ImageView
-                        android:layout_width="107dp"
-                        android:layout_height="@dimen/pet_image_height"
-                        android:layout_gravity="center_vertical"
-                        android:src="@drawable/petpic" />
-
-                    <LinearLayout
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="@dimen/margin_8"
-                        android:layout_weight="1"
-                        android:orientation="vertical">
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginTop="@dimen/margin_8"
-                            android:text="@string/zoe"
-                            android:textSize="18sp"
-                            android:textStyle="bold" />
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginTop="@dimen/margin_4"
-                            android:text="@string/age_2_years"
-                            android:textSize="12sp" />
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginTop="@dimen/margin_4"
-                            android:text="@string/colour_brown"
-                            android:textSize="12sp" />
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginTop="@dimen/margin_4"
-                            android:text="@string/breed_unknown"
-                            android:textSize="12sp" />
-
-                    </LinearLayout>
-
-                </LinearLayout>
-
-                <Button
-                    android:layout_width="@dimen/plus_button_width"
-                    android:layout_height="@dimen/plus_button_height"
-                    android:layout_marginStart="@dimen/margin_8"
-                    android:layout_marginTop="@dimen/margin_30"
-                    android:background="@drawable/round_button_background"
-                    android:gravity="center"
-                    android:padding="@dimen/padding_4"
-                    android:text="@string/plus"
-                    android:textColor="#FFFFFF"
-                    android:textSize="14sp" />
+                <include
+                    layout="@layout/pet_info_card"
+                    android:layout_width="407dp"
+                    android:layout_height="wrap_content" />
 
             </LinearLayout>
         </HorizontalScrollView>
