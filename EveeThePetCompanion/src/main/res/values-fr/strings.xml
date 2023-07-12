@@ -125,5 +125,6 @@
         <string name="lock_orientation">verrouiller_orientation</string>
         <string name="saved_email">email_enregistre</string>
         <string name="action_feedback">Retour</string>
+    <string name="click_a_cell_to_modify">cliquez sur une cellule pour la modifier</string>
 
 </resources>

@@ -15,6 +15,7 @@ import android.text.InputType;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.GridLayout;
 import android.widget.TextView;
@@ -34,6 +35,8 @@ public class PetProfileFragment extends Fragment {
     private EditText cellEditText;
     private boolean isEditMode = false;
     private SharedPreferences sharedPreferences;
+    private Button editScheduleButton;
+    private TextView modifyText;
 
     @Nullable
     @Override
@@ -53,15 +56,31 @@ public class PetProfileFragment extends Fragment {
         createScheduleGrid();
 
         // Set click listener for edit button
-        view.findViewById(R.id.edit_schedule_button).setOnClickListener(new View.OnClickListener() {
+        editScheduleButton = view.findViewById(R.id.edit_schedule_button);
+        modifyText = view.findViewById(R.id.modify_text);
+
+        updateEditModeUI();
+
+        editScheduleButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 isEditMode = !isEditMode; // Toggle the edit mode flag
                 updateCellClickability(); // Update cell clickability based on edit mode
+                updateEditModeUI(); // Update the UI based on edit mode
             }
         });
 
         return view;
+    }
+
+    private void updateEditModeUI() {
+        if (isEditMode) {
+            editScheduleButton.setText("Finish Edits");
+            modifyText.setVisibility(View.VISIBLE);
+        } else {
+            editScheduleButton.setText("Edit");
+            modifyText.setVisibility(View.GONE);
+        }
     }
 
     private void createScheduleGrid() {
@@ -89,7 +108,7 @@ public class PetProfileFragment extends Fragment {
             scheduleGrid.addView(dayLabelTextView);
         }
 
-// Add hour labels and cells
+        // Add hour labels and cells
         for (int hour = 0; hour < NUM_ROWS; hour++) {
             // Add hour labels
             TextView hourLabelTextView = new TextView(requireContext());
@@ -129,7 +148,6 @@ public class PetProfileFragment extends Fragment {
                 scheduleGrid.addView(cellTextView);
             }
         }
-
     }
 
     private String getStoredText(int hour, int day) {
@@ -187,7 +205,6 @@ public class PetProfileFragment extends Fragment {
                 .show();
     }
 
-
     private static class Grid {
         static int getHourFromView(TextView textView) {
             GridLayout.LayoutParams params = (GridLayout.LayoutParams) textView.getLayoutParams();
@@ -224,5 +241,20 @@ public class PetProfileFragment extends Fragment {
             }
             return 0;
         }
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.putBoolean("isEditMode", isEditMode);
+        editor.apply();
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        isEditMode = sharedPreferences.getBoolean("isEditMode", false);
+        updateCellClickability();
     }
 }
