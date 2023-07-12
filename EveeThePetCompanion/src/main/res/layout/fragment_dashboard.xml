@@ -64,33 +64,16 @@
             android:background="@drawable/card_background"
             android:padding="@dimen/padding_8">
 
-            <CheckBox
-                android:id="@+id/vet_visits_reminder"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="@string/vet_visits_july_1_2023"
-                android:layout_marginTop="@dimen/margin_8"
-                android:visibility="visible"
-                android:tag="vet_visits_reminder" />
-
-            <CheckBox
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="@string/feeding_time_8_00_am"
-                android:layout_marginTop="@dimen/margin_4"
-                android:visibility="visible"
-                android:tag="feeding_time_reminder" />
-
-
-            <EditText
-                android:id="@+id/edit_text_reminder"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:hint="@string/add_more_reminders"
-                android:inputType="text" />
-
+            <!-- Place the reminders here -->
 
         </LinearLayout>
+
+        <EditText
+            android:id="@+id/edit_text_reminder"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="@string/add_more_reminders"
+            android:inputType="text" />
 
         <TextView
             android:layout_width="wrap_content"
