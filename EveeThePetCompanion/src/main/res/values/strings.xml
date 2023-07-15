@@ -131,5 +131,6 @@
     <string name="cal_enter_text_hint">Enter Text</string>
     <string name="cancel">Cancel</string>
     <string name="delete">Delete</string>
+    <string name="edit_cell">Edit Cell</string>
 
 </resources>

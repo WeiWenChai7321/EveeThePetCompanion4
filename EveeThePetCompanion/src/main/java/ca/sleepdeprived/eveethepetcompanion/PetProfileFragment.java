@@ -174,7 +174,7 @@ public class PetProfileFragment extends Fragment {
 
     private void showCellEditDialog(final TextView cellTextView) {
         AlertDialog.Builder builder = new AlertDialog.Builder(requireContext());
-        builder.setTitle("Edit Cell");
+        builder.setTitle(R.string.edit_cell);
 
         // Create and configure the cellEditText
         final EditText cellEditText = new EditText(requireContext());

@@ -129,5 +129,6 @@
         <string name="cal_enter_text_hint">Entrez du texte</string>
         <string name="cancel">Annuler</string>
         <string name="delete">Supprimer</string>
+        <string name="edit_cell">Modifier la cellule</string>
 
 </resources>
