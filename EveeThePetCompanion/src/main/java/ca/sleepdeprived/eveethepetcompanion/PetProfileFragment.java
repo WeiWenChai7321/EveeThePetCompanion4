@@ -201,7 +201,7 @@ public class PetProfileFragment extends Fragment {
                         Toast.makeText(requireContext(), "Cell deleted", Toast.LENGTH_SHORT).show();
                     }
                 })
-                .setNeutralButton("Cancel", null)
+                .setNeutralButton(R.string.cancel, null)
                 .show();
     }
 
