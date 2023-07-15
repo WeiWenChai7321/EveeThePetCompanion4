@@ -13,10 +13,12 @@ import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.view.View;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
@@ -25,7 +27,11 @@ import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.common.SignInButton;
 import com.google.android.gms.common.api.ApiException;
+import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QuerySnapshot;
 
 public class LoginActivity extends AppCompatActivity {
 
@@ -38,6 +44,8 @@ public class LoginActivity extends AppCompatActivity {
     private SignInButton googleSignInButton;
     private GoogleSignInClient googleSignInClient;
 
+    private FirebaseFirestore db;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -48,6 +56,9 @@ public class LoginActivity extends AppCompatActivity {
         loginButton = findViewById(R.id.login_button);
         signUpTextView = findViewById(R.id.sign_up_textview);
         googleSignInButton = findViewById(R.id.google_sign_in_button);
+
+        // Initialize Firebase Firestore
+        db = FirebaseFirestore.getInstance();
 
         // Configure Google Sign-In
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
@@ -61,11 +72,8 @@ public class LoginActivity extends AppCompatActivity {
                 String username = usernameEditText.getText().toString();
                 String password = passwordEditText.getText().toString();
 
-                boolean isLoggedIn = performLogin(username, password);
-
-                if (isLoggedIn) {
-                    navigateToMainActivity();
-                }
+                // Perform login validation against the Firestore database
+                validateLogin(username, password);
             }
         });
 
@@ -83,19 +91,23 @@ public class LoginActivity extends AppCompatActivity {
             }
         });
 
+        // Check if the user is already signed in with Google
         try {
-            googleSignInClient.silentSignIn().addOnCompleteListener(this, task -> {
-                if (task.isSuccessful()) {
-                    GoogleSignInAccount account = task.getResult();
-                    handleGoogleSignInSuccess(account);
-                } else {
-                    Exception exception = task.getException();
-                    if (exception instanceof ApiException) {
-                        ApiException apiException = (ApiException) exception;
-                        int statusCode = apiException.getStatusCode();
-                        Toast.makeText(LoginActivity.this, "Google Sign-In failed: " + statusCode, Toast.LENGTH_SHORT).show();
+            googleSignInClient.silentSignIn().addOnCompleteListener(this, new OnCompleteListener<GoogleSignInAccount>() {
+                @Override
+                public void onComplete(@NonNull Task<GoogleSignInAccount> task) {
+                    if (task.isSuccessful()) {
+                        GoogleSignInAccount account = task.getResult();
+                        handleGoogleSignInSuccess(account);
                     } else {
-                        Toast.makeText(LoginActivity.this, "Google Sign-In failed: " + exception.getMessage(), Toast.LENGTH_SHORT).show();
+                        Exception exception = task.getException();
+                        if (exception instanceof ApiException) {
+                            ApiException apiException = (ApiException) exception;
+                            int statusCode = apiException.getStatusCode();
+                            Toast.makeText(LoginActivity.this, "Google Sign-In failed: " + statusCode, Toast.LENGTH_SHORT).show();
+                        } else {
+                            Toast.makeText(LoginActivity.this, "Google Sign-In failed: " + exception.getMessage(), Toast.LENGTH_SHORT).show();
+                        }
                     }
                 }
             });
@@ -104,23 +116,48 @@ public class LoginActivity extends AppCompatActivity {
         }
     }
 
-    private boolean performLogin(String username, String password) {
-        if (username.isEmpty() || password.isEmpty()) {
-            Toast.makeText(this, "Please enter username and password", Toast.LENGTH_SHORT).show();
-            return false;
-        }
+    private void validateLogin(final String email, final String password) {
+        // Query the "users" collection for the document with the matching email
+        db.collection("users")
+                .whereEqualTo("email", email)
+                .limit(1)
+                .get()
+                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                        if (task.isSuccessful()) {
+                            QuerySnapshot querySnapshot = task.getResult();
+                            if (querySnapshot != null && !querySnapshot.isEmpty()) {
+                                // User with matching email found
+                                DocumentSnapshot document = querySnapshot.getDocuments().get(0);
+                                String storedPassword = document.getString("password");
+                                if (storedPassword != null && storedPassword.equals(password)) {
+                                    // Password matches, perform successful login
+                                    performSuccessfulLogin();
+                                } else {
+                                    // Password doesn't match, show error message
+                                    Toast.makeText(LoginActivity.this, "Invalid password", Toast.LENGTH_SHORT).show();
+                                }
+                            } else {
+                                // User not found with the given email, show error message
+                                Toast.makeText(LoginActivity.this, "Account doesn't exist", Toast.LENGTH_SHORT).show();
+                            }
+                        } else {
+                            // Error occurred while accessing the database, show error message
+                            Toast.makeText(LoginActivity.this, "Failed to validate login. Please try again.", Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                });
+    }
 
-        if (!username.equals(getString(R.string.admin)) || !password.equals(getString(R.string.loginpassword))) {
-            Toast.makeText(this, "Invalid username or password", Toast.LENGTH_SHORT).show();
-            return false;
-        }
 
+    private void performSuccessfulLogin() {
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
         SharedPreferences.Editor editor = preferences.edit();
         editor.putBoolean(getString(R.string.isloggedin), true);
         editor.apply();
 
-        return true;
+        navigateToMainActivity();
     }
 
     private void navigateToMainActivity() {
@@ -167,5 +204,4 @@ public class LoginActivity extends AppCompatActivity {
         Intent intent = new Intent(LoginActivity.this, RegisterActivity.class);
         startActivity(intent);
     }
-
 }
