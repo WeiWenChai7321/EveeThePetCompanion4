@@ -21,6 +21,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
+import com.google.android.material.snackbar.Snackbar;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 public class FeedbackFragment extends Fragment {
@@ -30,6 +31,7 @@ public class FeedbackFragment extends Fragment {
     private EditText editEmail;
     private EditText editComment;
     private RatingBar ratingBar;
+
 
     private FirebaseFirestore db;
 
@@ -44,6 +46,7 @@ public class FeedbackFragment extends Fragment {
         editEmail = view.findViewById(R.id.edit_email);
         editComment = view.findViewById(R.id.edit_comment);
         ratingBar = view.findViewById(R.id.rating_bar);
+
 
         // Initialize Firebase Firestore
         db = FirebaseFirestore.getInstance();
@@ -101,7 +104,7 @@ public class FeedbackFragment extends Fragment {
                 .add(feedback)
                 .addOnSuccessListener(documentReference -> {
                     // Feedback saved successfully
-                    Toast.makeText(getContext(), "Feedback submitted!", Toast.LENGTH_SHORT).show();
+                    Snackbar.make(getView(), "Feedback submitted!", Snackbar.LENGTH_SHORT).show();
 
                     // Reset the form
                     editName.setText("");
@@ -112,7 +115,8 @@ public class FeedbackFragment extends Fragment {
                 })
                 .addOnFailureListener(e -> {
                     // Failed to save feedback
-                    Toast.makeText(getContext(), "Failed to submit feedback. Please try again.", Toast.LENGTH_SHORT).show();
+                    Snackbar.make(getView(), "Failed to submit feedback. Please try again.", Snackbar.LENGTH_SHORT).show();
                 });
     }
+
 }
