@@ -35,7 +35,7 @@
         <string name="screen_orientation_locked_to_portrait">Orientation de l\'écran verrouillée sur portrait</string>
         <string name="username">courrier électronique</string>
         <string name="password">mot de passe</string>
-        <string name="login">Login</string>
+        <string name="login">Connexion</string>
         <string name="forgot_password">Mot de passe oublié?</string>
         <string name="don_t_have_an_account_sign_up">Vous n\'avez pas de compte ? S\'inscrire</string>
         <string name="hi_chloe">Salut Chloé</string>
@@ -125,6 +125,6 @@
         <string name="lock_orientation">verrouiller_orientation</string>
         <string name="saved_email">email_enregistre</string>
         <string name="action_feedback">Retour</string>
-    <string name="click_a_cell_to_modify">cliquez sur une cellule pour la modifier</string>
+        <string name="click_a_cell_to_modify">cliquez sur une cellule pour la modifier</string>
 
 </resources>
