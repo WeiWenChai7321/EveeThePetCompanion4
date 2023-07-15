@@ -130,5 +130,9 @@
         <string name="cancel">Annuler</string>
         <string name="delete">Supprimer</string>
         <string name="edit_cell">Modifier la cellule</string>
+        <string name="invalid_password">Mot de passe incorrect</string>
+        <string name="account_not_found">Account Not Found</string>
+        <string name="login_failed">Compte non trouvé</string>
+        <string name="signing_in">Connectez-vous</string>
 
 </resources>
