@@ -99,7 +99,7 @@ public class PetProfileFragment extends Fragment {
 
             if (day > 0) {
                 // Set the day labels (Mon, Tue, Wed, etc.)
-                String[] dayLabels = {"Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"};
+                String[] dayLabels = {getString(R.string.mon), "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"};
                 dayLabelTextView.setText(dayLabels[day - 1]);
                 dayLabelTextView.setBackgroundColor(Color.LTGRAY); // Set the background color to light grey
                 dayLabelTextView.setTextColor(Color.BLACK); // Set the text color to black
