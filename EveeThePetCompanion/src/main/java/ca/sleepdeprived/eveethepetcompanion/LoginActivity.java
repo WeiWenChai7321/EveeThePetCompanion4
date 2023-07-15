@@ -153,7 +153,6 @@ public class LoginActivity extends AppCompatActivity {
                     }
                 });
     }
-
     private void dismissSnackbar(Snackbar snackbar) {
         if (snackbar != null && snackbar.isShown()) {
             snackbar.dismiss();
@@ -164,7 +163,7 @@ public class LoginActivity extends AppCompatActivity {
         Snackbar.make(findViewById(android.R.id.content), message, Snackbar.LENGTH_SHORT).show();
     }
 
-}
+
     private void performSuccessfulLogin() {
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
         SharedPreferences.Editor editor = preferences.edit();

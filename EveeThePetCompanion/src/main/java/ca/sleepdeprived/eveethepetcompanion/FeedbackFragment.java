@@ -104,7 +104,7 @@ public class FeedbackFragment extends Fragment {
                 .add(feedback)
                 .addOnSuccessListener(documentReference -> {
                     // Feedback saved successfully
-                    Snackbar.make(getView(), "Feedback submitted!", Snackbar.LENGTH_SHORT).show();
+                    showSnackbar(getString(R.string.feedback_submitted));
 
                     // Reset the form
                     editName.setText("");
@@ -115,8 +115,13 @@ public class FeedbackFragment extends Fragment {
                 })
                 .addOnFailureListener(e -> {
                     // Failed to save feedback
-                    Snackbar.make(getView(), "Failed to submit feedback. Please try again.", Snackbar.LENGTH_SHORT).show();
+                    showSnackbar(getString(R.string.failed_to_submit_feedback));
                 });
     }
+
+    private void showSnackbar(String message) {
+        Snackbar.make(getView(), message, Snackbar.LENGTH_SHORT).show();
+    }
+
 
 }
