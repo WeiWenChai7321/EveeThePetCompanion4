@@ -75,8 +75,8 @@
         <string name="wed">MER</string>
         <string name="thu">JEU</string>
         <string name="fri">VEN</string>
-        <string name="sun">SAM</string>
-        <string name="sat">DIM</string>
+        <string name="sat">SAM</string>
+        <string name="sun">DIM</string>
         <string name="_12_am">00h00</string>
         <string name="blank" />
         <string name="_1_am">1h du matin</string>
