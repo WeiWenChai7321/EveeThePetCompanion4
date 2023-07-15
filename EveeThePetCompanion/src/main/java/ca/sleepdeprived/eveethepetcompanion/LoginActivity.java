@@ -118,7 +118,7 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     private void validateLogin(final String email, final String password) {
-        Snackbar loggingInSnackbar = Snackbar.make(findViewById(android.R.id.content), "Signing in", Snackbar.LENGTH_INDEFINITE);
+        Snackbar loggingInSnackbar = Snackbar.make(findViewById(android.R.id.content), getString(R.string.signing_in), Snackbar.LENGTH_INDEFINITE);
         loggingInSnackbar.show();
         // Query the "users" collection for the document with the matching email
         db.collection("users")
@@ -140,19 +140,20 @@ public class LoginActivity extends AppCompatActivity {
                                     performSuccessfulLogin();
                                 } else {
                                     // Password doesn't match, show error message
-                                    showSnackbar("Invalid password");
+                                    showSnackbar(getString(R.string.invalid_password));
                                 }
                             } else {
                                 // User not found with the given email, show error message
-                                showSnackbar("Account doesn't exist");
+                                showSnackbar(getString(R.string.account_not_found));
                             }
                         } else {
                             // Error occurred while accessing the database, show error message
-                            showSnackbar("Failed to validate login. Please try again.");
+                            showSnackbar(getString(R.string.login_failed));
                         }
                     }
                 });
     }
+
     private void dismissSnackbar(Snackbar snackbar) {
         if (snackbar != null && snackbar.isShown()) {
             snackbar.dismiss();
@@ -163,6 +164,7 @@ public class LoginActivity extends AppCompatActivity {
         Snackbar.make(findViewById(android.R.id.content), message, Snackbar.LENGTH_SHORT).show();
     }
 
+}
     private void performSuccessfulLogin() {
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
         SharedPreferences.Editor editor = preferences.edit();
