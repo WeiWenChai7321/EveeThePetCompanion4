@@ -180,7 +180,7 @@ public class PetProfileFragment extends Fragment {
         final EditText cellEditText = new EditText(requireContext());
         cellEditText.setInputType(InputType.TYPE_CLASS_TEXT);
         cellEditText.setSingleLine();
-        cellEditText.setHint("Enter text");
+        cellEditText.setHint(R.string.cal_enter_text_hint);
         cellEditText.setText(cellTextView.getText().toString());
 
         builder.setView(cellEditText)
