@@ -72,11 +72,11 @@
         <string name="hour">Heure</string>
         <string name="mon">LUN</string>
         <string name="tue">MAR</string>
-        <string name="wed">ÉPOUSER</string>
+        <string name="wed">MER</string>
         <string name="thu">JEU</string>
         <string name="fri">VEN</string>
-        <string name="sun">SOLEIL</string>
-        <string name="sat">ASSIS</string>
+        <string name="sun">SAM</string>
+        <string name="sat">DIM</string>
         <string name="_12_am">00h00</string>
         <string name="blank" />
         <string name="_1_am">1h du matin</string>
