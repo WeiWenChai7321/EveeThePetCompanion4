@@ -78,7 +78,7 @@ public class PetProfileFragment extends Fragment {
             editScheduleButton.setText("Finish Edits");
             modifyText.setVisibility(View.VISIBLE);
         } else {
-            editScheduleButton.setText("Edit");
+            editScheduleButton.setText(R.string.edit);
             modifyText.setVisibility(View.GONE);
         }
     }
