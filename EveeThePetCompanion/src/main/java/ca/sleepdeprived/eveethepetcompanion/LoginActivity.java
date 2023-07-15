@@ -29,6 +29,7 @@ import com.google.android.gms.common.SignInButton;
 import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.android.material.snackbar.Snackbar;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QuerySnapshot;
@@ -117,6 +118,8 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     private void validateLogin(final String email, final String password) {
+        Snackbar loggingInSnackbar = Snackbar.make(findViewById(android.R.id.content), "Signing in", Snackbar.LENGTH_INDEFINITE);
+        loggingInSnackbar.show();
         // Query the "users" collection for the document with the matching email
         db.collection("users")
                 .whereEqualTo("email", email)
@@ -125,6 +128,7 @@ public class LoginActivity extends AppCompatActivity {
                 .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                     @Override
                     public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                        dismissSnackbar(loggingInSnackbar);
                         if (task.isSuccessful()) {
                             QuerySnapshot querySnapshot = task.getResult();
                             if (querySnapshot != null && !querySnapshot.isEmpty()) {
@@ -136,20 +140,28 @@ public class LoginActivity extends AppCompatActivity {
                                     performSuccessfulLogin();
                                 } else {
                                     // Password doesn't match, show error message
-                                    Toast.makeText(LoginActivity.this, "Invalid password", Toast.LENGTH_SHORT).show();
+                                    showSnackbar("Invalid password");
                                 }
                             } else {
                                 // User not found with the given email, show error message
-                                Toast.makeText(LoginActivity.this, "Account doesn't exist", Toast.LENGTH_SHORT).show();
+                                showSnackbar("Account doesn't exist");
                             }
                         } else {
                             // Error occurred while accessing the database, show error message
-                            Toast.makeText(LoginActivity.this, "Failed to validate login. Please try again.", Toast.LENGTH_SHORT).show();
+                            showSnackbar("Failed to validate login. Please try again.");
                         }
                     }
                 });
     }
+    private void dismissSnackbar(Snackbar snackbar) {
+        if (snackbar != null && snackbar.isShown()) {
+            snackbar.dismiss();
+        }
+    }
 
+    private void showSnackbar(String message) {
+        Snackbar.make(findViewById(android.R.id.content), message, Snackbar.LENGTH_SHORT).show();
+    }
 
     private void performSuccessfulLogin() {
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
