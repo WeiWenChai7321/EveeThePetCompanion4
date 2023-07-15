@@ -130,5 +130,6 @@
     <string name="click_a_cell_to_modify">Click a cell to modify</string>
     <string name="cal_enter_text_hint">Enter Text</string>
     <string name="cancel">Cancel</string>
+    <string name="delete">Delete</string>
 
 </resources>

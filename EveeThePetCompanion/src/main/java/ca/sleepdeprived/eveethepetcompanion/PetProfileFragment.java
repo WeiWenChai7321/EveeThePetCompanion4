@@ -184,7 +184,7 @@ public class PetProfileFragment extends Fragment {
         cellEditText.setText(cellTextView.getText().toString());
 
         builder.setView(cellEditText)
-                .setPositiveButton("Save", new DialogInterface.OnClickListener() {
+                .setPositiveButton(R.string.save, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         String text = cellEditText.getText().toString().trim();
@@ -193,7 +193,7 @@ public class PetProfileFragment extends Fragment {
                         Toast.makeText(requireContext(), "Entry saved: " + text, Toast.LENGTH_SHORT).show();
                     }
                 })
-                .setNegativeButton("Delete", new DialogInterface.OnClickListener() {
+                .setNegativeButton(R.string.delete, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         cellTextView.setText("");
