@@ -128,5 +128,6 @@
     <string name="saved_email">saved_email</string>
     <string name="mailto_chloeissleeping_gmail_com" translatable="false">mailto:chloeissleeping@gmail.com</string>
     <string name="click_a_cell_to_modify">Click a cell to modify</string>
+    <string name="cal_enter_text_hint">Enter Text</string>
 
 </resources>

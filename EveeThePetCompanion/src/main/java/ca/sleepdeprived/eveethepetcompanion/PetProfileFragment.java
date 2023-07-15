@@ -50,7 +50,7 @@ public class PetProfileFragment extends Fragment {
         // Set properties for cellEditText
         cellEditText.setInputType(InputType.TYPE_CLASS_TEXT);
         cellEditText.setSingleLine();
-        cellEditText.setHint("Enter text");
+        cellEditText.setHint(R.string.cal_enter_text_hint);
 
         // Create the schedule grid
         createScheduleGrid();
