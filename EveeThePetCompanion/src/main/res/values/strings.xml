@@ -137,6 +137,6 @@
     <string name="login_failed">Login Failed</string>
     <string name="signing_in">Signing In</string>
     <string name="feedback_submitted">Feedback Submitted</string>
-    <string name="failed_to_submit_feedback">Failed To Submit Feedbsck</string>
+    <string name="failed_to_submit_feedback">Failed To Submit Feedback</string>
 
 </resources>

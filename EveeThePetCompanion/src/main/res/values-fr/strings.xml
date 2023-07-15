@@ -134,5 +134,6 @@
         <string name="account_not_found">Account Not Found</string>
         <string name="login_failed">Compte non trouvé</string>
         <string name="signing_in">Connectez-vous</string>
-
+        <string name="feedback_submitted">Commentaires soumis</string>
+        <string name="failed_to_submit_feedback">Échec de l'envoi des commentaires</string>
 </resources>
