@@ -81,7 +81,16 @@ public class SettingsFragment extends Fragment {
                 if (emailEditText.isEnabled()) {
                     String updatedEmail = emailEditText.getText().toString();
                     // Update the email in Firestore
-                    updateEmailInFirestore(updatedEmail);
+
+                    // Check if the user is signed in with Google
+                    FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+                    if (user != null && user.getProviderData().size() > 1) {
+                        // User signed in with Google, show a toast message
+                        Toast.makeText(getActivity(), "You cannot edit a Google email.", Toast.LENGTH_SHORT).show();
+                    } else {
+                        // User not signed in with Google, proceed with email update
+                        updateEmailInFirestore(updatedEmail);
+                    }
                 } else {
                     emailEditText.setEnabled(true);
                     updateButton.setText(R.string.save);
@@ -112,11 +121,15 @@ public class SettingsFragment extends Fragment {
                                 if (email != null) {
                                     emailEditText.setText(email);
                                 }
+
+                                // Disable editing
+                                emailEditText.setEnabled(false);
                             }
                         }
                     });
         }
     }
+
 
     @Override
     public void onStop() {
