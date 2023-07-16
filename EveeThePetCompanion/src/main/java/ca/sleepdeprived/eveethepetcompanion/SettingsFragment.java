@@ -37,12 +37,14 @@ import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.ListenerRegistration;
 
 public class SettingsFragment extends Fragment {
+    private EditText emailEditText;
 
     private Switch lockOrientationSwitch;
     private Switch pushNotificationSwitch;
     private SharedPreferences sharedPreferences;
     private FirebaseFirestore firestore;
     private ListenerRegistration emailListener;
+    private Button updateButton;
 
     public SettingsFragment() {
     }
@@ -54,13 +56,14 @@ public class SettingsFragment extends Fragment {
         pushNotificationSwitch = view.findViewById(R.id.switch_push_notifications);
         sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getActivity());
         firestore = FirebaseFirestore.getInstance();
+        emailEditText = view.findViewById(R.id.et_email);
         return view;
     }
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
-        EditText emailEditText = view.findViewById(R.id.et_email);
-        Button updateButton = view.findViewById(R.id.btn_update);
+        updateButton = view.findViewById(R.id.btn_update);
+
         Button logoutButton = view.findViewById(R.id.btn_logout);
 
         super.onViewCreated(view, savedInstanceState);
@@ -77,11 +80,8 @@ public class SettingsFragment extends Fragment {
             public void onClick(View v) {
                 if (emailEditText.isEnabled()) {
                     String updatedEmail = emailEditText.getText().toString();
-                    Toast.makeText(getActivity(), getString(R.string.email_saved) + updatedEmail, Toast.LENGTH_SHORT).show();
-                    emailEditText.setEnabled(false);
-                    updateButton.setText(R.string.update);
-                    // Save the updated email in SharedPreferences
-                    sharedPreferences.edit().putString(getString(R.string.saved_email), updatedEmail).apply();
+                    // Update the email in Firestore
+                    updateEmailInFirestore(updatedEmail);
                 } else {
                     emailEditText.setEnabled(true);
                     updateButton.setText(R.string.save);
@@ -97,8 +97,6 @@ public class SettingsFragment extends Fragment {
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
 
         if (user != null) {
-            String uid = user.getUid();
-            fetchEmailFromFirestore(uid);
             emailListener = firestore.collection("users")
                     .document(user.getUid())
                     .addSnapshotListener(new EventListener<DocumentSnapshot>() {
@@ -112,9 +110,7 @@ public class SettingsFragment extends Fragment {
                             if (documentSnapshot != null && documentSnapshot.exists()) {
                                 String email = documentSnapshot.getString("email");
                                 if (email != null) {
-                                    TextView emailTextView = getView().findViewById(R.id.tv_email);
-                                    emailTextView.setText(email);
-                                    emailTextView.setVisibility(View.VISIBLE);
+                                    emailEditText.setText(email);
                                 }
                             }
                         }
@@ -132,44 +128,6 @@ public class SettingsFragment extends Fragment {
         }
     }
 
-    private void fetchEmailFromFirestore(String uid) {
-        Log.d("SettingsFragment", "Fetching email for UID: " + uid);
-        firestore.collection("users")
-                .document(uid)
-                .get()
-                .addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
-                    @Override
-                    public void onSuccess(DocumentSnapshot documentSnapshot) {
-                        if (documentSnapshot.exists()) {
-                            String email = documentSnapshot.getString("email");
-                            if (email != null) {
-                                TextView emailTextView = getView().findViewById(R.id.tv_email);
-                                emailTextView.setText(email);
-                                emailTextView.setVisibility(View.VISIBLE);
-
-                                // Log the email value
-                                Log.d("SettingsFragment", "Email: " + email);
-
-                                // Display the email in a toast message
-                                Toast.makeText(getActivity(), "Email: " + email, Toast.LENGTH_SHORT).show();
-                            } else {
-                                // Log that the email is null
-                                Log.d("SettingsFragment", "Email is null");
-                            }
-                        } else {
-                            // Log that the document does not exist
-                            Log.d("SettingsFragment", "Document does not exist");
-                        }
-                    }
-                })
-                .addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception e) {
-                        // Log the failure
-                        Log.e("SettingsFragment", "Error getting document: " + e.getMessage());
-                    }
-                });
-    }
 
 
 
@@ -191,10 +149,6 @@ public class SettingsFragment extends Fragment {
     public void onResume() {
         super.onResume();
         String storedEmail = sharedPreferences.getString(getString(R.string.saved_email), "");
-        TextView emailTextView = getView().findViewById(R.id.tv_email);
-        emailTextView.setText(storedEmail);
-        emailTextView.setVisibility(View.VISIBLE);
-        emailTextView.setEnabled(true);
 
         // Read the stored preferences and update the switches accordingly
         boolean isOrientationLocked = sharedPreferences.getBoolean(getString(R.string.lock_orientation), false);
@@ -234,6 +188,31 @@ public class SettingsFragment extends Fragment {
                 }
             }
         });
+    }
+    private void updateEmailInFirestore(String updatedEmail) {
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        if (user != null) {
+            String uid = user.getUid();
+            firestore.collection("users")
+                    .document(uid)
+                    .update("email", updatedEmail)
+                    .addOnSuccessListener(new OnSuccessListener<Void>() {
+                        @Override
+                        public void onSuccess(Void aVoid) {
+                            Toast.makeText(getActivity(), getString(R.string.email_saved) + updatedEmail, Toast.LENGTH_SHORT).show();
+                            emailEditText.setEnabled(false);
+                            updateButton.setText(R.string.update);
+                            // Save the updated email in SharedPreferences
+                            sharedPreferences.edit().putString(getString(R.string.saved_email), updatedEmail).apply();
+                        }
+                    })
+                    .addOnFailureListener(new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception e) {
+                            Toast.makeText(getActivity(), "Failed to update email. Please try again.", Toast.LENGTH_SHORT).show();
+                        }
+                    });
+        }
     }
 
 }
