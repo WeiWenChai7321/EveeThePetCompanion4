@@ -13,6 +13,7 @@ import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.view.View;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -48,7 +49,7 @@ public class LoginActivity extends AppCompatActivity {
     private TextView signUpTextView;
     private SignInButton googleSignInButton;
     private GoogleSignInClient googleSignInClient;
-
+    private CheckBox rememberMeCheckbox;
     private FirebaseAuth firebaseAuth;
     private FirebaseFirestore db;
 
@@ -62,6 +63,8 @@ public class LoginActivity extends AppCompatActivity {
         loginButton = findViewById(R.id.login_button);
         signUpTextView = findViewById(R.id.sign_up_textview);
         googleSignInButton = findViewById(R.id.google_sign_in_button);
+        rememberMeCheckbox = findViewById(R.id.remember_me_checkbox);
+        rememberMeCheckbox.setChecked(true);
 
         // Initialize Firebase Authentication and Firestore
         firebaseAuth = FirebaseAuth.getInstance();
