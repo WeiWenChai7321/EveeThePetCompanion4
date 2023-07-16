@@ -40,11 +40,11 @@
         <string name="don_t_have_an_account_sign_up">Vous n\'avez pas de compte ? S\'inscrire</string>
         <string name="hi_chloe">Salut Chloé</string>
         <string name="your_pets">Vos animaux de compagnie</string>
-        <string name="zoe">Zoé</string>
+        <string name="petname">Zoé</string>
         <string name="eat">Manger</string>
-        <string name="age_2_years">Âge : 2 ans</string>
-        <string name="colour_brown">Couleur : Marron</string>
-        <string name="breed_unknown">Race : Inconnue</string>
+        <string name="age">Âge : 2 ans</string>
+        <string name="colour">Couleur : Marron</string>
+        <string name="breed">Race : Inconnue</string>
         <string name="plus" />
         <string name="reminders">Rappels</string>
         <string name="vet_visits_july_1_2023">Visites vétérinaires - 1er juillet 2023</string>
@@ -136,4 +136,7 @@
         <string name="signing_in">Connectez-vous</string>
         <string name="feedback_submitted">Commentaires soumis</string>
         <string name="failed_to_submit_feedback">Échec de l\'envoi des commentaires</string>
+        <string name="edit_pet_info">Modifier les informations de l\'animal</string>
+        <string name="pet_info_saved">Informations sur l\'animal enregistrées</string>
+
 </resources>

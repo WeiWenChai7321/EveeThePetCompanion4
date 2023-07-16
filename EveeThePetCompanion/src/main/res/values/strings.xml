@@ -41,11 +41,11 @@
     <string name="don_t_have_an_account_sign_up">Don\'t have an account? Sign up</string>
     <string name="hi_chloe">Hi Chloe</string>
     <string name="your_pets">Your Pet</string>
-    <string name="zoe">Zoe</string>
+    <string name="petname">Zoe</string>
     <string name="eat">Eat</string>
-    <string name="age_2_years">Age: 2 years</string>
-    <string name="colour_brown">Colour: Brown</string>
-    <string name="breed_unknown">Breed: Unknown</string>
+    <string name="age">Age: </string>
+    <string name="colour">Colour: </string>
+    <string name="breed">Breed: </string>
     <string name="plus">+</string>
     <string name="reminders">Reminders</string>
     <string name="vet_visits_july_1_2023">Vet Visits - July 1, 2023</string>
@@ -138,5 +138,7 @@
     <string name="signing_in">Signing In</string>
     <string name="feedback_submitted">Feedback Submitted</string>
     <string name="failed_to_submit_feedback">Failed To Submit Feedback</string>
+    <string name="edit_pet_info">Edit Pet Info</string>
+    <string name="pet_info_saved">Pet info saved</string>
 
 </resources>

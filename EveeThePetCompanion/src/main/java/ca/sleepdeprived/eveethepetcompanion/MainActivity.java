@@ -11,6 +11,8 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.view.menu.MenuBuilder;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProvider;
+
 import android.content.pm.ActivityInfo;
 import android.annotation.SuppressLint;
 import android.content.DialogInterface;
@@ -30,6 +32,7 @@ public class MainActivity extends AppCompatActivity {
 
     private boolean isLoggedIn = false;
     private BottomNavigationView bottomNavigationView;
+    private PetInfoViewModel petInfoViewModel; // Added
 
     @SuppressLint("RestrictedApi")
     @Override
@@ -51,6 +54,7 @@ public class MainActivity extends AppCompatActivity {
 
         return true;
     }
+
     private void uncheckAllItems() {
         bottomNavigationView.getMenu().setGroupCheckable(0, true, false);
         for (int i = 0; i < bottomNavigationView.getMenu().size(); i++) {
@@ -113,13 +117,14 @@ public class MainActivity extends AppCompatActivity {
         } else {
             startLoginActivity();
         }
+
+        petInfoViewModel = new ViewModelProvider(this).get(PetInfoViewModel.class); // Added
     }
 
     private boolean checkLoginStatus() {
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
         return preferences.getBoolean(getString(R.string.isloggedin), false);
     }
-
 
     private void showMainActivity() {
         BottomNavigationView bottomNavigationView = findViewById(R.id.bottom_navigation);
@@ -134,7 +139,6 @@ public class MainActivity extends AppCompatActivity {
         startActivity(intent);
         finish();
     }
-
 
     private BottomNavigationView.OnNavigationItemSelectedListener navListener =
             new BottomNavigationView.OnNavigationItemSelectedListener() {
@@ -173,5 +177,10 @@ public class MainActivity extends AppCompatActivity {
                 })
                 .setNegativeButton(R.string.no,null)
                 .show();
+    }
+
+    // Add this method inside MainActivity class
+    public PetInfoViewModel getPetInfoViewModel() {
+        return petInfoViewModel;
     }
 }

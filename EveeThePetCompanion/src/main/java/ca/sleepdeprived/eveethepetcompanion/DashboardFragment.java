@@ -6,6 +6,8 @@
 */
 package ca.sleepdeprived.eveethepetcompanion;
 
+import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProvider;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -19,6 +21,7 @@ import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -30,9 +33,15 @@ import java.util.List;
 import java.util.Set;
 
 public class DashboardFragment extends Fragment {
-
+    private PetInfoViewModel petInfoViewModel;
     private List<CheckBox> reminderCheckboxes;
     private SharedPreferences sharedPreferences;
+
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        petInfoViewModel = new ViewModelProvider(requireActivity()).get(PetInfoViewModel.class);
+    }
 
     @Nullable
     @Override
@@ -42,6 +51,13 @@ public class DashboardFragment extends Fragment {
         EditText editReminderEditText = view.findViewById(R.id.edit_text_reminder);
         sharedPreferences = requireActivity().getPreferences(Context.MODE_PRIVATE);
         reminderCheckboxes = new ArrayList<>();
+
+        petInfoViewModel.getPetName().observe(getViewLifecycleOwner(), new Observer<String>() {
+            @Override
+            public void onChanged(String petName) {
+                // Update the pet name if necessary
+            }
+        });
 
         // Retrieve saved reminders
         Set<String> savedReminders = sharedPreferences.getStringSet("reminders", new HashSet<>());

@@ -5,8 +5,9 @@
   Ubay Abdulaziz, N01437353
 */
 package ca.sleepdeprived.eveethepetcompanion;
-
+import androidx.lifecycle.ViewModelProvider;
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.graphics.Color;
@@ -26,7 +27,7 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
 public class PetProfileFragment extends Fragment {
-
+    private PetInfoViewModel petInfoViewModel;
     private static final int NUM_COLUMNS = 7; // Number of days in a week
     private static final int NUM_ROWS = 24; // Number of hours in a day
     private static final String PREFS_NAME = "CellDataPrefs";
@@ -37,6 +38,16 @@ public class PetProfileFragment extends Fragment {
     private SharedPreferences sharedPreferences;
     private Button editScheduleButton;
     private TextView modifyText;
+    private TextView nameTextView;
+    private TextView ageTextView;
+    private TextView colorTextView;
+    private TextView breedTextView;
+
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        petInfoViewModel = new ViewModelProvider(requireActivity()).get(PetInfoViewModel.class);
+    }
 
     @Nullable
     @Override
@@ -45,8 +56,11 @@ public class PetProfileFragment extends Fragment {
 
         scheduleGrid = view.findViewById(R.id.schedule_grid);
         cellEditText = new EditText(requireContext());
-        sharedPreferences = requireContext().getSharedPreferences(PREFS_NAME, 0);
-
+        sharedPreferences = requireContext().getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
+        nameTextView = view.findViewById(R.id.nameTextView);
+        ageTextView = view.findViewById(R.id.ageTextView);
+        colorTextView = view.findViewById(R.id.colorTextView);
+        breedTextView = view.findViewById(R.id.breedTextView);
         // Set properties for cellEditText
         cellEditText.setInputType(InputType.TYPE_CLASS_TEXT);
         cellEditText.setSingleLine();
@@ -61,6 +75,14 @@ public class PetProfileFragment extends Fragment {
 
         updateEditModeUI();
 
+        Button editButton = view.findViewById(R.id.editButton);
+        editButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                editPetInfo();
+            }
+        });
+
         editScheduleButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -72,6 +94,68 @@ public class PetProfileFragment extends Fragment {
 
         return view;
     }
+    private void editPetInfo() {
+        // Inflate the dialog_pet_info_edit.xml layout
+        View dialogView = LayoutInflater.from(requireContext()).inflate(R.layout.dialog_pet_info_edit, null);
+
+        // Find the EditText views
+        EditText nameEditText = dialogView.findViewById(R.id.nameEditText);
+        EditText ageEditText = dialogView.findViewById(R.id.ageEditText);
+        EditText colorEditText = dialogView.findViewById(R.id.colorEditText);
+        EditText breedEditText = dialogView.findViewById(R.id.breedEditText);
+
+        // Set the initial text for the EditText views
+        nameEditText.setText(nameTextView.getText());
+        ageEditText.setText(ageTextView.getText());
+        colorEditText.setText(colorTextView.getText());
+        breedEditText.setText(breedTextView.getText());
+
+        String name = nameEditText.getText().toString();
+        String age = ageEditText.getText().toString();
+        String color = colorEditText.getText().toString();
+        String breed = breedEditText.getText().toString();
+
+        petInfoViewModel.setPetName(name);
+        petInfoViewModel.setPetAge(age);
+        petInfoViewModel.setPetColor(color);
+        petInfoViewModel.setPetBreed(breed);
+
+        // Create and show the AlertDialog for editing pet info
+        AlertDialog.Builder builder = new AlertDialog.Builder(requireContext());
+        builder.setTitle("Edit Pet Information")
+                .setView(dialogView)
+                .setPositiveButton("Save", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        // Get the updated text from the EditText views
+                        String name = nameEditText.getText().toString();
+                        String age = ageEditText.getText().toString();
+                        String color = colorEditText.getText().toString();
+                        String breed = breedEditText.getText().toString();
+
+                        // Update the TextViews with the edited information
+                        nameTextView.setText(name);
+                        ageTextView.setText(age);
+                        colorTextView.setText(color);
+                        breedTextView.setText(breed);
+
+                        // Store the edited information in SharedPreferences
+                        SharedPreferences.Editor editor = sharedPreferences.edit();
+                        editor.putString("name", name);
+                        editor.putString("age", age);
+                        editor.putString("color", color);
+                        editor.putString("breed", breed);
+                        editor.apply();
+
+                        // Show a toast message to indicate successful editing
+                        Toast.makeText(requireContext(), "Pet information updated", Toast.LENGTH_SHORT).show();
+                    }
+                })
+                .setNegativeButton("Cancel", null)
+                .show();
+    }
+
+
 
     private void updateEditModeUI() {
         if (isEditMode) {
@@ -176,32 +260,42 @@ public class PetProfileFragment extends Fragment {
         AlertDialog.Builder builder = new AlertDialog.Builder(requireContext());
         builder.setTitle(R.string.edit_cell);
 
-        // Create and configure the cellEditText
-        final EditText cellEditText = new EditText(requireContext());
-        cellEditText.setInputType(InputType.TYPE_CLASS_TEXT);
-        cellEditText.setSingleLine();
-        cellEditText.setHint(R.string.cal_enter_text_hint);
-        cellEditText.setText(cellTextView.getText().toString());
+        // Inflate the dialog layout
+        View dialogView = LayoutInflater.from(requireContext()).inflate(R.layout.dialog_pet_info_edit, null);
 
-        builder.setView(cellEditText)
+        // Find the EditText fields in the dialog layout
+        final EditText nameEditText = dialogView.findViewById(R.id.nameEditText);
+        final EditText ageEditText = dialogView.findViewById(R.id.ageEditText);
+        final EditText colorEditText = dialogView.findViewById(R.id.colorEditText);
+        final EditText breedEditText = dialogView.findViewById(R.id.breedEditText);
+
+        // Set the initial values of the EditText fields
+        nameEditText.setText(nameTextView.getText());
+        ageEditText.setText(ageTextView.getText());
+        colorEditText.setText(colorTextView.getText());
+        breedEditText.setText(breedTextView.getText());
+
+        builder.setView(dialogView)
                 .setPositiveButton(R.string.save, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        String text = cellEditText.getText().toString().trim();
-                        cellTextView.setText(text);
-                        storeText(Grid.getHourFromView(cellTextView), Grid.getDayFromView(cellTextView), text);
-                        Toast.makeText(requireContext(), "Entry saved: " + text, Toast.LENGTH_SHORT).show();
+                        String name = nameEditText.getText().toString().trim();
+                        String age = ageEditText.getText().toString().trim();
+                        String color = colorEditText.getText().toString().trim();
+                        String breed = breedEditText.getText().toString().trim();
+
+                        // Store the updated values in SharedPreferences
+                        SharedPreferences.Editor editor = sharedPreferences.edit();
+                        editor.putString("name", name);
+                        editor.putString("age", age);
+                        editor.putString("color", color);
+                        editor.putString("breed", breed);
+                        editor.apply();
+
+                        Toast.makeText(requireContext(), "Pet information saved", Toast.LENGTH_SHORT).show();
                     }
                 })
-                .setNegativeButton(R.string.delete, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        cellTextView.setText("");
-                        storeText(Grid.getHourFromView(cellTextView), Grid.getDayFromView(cellTextView), "");
-                        Toast.makeText(requireContext(), "Cell deleted", Toast.LENGTH_SHORT).show();
-                    }
-                })
-                .setNeutralButton(R.string.cancel, null)
+                .setNegativeButton(R.string.cancel, null)
                 .show();
     }
 
@@ -256,20 +350,41 @@ public class PetProfileFragment extends Fragment {
         super.onResume();
         isEditMode = sharedPreferences.getBoolean("isEditMode", false);
         updateCellClickability();
+
+        // Retrieve the stored pet information from SharedPreferences
+        String name = sharedPreferences.getString("name", "");
+        String age = sharedPreferences.getString("age", "");
+        String color = sharedPreferences.getString("color", "");
+        String breed = sharedPreferences.getString("breed", "");
+
+        // Update the TextViews with the stored pet information if available
+        if (!name.isEmpty()) {
+            nameTextView.setText(name);
+        }
+        if (!age.isEmpty()) {
+            ageTextView.setText(age);
+        }
+        if (!color.isEmpty()) {
+            colorTextView.setText(color);
+        }
+        if (!breed.isEmpty()) {
+            breedTextView.setText(breed);
+        }
     }
 
     @Override
-    public void onSaveInstanceState(Bundle savedInstanceState) {
-        super.onSaveInstanceState(savedInstanceState);
-        // Save UI state changes to the savedInstanceState.
-        // This bundle will be passed to onCreate if the process is
-        // killed and restarted.
-        savedInstanceState.putBoolean("MyBoolean", true);
-        savedInstanceState.putDouble("myDouble", 1.9);
-        savedInstanceState.putInt("MyInt", 1);
-        savedInstanceState.putString("MyString", "Welcome back to Android");
-        // etc.
+    public void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putBoolean("isEditMode", isEditMode);
     }
 
-
+    @Override
+    public void onViewStateRestored(@Nullable Bundle savedInstanceState) {
+        super.onViewStateRestored(savedInstanceState);
+        if (savedInstanceState != null) {
+            isEditMode = savedInstanceState.getBoolean("isEditMode", false);
+            updateEditModeUI();
+            updateCellClickability();
+        }
+    }
 }
