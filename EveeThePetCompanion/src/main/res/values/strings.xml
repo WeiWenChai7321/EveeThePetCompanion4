@@ -140,5 +140,8 @@
     <string name="failed_to_submit_feedback">Failed To Submit Feedback</string>
     <string name="edit_pet_info">Edit Pet Info</string>
     <string name="pet_info_saved">Pet info saved</string>
+    <string name="age_placeholder">2</string>
+    <string name="color_placeholder">brown</string>
+    <string name="breed_placeholder">tortoiseshell</string>
 
 </resources>

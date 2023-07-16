@@ -44,75 +44,75 @@
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="horizontal">
+                    android:orientation="horizontal"
+                    android:layout_marginTop="@dimen/margin_4">
 
                     <TextView
                         android:id="@+id/ageLabelTextView"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="@dimen/margin_4"
                         android:text="@string/age"
                         android:textSize="12sp"
-                        android:textStyle="bold" />
+                        android:textStyle="bold"
+                        android:layout_marginEnd="@dimen/margin_4" />
 
                     <TextView
                         android:id="@+id/ageTextView"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="@dimen/margin_4"
-                        android:text=""
-                        android:textSize="12sp"
-                        android:layout_marginStart="8dp" />
+                        android:text="@string/age_placeholder"
+                        android:hint="@string/age_placeholder"
+                        android:textSize="12sp" />
 
                 </LinearLayout>
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="horizontal">
+                    android:orientation="horizontal"
+                    android:layout_marginTop="@dimen/margin_4">
 
                     <TextView
                         android:id="@+id/colorLabelTextView"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="@dimen/margin_4"
                         android:text="@string/colour"
                         android:textSize="12sp"
-                        android:textStyle="bold" />
+                        android:textStyle="bold"
+                        android:layout_marginEnd="@dimen/margin_4" />
 
                     <TextView
                         android:id="@+id/colorTextView"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="@dimen/margin_4"
-                        android:text=""
-                        android:textSize="12sp"
-                        android:layout_marginStart="8dp" />
+                        android:text="@string/color_placeholder"
+                        android:hint="@string/color_placeholder"
+                        android:textSize="12sp" />
 
                 </LinearLayout>
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="horizontal">
+                    android:orientation="horizontal"
+                    android:layout_marginTop="@dimen/margin_4">
 
                     <TextView
                         android:id="@+id/breedLabelTextView"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="@dimen/margin_4"
                         android:text="@string/breed"
                         android:textSize="12sp"
-                        android:textStyle="bold" />
+                        android:textStyle="bold"
+                        android:layout_marginEnd="@dimen/margin_4" />
 
                     <TextView
                         android:id="@+id/breedTextView"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="@dimen/margin_4"
-                        android:text=""
-                        android:textSize="12sp"
-                        android:layout_marginStart="8dp" />
+                        android:text="@string/breed_placeholder"
+                        android:hint="@string/breed_placeholder"
+                        android:textSize="12sp" />
 
                 </LinearLayout>
 

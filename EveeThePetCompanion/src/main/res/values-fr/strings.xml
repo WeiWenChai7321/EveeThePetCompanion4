@@ -138,5 +138,9 @@
         <string name="failed_to_submit_feedback">Échec de l\'envoi des commentaires</string>
         <string name="edit_pet_info">Modifier les informations de l\'animal</string>
         <string name="pet_info_saved">Informations sur l\'animal enregistrées</string>
+        <string name="age_placeholder">2</string>
+        <string name="color_placeholder">marron</string>
+        <string name="breed_placeholder">écaille de tortue</string>
+
 
 </resources>
