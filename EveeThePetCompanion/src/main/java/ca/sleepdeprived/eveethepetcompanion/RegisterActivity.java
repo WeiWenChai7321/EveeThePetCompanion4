@@ -13,6 +13,10 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
+import com.google.firebase.auth.AuthResult;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.SignInMethodQueryResult;
+import com.google.firebase.firestore.FirebaseFirestore;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -21,6 +25,7 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.Source;
 
 public class RegisterActivity extends AppCompatActivity {
 
@@ -28,7 +33,7 @@ public class RegisterActivity extends AppCompatActivity {
     private EditText passwordEditText;
     private EditText confirmPasswordEditText;
     private Button signUpButton;
-
+    private FirebaseAuth firebaseAuth;
     private FirebaseFirestore db;
 
     @Override
@@ -37,7 +42,7 @@ public class RegisterActivity extends AppCompatActivity {
         setContentView(R.layout.activity_register);
 
         db = FirebaseFirestore.getInstance();
-
+        firebaseAuth = FirebaseAuth.getInstance();
         emailEditText = findViewById(R.id.email_edittext);
         passwordEditText = findViewById(R.id.password_edittext);
         confirmPasswordEditText = findViewById(R.id.confirm_password_edittext);
@@ -61,44 +66,39 @@ public class RegisterActivity extends AppCompatActivity {
         } else if (!password.equals(confirmPassword)) {
             Toast.makeText(RegisterActivity.this, "Passwords do not match", Toast.LENGTH_SHORT).show();
         } else {
-            // Check if the email already exists in the database
-            db.collection("users")
-                    .document(email)
-                    .get()
-                    .addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-                        @Override
-                        public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                            if (task.isSuccessful()) {
-                                DocumentSnapshot document = task.getResult();
-                                if (document != null && document.exists()) {
-                                    // Email doesn't exist, proceed with account creation
-                                    createAccount(email);
-                                } else {
-                                    // Email already exists in the database, show error message
-                                    Toast.makeText(RegisterActivity.this, "Account already exists with this email", Toast.LENGTH_SHORT).show();
-                                }
-                            } else {
-                                // Error occurred while accessing the database, show error message
-                                Toast.makeText(RegisterActivity.this, "Failed to access the database. Please try again.", Toast.LENGTH_SHORT).show();
-                            }
+            // Check if the email already exists in Firebase Authentication
+            firebaseAuth.fetchSignInMethodsForEmail(email).addOnCompleteListener(new OnCompleteListener<SignInMethodQueryResult>() {
+                @Override
+                public void onComplete(@NonNull Task<SignInMethodQueryResult> task) {
+                    if (task.isSuccessful()) {
+                        SignInMethodQueryResult result = task.getResult();
+                        if (result != null && result.getSignInMethods() != null && result.getSignInMethods().size() > 0) {
+                            // Email already exists in Firebase Authentication, show error message
+                            Toast.makeText(RegisterActivity.this, "Account already exists with this email", Toast.LENGTH_SHORT).show();
+                        } else {
+                            // Email doesn't exist in Firebase Authentication, proceed with account creation
+                            createAccount(email, password);
                         }
-                    });
+                    } else {
+                        // Error occurred while accessing Firebase Authentication, show error message
+                        Toast.makeText(RegisterActivity.this, "Failed to access Firebase Authentication. Please try again.", Toast.LENGTH_SHORT).show();
+                    }
+                }
+            });
         }
     }
 
-    private void createAccount(String email) {
-        String password = passwordEditText.getText().toString().trim();
-
-        // Create a new document in the "users" collection with the email as the document ID
-        db.collection("users")
-                .document(email)
-                .set(new User(email, password))
-                .addOnCompleteListener(new OnCompleteListener<Void>() {
+    private void createAccount(final String email, final String password) {
+        firebaseAuth.createUserWithEmailAndPassword(email, password)
+                .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
                     @Override
-                    public void onComplete(@NonNull Task<Void> task) {
+                    public void onComplete(@NonNull Task<AuthResult> task) {
                         if (task.isSuccessful()) {
                             // Account creation successful, show success message
                             Toast.makeText(RegisterActivity.this, "Account created successfully", Toast.LENGTH_SHORT).show();
+
+                            // Save the user's email to Firestore
+                            saveUserToFirestore(email,password);
 
                             // Navigate to LoginActivity
                             navigateToLoginActivity();
@@ -110,6 +110,25 @@ public class RegisterActivity extends AppCompatActivity {
                 });
     }
 
+    private void saveUserToFirestore(String email, String password) {
+        String uid = firebaseAuth.getCurrentUser().getUid();
+        User user = new User(email, password);
+
+        db.collection("users")
+                .document(uid)
+                .set(user)
+                .addOnCompleteListener(new OnCompleteListener<Void>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Void> task) {
+                        if (task.isSuccessful()) {
+                            // User data saved to Firestore
+                        } else {
+                            // Error occurred while saving user data, show error message
+                            Toast.makeText(RegisterActivity.this, "Failed to save user data. Please try again.", Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                });
+    }
 
     private void navigateToLoginActivity() {
         Intent intent = new Intent(RegisterActivity.this, LoginActivity.class);

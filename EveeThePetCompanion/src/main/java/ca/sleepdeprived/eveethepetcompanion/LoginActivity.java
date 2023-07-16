@@ -13,7 +13,6 @@ import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.view.View;
 import android.widget.Button;
-import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -30,6 +29,11 @@ import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.snackbar.Snackbar;
+import com.google.firebase.auth.AuthCredential;
+import com.google.firebase.auth.AuthResult;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.auth.GoogleAuthProvider;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QuerySnapshot;
@@ -45,6 +49,7 @@ public class LoginActivity extends AppCompatActivity {
     private SignInButton googleSignInButton;
     private GoogleSignInClient googleSignInClient;
 
+    private FirebaseAuth firebaseAuth;
     private FirebaseFirestore db;
 
     @Override
@@ -58,11 +63,13 @@ public class LoginActivity extends AppCompatActivity {
         signUpTextView = findViewById(R.id.sign_up_textview);
         googleSignInButton = findViewById(R.id.google_sign_in_button);
 
-        // Initialize Firebase Firestore
+        // Initialize Firebase Authentication and Firestore
+        firebaseAuth = FirebaseAuth.getInstance();
         db = FirebaseFirestore.getInstance();
 
         // Configure Google Sign-In
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+                .requestIdToken(getString(R.string.default_web_client_id))
                 .requestEmail()
                 .build();
         googleSignInClient = GoogleSignIn.getClient(this, gso);
@@ -93,66 +100,34 @@ public class LoginActivity extends AppCompatActivity {
         });
 
         // Check if the user is already signed in with Google
-        try {
-            googleSignInClient.silentSignIn().addOnCompleteListener(this, new OnCompleteListener<GoogleSignInAccount>() {
-                @Override
-                public void onComplete(@NonNull Task<GoogleSignInAccount> task) {
-                    if (task.isSuccessful()) {
-                        GoogleSignInAccount account = task.getResult();
-                        handleGoogleSignInSuccess(account);
-                    } else {
-                        Exception exception = task.getException();
-                        if (exception instanceof ApiException) {
-                            ApiException apiException = (ApiException) exception;
-                            int statusCode = apiException.getStatusCode();
-                            Toast.makeText(LoginActivity.this, "Google Sign-In failed: " + statusCode, Toast.LENGTH_SHORT).show();
-                        } else {
-                            Toast.makeText(LoginActivity.this, "Google Sign-In failed: " + exception.getMessage(), Toast.LENGTH_SHORT).show();
-                        }
-                    }
-                }
-            });
-        } catch (Exception e) {
-            Toast.makeText(LoginActivity.this, "Google Sign-In failed: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+        GoogleSignInAccount account = GoogleSignIn.getLastSignedInAccount(this);
+        if (account != null) {
+            // User already signed in with Google, authenticate with Firebase
+            firebaseAuthWithGoogle(account);
         }
     }
 
     private void validateLogin(final String email, final String password) {
         Snackbar loggingInSnackbar = Snackbar.make(findViewById(android.R.id.content), getString(R.string.signing_in), Snackbar.LENGTH_INDEFINITE);
         loggingInSnackbar.show();
-        // Query the "users" collection for the document with the matching email
-        db.collection("users")
-                .whereEqualTo("email", email)
-                .limit(1)
-                .get()
-                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+
+        // Authenticate user with Firebase Authentication
+        firebaseAuth.signInWithEmailAndPassword(email, password)
+                .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
                     @Override
-                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                    public void onComplete(@NonNull Task<AuthResult> task) {
                         dismissSnackbar(loggingInSnackbar);
                         if (task.isSuccessful()) {
-                            QuerySnapshot querySnapshot = task.getResult();
-                            if (querySnapshot != null && !querySnapshot.isEmpty()) {
-                                // User with matching email found
-                                DocumentSnapshot document = querySnapshot.getDocuments().get(0);
-                                String storedPassword = document.getString("password");
-                                if (storedPassword != null && storedPassword.equals(password)) {
-                                    // Password matches, perform successful login
-                                    performSuccessfulLogin();
-                                } else {
-                                    // Password doesn't match, show error message
-                                    showSnackbar(getString(R.string.invalid_password));
-                                }
-                            } else {
-                                // User not found with the given email, show error message
-                                showSnackbar(getString(R.string.account_not_found));
-                            }
+                            // Authentication successful, perform successful login
+                            performSuccessfulLogin();
                         } else {
-                            // Error occurred while accessing the database, show error message
+                            // Authentication failed, show error message
                             showSnackbar(getString(R.string.login_failed));
                         }
                     }
                 });
     }
+
     private void dismissSnackbar(Snackbar snackbar) {
         if (snackbar != null && snackbar.isShown()) {
             snackbar.dismiss();
@@ -162,7 +137,6 @@ public class LoginActivity extends AppCompatActivity {
     private void showSnackbar(String message) {
         Snackbar.make(findViewById(android.R.id.content), message, Snackbar.LENGTH_SHORT).show();
     }
-
 
     private void performSuccessfulLogin() {
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
@@ -197,20 +171,27 @@ public class LoginActivity extends AppCompatActivity {
     private void handleGoogleSignInResult(Task<GoogleSignInAccount> task) {
         try {
             GoogleSignInAccount account = task.getResult(ApiException.class);
-            handleGoogleSignInSuccess(account);
+            firebaseAuthWithGoogle(account);
         } catch (ApiException e) {
-            handleGoogleSignInFailure(e);
+            Toast.makeText(this, "Google Sign-In failed: " + e.getStatusCode(), Toast.LENGTH_SHORT).show();
         }
     }
 
-    private void handleGoogleSignInSuccess(GoogleSignInAccount account) {
-        String email = account.getEmail();
-        Toast.makeText(this, "Signed in with Google: " + email, Toast.LENGTH_SHORT).show();
-        navigateToMainActivity();
-    }
-
-    private void handleGoogleSignInFailure(ApiException e) {
-        Toast.makeText(this, "Google Sign-In failed: " + e.getStatusCode(), Toast.LENGTH_SHORT).show();
+    private void firebaseAuthWithGoogle(GoogleSignInAccount account) {
+        AuthCredential credential = GoogleAuthProvider.getCredential(account.getIdToken(), null);
+        firebaseAuth.signInWithCredential(credential)
+                .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
+                    @Override
+                    public void onComplete(@NonNull Task<AuthResult> task) {
+                        if (task.isSuccessful()) {
+                            // Authentication successful, perform successful login
+                            performSuccessfulLogin();
+                        } else {
+                            // Authentication failed, show error message
+                            Toast.makeText(LoginActivity.this, "Google Sign-In failed: " + task.getException().getMessage(), Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                });
     }
 
     private void navigateToRegisterActivity() {

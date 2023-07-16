@@ -9,31 +9,40 @@ package ca.sleepdeprived.eveethepetcompanion;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
-import android.net.Uri;
 import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
 import android.preference.PreferenceManager;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.EditText;
-import android.widget.Spinner;
 import android.widget.Switch;
+import android.widget.TextView;
 import android.widget.Toast;
 
-import java.util.Locale;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.EventListener;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.FirebaseFirestoreException;
+import com.google.firebase.firestore.ListenerRegistration;
 
 public class SettingsFragment extends Fragment {
 
     private Switch lockOrientationSwitch;
     private Switch pushNotificationSwitch;
     private SharedPreferences sharedPreferences;
+    private FirebaseFirestore firestore;
+    private ListenerRegistration emailListener;
 
     public SettingsFragment() {
     }
@@ -44,6 +53,7 @@ public class SettingsFragment extends Fragment {
         lockOrientationSwitch = view.findViewById(R.id.switch_lock_orientation);
         pushNotificationSwitch = view.findViewById(R.id.switch_push_notifications);
         sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getActivity());
+        firestore = FirebaseFirestore.getInstance();
         return view;
     }
 
@@ -80,6 +90,89 @@ public class SettingsFragment extends Fragment {
         });
     }
 
+    @Override
+    public void onStart() {
+        super.onStart();
+
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+
+        if (user != null) {
+            String uid = user.getUid();
+            fetchEmailFromFirestore(uid);
+            emailListener = firestore.collection("users")
+                    .document(user.getUid())
+                    .addSnapshotListener(new EventListener<DocumentSnapshot>() {
+                        @Override
+                        public void onEvent(@Nullable DocumentSnapshot documentSnapshot, @Nullable FirebaseFirestoreException e) {
+                            if (e != null) {
+                                // Handle error
+                                return;
+                            }
+
+                            if (documentSnapshot != null && documentSnapshot.exists()) {
+                                String email = documentSnapshot.getString("email");
+                                if (email != null) {
+                                    TextView emailTextView = getView().findViewById(R.id.tv_email);
+                                    emailTextView.setText(email);
+                                    emailTextView.setVisibility(View.VISIBLE);
+                                }
+                            }
+                        }
+                    });
+        }
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+
+        // Unsubscribe from Firestore listener
+        if (emailListener != null) {
+            emailListener.remove();
+        }
+    }
+
+    private void fetchEmailFromFirestore(String uid) {
+        Log.d("SettingsFragment", "Fetching email for UID: " + uid);
+        firestore.collection("users")
+                .document(uid)
+                .get()
+                .addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                    @Override
+                    public void onSuccess(DocumentSnapshot documentSnapshot) {
+                        if (documentSnapshot.exists()) {
+                            String email = documentSnapshot.getString("email");
+                            if (email != null) {
+                                TextView emailTextView = getView().findViewById(R.id.tv_email);
+                                emailTextView.setText(email);
+                                emailTextView.setVisibility(View.VISIBLE);
+
+                                // Log the email value
+                                Log.d("SettingsFragment", "Email: " + email);
+
+                                // Display the email in a toast message
+                                Toast.makeText(getActivity(), "Email: " + email, Toast.LENGTH_SHORT).show();
+                            } else {
+                                // Log that the email is null
+                                Log.d("SettingsFragment", "Email is null");
+                            }
+                        } else {
+                            // Log that the document does not exist
+                            Log.d("SettingsFragment", "Document does not exist");
+                        }
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        // Log the failure
+                        Log.e("SettingsFragment", "Error getting document: " + e.getMessage());
+                    }
+                });
+    }
+
+
+
     private void logoutUser() {
         // Clear login status
         sharedPreferences.edit().putBoolean(getString(R.string.isloggedin), false).apply();
@@ -97,6 +190,11 @@ public class SettingsFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
+        String storedEmail = sharedPreferences.getString(getString(R.string.saved_email), "");
+        TextView emailTextView = getView().findViewById(R.id.tv_email);
+        emailTextView.setText(storedEmail);
+        emailTextView.setVisibility(View.VISIBLE);
+        emailTextView.setEnabled(true);
 
         // Read the stored preferences and update the switches accordingly
         boolean isOrientationLocked = sharedPreferences.getBoolean(getString(R.string.lock_orientation), false);
@@ -137,5 +235,5 @@ public class SettingsFragment extends Fragment {
             }
         });
     }
-}
 
+}

@@ -22,6 +22,7 @@
         </activity>
 
         <activity android:name="ca.sleepdeprived.eveethepetcompanion.LoginActivity" />
+        <activity android:name="ca.sleepdeprived.eveethepetcompanion.RegisterActivity" />
         <activity android:name="ca.sleepdeprived.eveethepetcompanion.MainActivity" />
 
 
