@@ -28,6 +28,7 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -36,21 +37,30 @@ public class DashboardFragment extends Fragment {
     private PetInfoViewModel petInfoViewModel;
     private List<CheckBox> reminderCheckboxes;
     private SharedPreferences sharedPreferences;
+    private LinearLayout remindersLayout;
+    private EditText editReminderEditText;
+    private Set<String> savedReminders;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         petInfoViewModel = new ViewModelProvider(requireActivity()).get(PetInfoViewModel.class);
+        reminderCheckboxes = new ArrayList<>();
+
+        // Retrieve saved reminders
+        sharedPreferences = requireActivity().getPreferences(Context.MODE_PRIVATE);
+        savedReminders = sharedPreferences.getStringSet("reminders", new HashSet<>());
+        for (String reminder : savedReminders) {
+            addReminder(reminder);
+        }
     }
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_dashboard, container, false);
-        LinearLayout remindersLayout = view.findViewById(R.id.reminders_card);
-        EditText editReminderEditText = view.findViewById(R.id.edit_text_reminder);
-        sharedPreferences = requireActivity().getPreferences(Context.MODE_PRIVATE);
-        reminderCheckboxes = new ArrayList<>();
+        remindersLayout = view.findViewById(R.id.reminders_card);
+        editReminderEditText = view.findViewById(R.id.edit_text_reminder);
 
         petInfoViewModel.getPetName().observe(getViewLifecycleOwner(), new Observer<String>() {
             @Override
@@ -59,18 +69,12 @@ public class DashboardFragment extends Fragment {
             }
         });
 
-        // Retrieve saved reminders
-        Set<String> savedReminders = sharedPreferences.getStringSet("reminders", new HashSet<>());
-        for (String reminder : savedReminders) {
-            addReminder(remindersLayout, reminder);
-        }
-
         // Add reminder when pressing enter on the keyboard
         editReminderEditText.setOnEditorActionListener((v, actionId, event) -> {
             if (actionId == EditorInfo.IME_ACTION_DONE) {
                 String reminderText = editReminderEditText.getText().toString().trim();
                 if (!TextUtils.isEmpty(reminderText)) {
-                    addReminder(remindersLayout, reminderText);
+                    addReminder(reminderText);
                     editReminderEditText.setText("");
                     return true;
                 }
@@ -78,41 +82,72 @@ public class DashboardFragment extends Fragment {
             return false;
         });
 
+        // Add saved reminders
+        addSavedReminders();
+
         return view;
+    }
+
+    @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        if (savedInstanceState != null) {
+            ArrayList<String> remindersArrayList = savedInstanceState.getStringArrayList("savedReminders");
+            if (remindersArrayList != null) {
+                savedReminders = new HashSet<>(remindersArrayList);
+                // Add saved reminders
+                addSavedReminders();
+            }
+        }
+    }
+
+    @Override
+    public void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putStringArrayList("savedReminders", new ArrayList<>(savedReminders));
     }
 
     @Override
     public void onDestroyView() {
         super.onDestroyView();
-        // Save the reminders in SharedPreferences
-        Set<String> reminders = new HashSet<>();
-        for (CheckBox checkBox : reminderCheckboxes) {
-            if (checkBox.isChecked()) {
-                reminders.add(checkBox.getText().toString());
-            }
-        }
-        SharedPreferences.Editor editor = sharedPreferences.edit();
-        editor.putStringSet("reminders", reminders);
-        editor.apply();
+        saveReminders();
     }
 
-    private void addReminder(ViewGroup remindersLayout, String reminderText) {
+    private void addReminder(String reminderText) {
+        if (remindersLayout == null) {
+            return;
+        }
+
         CheckBox reminderCheckBox = new CheckBox(requireContext());
         reminderCheckBox.setText(reminderText);
         reminderCheckBox.setChecked(false);
         reminderCheckBox.setOnCheckedChangeListener((buttonView, isChecked) -> {
             if (isChecked) {
-                removeReminderDelayed((CheckBox) buttonView, remindersLayout);
+                removeReminderDelayed((CheckBox) buttonView);
             }
         });
         remindersLayout.addView(reminderCheckBox);
         reminderCheckboxes.add(reminderCheckBox);
+        savedReminders.add(reminderText);
     }
 
-    private void removeReminderDelayed(CheckBox checkBox, ViewGroup remindersLayout) {
+    private void removeReminderDelayed(CheckBox checkBox) {
         new Handler().postDelayed(() -> {
             remindersLayout.removeView(checkBox);
             reminderCheckboxes.remove(checkBox);
+            savedReminders.remove(checkBox.getText().toString());
         }, 5000);
+    }
+
+    private void addSavedReminders() {
+        for (String reminder : savedReminders) {
+            addReminder(reminder);
+        }
+    }
+
+    private void saveReminders() {
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.putStringSet("reminders", savedReminders);
+        editor.apply();
     }
 }
