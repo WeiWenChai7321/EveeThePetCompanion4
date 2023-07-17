@@ -143,5 +143,8 @@
     <string name="age_placeholder">2</string>
     <string name="color_placeholder">brown</string>
     <string name="breed_placeholder">tortoiseshell</string>
+    <string name="channel_name">App Review Channel</string>
+    <string name="channel_description">Receive notifications to review our app</string>
+
 
 </resources>

@@ -141,6 +141,9 @@
         <string name="age_placeholder">2</string>
         <string name="color_placeholder">marron</string>
         <string name="breed_placeholder">écaille de tortue</string>
+        <string name="channel_name">Canal d\'évaluation de l\'application</string>
+        <string name="channel_description">Recevez des notifications pour évaluer notre application</string>
+
 
 
 </resources>

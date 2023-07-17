@@ -10,16 +10,20 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.view.menu.MenuBuilder;
+import androidx.core.app.NotificationCompat;
+import androidx.core.app.NotificationManagerCompat;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 
-import android.content.pm.ActivityInfo;
-import android.annotation.SuppressLint;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.os.Build;
 import android.os.Bundle;
-import android.os.Handler;
+import android.os.SystemClock;
 import android.preference.PreferenceManager;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -34,7 +38,6 @@ public class MainActivity extends AppCompatActivity {
     private BottomNavigationView bottomNavigationView;
     private PetInfoViewModel petInfoViewModel; // Added
 
-    @SuppressLint("RestrictedApi")
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
@@ -119,6 +122,7 @@ public class MainActivity extends AppCompatActivity {
         }
 
         petInfoViewModel = new ViewModelProvider(this).get(PetInfoViewModel.class); // Added
+        showReviewNotification(); // Added
     }
 
     private boolean checkLoginStatus() {
@@ -162,20 +166,19 @@ public class MainActivity extends AppCompatActivity {
                 }
             };
 
-
     @Override
-    public void onBackPressed(){
+    public void onBackPressed() {
         new AlertDialog.Builder(this)
                 .setIcon(android.R.drawable.ic_dialog_alert)
                 .setTitle(R.string.exit_app)
                 .setMessage(R.string.are_you_sure_you_want_to_exit)
                 .setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
                     @Override
-                    public void onClick(DialogInterface dialog, int which){
+                    public void onClick(DialogInterface dialog, int which) {
                         finish();
                     }
                 })
-                .setNegativeButton(R.string.no,null)
+                .setNegativeButton(R.string.no, null)
                 .show();
     }
 
@@ -183,4 +186,56 @@ public class MainActivity extends AppCompatActivity {
     public PetInfoViewModel getPetInfoViewModel() {
         return petInfoViewModel;
     }
+
+    private void showReviewNotification() {
+        long appStartTimeInMillis = SystemClock.elapsedRealtime();
+        long oneHourInMillis = 60 * 60 * 1000;
+
+        if (appStartTimeInMillis >= oneHourInMillis) {
+            String CHANNEL_ID = "app_review_channel";
+            int notificationId = 1;
+
+            // Create an Intent for the "Okay" action (leads to FeedbackFragment)
+            Intent okayIntent = new Intent(this, FeedbackFragment.class);
+            PendingIntent okayPendingIntent = PendingIntent.getActivity(this, 0,
+                    okayIntent, PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE);
+
+            // Create an Intent for the "No thanks" action (disable the notification)
+            Intent noThanksIntent = new Intent(this, DisableNotificationReceiver.class);
+            PendingIntent noThanksPendingIntent = PendingIntent.getBroadcast(this, 0,
+                    noThanksIntent, PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE);
+
+            // Build the notification
+            NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(this, CHANNEL_ID)
+                    .setSmallIcon(R.drawable.notification_icon)
+                    .setContentTitle("Enjoying our app?")
+                    .setContentText("Leave us a review!")
+                    .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+                    .setContentIntent(okayPendingIntent)
+                    .addAction(0, "No thanks", noThanksPendingIntent)
+                    .addAction(0, "Okay", okayPendingIntent)
+                    .setAutoCancel(true);
+
+            // Create the notification channel
+            createNotificationChannel();
+
+            // Create the notification manager and display the notification
+            NotificationManagerCompat notificationManager = NotificationManagerCompat.from(this);
+            notificationManager.notify(notificationId, notificationBuilder.build());
+        }
+    }
+
+    // Create the notification channel
+    private void createNotificationChannel() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            CharSequence name = getString(R.string.channel_name);
+            String description = getString(R.string.channel_description);
+            int importance = NotificationManager.IMPORTANCE_DEFAULT;
+            NotificationChannel channel = new NotificationChannel("app_review_channel", name, importance);
+            channel.setDescription(description);
+            NotificationManager notificationManager = getSystemService(NotificationManager.class);
+            notificationManager.createNotificationChannel(channel);
+        }
+    }
 }
+
