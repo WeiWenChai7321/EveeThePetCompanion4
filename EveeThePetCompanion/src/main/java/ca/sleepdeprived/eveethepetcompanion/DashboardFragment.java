@@ -34,7 +34,6 @@ import java.util.List;
 import java.util.Set;
 
 public class DashboardFragment extends Fragment {
-    private PetInfoViewModel petInfoViewModel;
     private List<CheckBox> reminderCheckboxes;
     private SharedPreferences sharedPreferences;
     private LinearLayout remindersLayout;
@@ -44,7 +43,6 @@ public class DashboardFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        petInfoViewModel = new ViewModelProvider(requireActivity()).get(PetInfoViewModel.class);
         reminderCheckboxes = new ArrayList<>();
 
         // Retrieve saved reminders
@@ -61,13 +59,6 @@ public class DashboardFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_dashboard, container, false);
         remindersLayout = view.findViewById(R.id.reminders_card);
         editReminderEditText = view.findViewById(R.id.edit_text_reminder);
-
-        petInfoViewModel.getPetName().observe(getViewLifecycleOwner(), new Observer<String>() {
-            @Override
-            public void onChanged(String petName) {
-                // Update the pet name if necessary
-            }
-        });
 
         // Add reminder when pressing enter on the keyboard
         editReminderEditText.setOnEditorActionListener((v, actionId, event) -> {
