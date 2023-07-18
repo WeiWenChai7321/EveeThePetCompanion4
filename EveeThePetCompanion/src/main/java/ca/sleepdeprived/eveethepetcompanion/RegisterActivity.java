@@ -13,19 +13,16 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
-import com.google.firebase.auth.AuthResult;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.SignInMethodQueryResult;
-import com.google.firebase.firestore.FirebaseFirestore;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
-import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.auth.AuthResult;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.SignInMethodQueryResult;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.Source;
 
 public class RegisterActivity extends AppCompatActivity {
 
@@ -74,14 +71,14 @@ public class RegisterActivity extends AppCompatActivity {
                         SignInMethodQueryResult result = task.getResult();
                         if (result != null && result.getSignInMethods() != null && result.getSignInMethods().size() > 0) {
                             // Email already exists in Firebase Authentication, show error message
-                            Toast.makeText(RegisterActivity.this, "Account already exists with this email", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(RegisterActivity.this, R.string.account_already_exists, Toast.LENGTH_SHORT).show();
                         } else {
                             // Email doesn't exist in Firebase Authentication, proceed with account creation
                             createAccount(email, password);
                         }
                     } else {
                         // Error occurred while accessing Firebase Authentication, show error message
-                        Toast.makeText(RegisterActivity.this, "Failed to access Firebase Authentication. Please try again.", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(RegisterActivity.this, R.string.failed_access_firebase, Toast.LENGTH_SHORT).show();
                     }
                 }
             });
@@ -95,16 +92,16 @@ public class RegisterActivity extends AppCompatActivity {
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if (task.isSuccessful()) {
                             // Account creation successful, show success message
-                            Toast.makeText(RegisterActivity.this, "Account created successfully", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(RegisterActivity.this, R.string.account_created_successfully, Toast.LENGTH_SHORT).show();
 
                             // Save the user's email to Firestore
-                            saveUserToFirestore(email,password);
+                            saveUserToFirestore(email, password);
 
                             // Navigate to LoginActivity
                             navigateToLoginActivity();
                         } else {
                             // Error occurred while creating the account, show error message
-                            Toast.makeText(RegisterActivity.this, "Failed to create account. Please try again.", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(RegisterActivity.this, R.string.failed_create_account, Toast.LENGTH_SHORT).show();
                         }
                     }
                 });
@@ -124,7 +121,7 @@ public class RegisterActivity extends AppCompatActivity {
                             // User data saved to Firestore
                         } else {
                             // Error occurred while saving user data, show error message
-                            Toast.makeText(RegisterActivity.this, "Failed to save user data. Please try again.", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(RegisterActivity.this, R.string.failed_save_user_data, Toast.LENGTH_SHORT).show();
                         }
                     }
                 });

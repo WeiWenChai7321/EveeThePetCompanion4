@@ -47,7 +47,7 @@ public class DashboardFragment extends Fragment {
 
         // Retrieve saved reminders
         sharedPreferences = requireActivity().getPreferences(Context.MODE_PRIVATE);
-        savedReminders = sharedPreferences.getStringSet("reminders", new HashSet<>());
+        savedReminders = sharedPreferences.getStringSet(getString(R.string.reminders_key), new HashSet<>());
         for (String reminder : savedReminders) {
             addReminder(reminder);
         }
@@ -83,7 +83,7 @@ public class DashboardFragment extends Fragment {
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         if (savedInstanceState != null) {
-            ArrayList<String> remindersArrayList = savedInstanceState.getStringArrayList("savedReminders");
+            ArrayList<String> remindersArrayList = savedInstanceState.getStringArrayList(getString(R.string.saved_reminders_key));
             if (remindersArrayList != null) {
                 savedReminders = new HashSet<>(remindersArrayList);
                 // Add saved reminders
@@ -95,7 +95,7 @@ public class DashboardFragment extends Fragment {
     @Override
     public void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
-        outState.putStringArrayList("savedReminders", new ArrayList<>(savedReminders));
+        outState.putStringArrayList(getString(R.string.saved_reminders_key), new ArrayList<>(savedReminders));
     }
 
     @Override
@@ -138,7 +138,7 @@ public class DashboardFragment extends Fragment {
 
     private void saveReminders() {
         SharedPreferences.Editor editor = sharedPreferences.edit();
-        editor.putStringSet("reminders", savedReminders);
+        editor.putStringSet(getString(R.string.reminders_key), savedReminders);
         editor.apply();
     }
 }

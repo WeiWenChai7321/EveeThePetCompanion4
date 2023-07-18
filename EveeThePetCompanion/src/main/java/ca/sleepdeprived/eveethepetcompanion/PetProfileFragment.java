@@ -5,6 +5,7 @@
   Ubay Abdulaziz, N01437353
 */
 package ca.sleepdeprived.eveethepetcompanion;
+
 import androidx.lifecycle.ViewModelProvider;
 import android.app.AlertDialog;
 import android.content.Context;
@@ -94,6 +95,7 @@ public class PetProfileFragment extends Fragment {
 
         return view;
     }
+
     private void editPetInfo() {
         // Inflate the dialog_pet_info_edit.xml layout
         View dialogView = LayoutInflater.from(requireContext()).inflate(R.layout.dialog_pet_info_edit, null);
@@ -141,10 +143,10 @@ public class PetProfileFragment extends Fragment {
 
                         // Store the edited information in SharedPreferences
                         SharedPreferences.Editor editor = sharedPreferences.edit();
-                        editor.putString("name", name);
-                        editor.putString("age", age);
-                        editor.putString("color", color);
-                        editor.putString("breed", breed);
+                        editor.putString(getString(R.string.name_key), name);
+                        editor.putString(getString(R.string.age_key), age);
+                        editor.putString(getString(R.string.color_key), color);
+                        editor.putString(getString(R.string.breed_key), breed);
                         editor.apply();
 
                         // Show a toast message to indicate successful editing
@@ -154,8 +156,6 @@ public class PetProfileFragment extends Fragment {
                 .setNegativeButton(R.string.cancel, null)
                 .show();
     }
-
-
 
     private void updateEditModeUI() {
         if (isEditMode) {
@@ -286,10 +286,10 @@ public class PetProfileFragment extends Fragment {
 
                         // Store the updated values in SharedPreferences
                         SharedPreferences.Editor editor = sharedPreferences.edit();
-                        editor.putString("name", name);
-                        editor.putString("age", age);
-                        editor.putString("color", color);
-                        editor.putString("breed", breed);
+                        editor.putString(getString(R.string.name_key), name);
+                        editor.putString(getString(R.string.age_key), age);
+                        editor.putString(getString(R.string.color_key), color);
+                        editor.putString(getString(R.string.breed_key), breed);
                         editor.apply();
 
                         Toast.makeText(requireContext(), R.string.pet_info_saved, Toast.LENGTH_SHORT).show();
@@ -341,21 +341,21 @@ public class PetProfileFragment extends Fragment {
     public void onPause() {
         super.onPause();
         SharedPreferences.Editor editor = sharedPreferences.edit();
-        editor.putBoolean("isEditMode", isEditMode);
+        editor.putBoolean(getString(R.string.is_edit_mode_key), isEditMode);
         editor.apply();
     }
 
     @Override
     public void onResume() {
         super.onResume();
-        isEditMode = sharedPreferences.getBoolean("isEditMode", false);
+        isEditMode = sharedPreferences.getBoolean(getString(R.string.is_edit_mode_key), false);
         updateCellClickability();
 
         // Retrieve the stored pet information from SharedPreferences
-        String name = sharedPreferences.getString("name", "");
-        String age = sharedPreferences.getString("age", "");
-        String color = sharedPreferences.getString("color", "");
-        String breed = sharedPreferences.getString("breed", "");
+        String name = sharedPreferences.getString(getString(R.string.name_key), "");
+        String age = sharedPreferences.getString(getString(R.string.age_key), "");
+        String color = sharedPreferences.getString(getString(R.string.color_key), "");
+        String breed = sharedPreferences.getString(getString(R.string.breed_key), "");
 
         // Update the TextViews with the stored pet information if available
         if (!name.isEmpty()) {
@@ -375,14 +375,14 @@ public class PetProfileFragment extends Fragment {
     @Override
     public void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
-        outState.putBoolean("isEditMode", isEditMode);
+        outState.putBoolean(getString(R.string.is_edit_mode_key), isEditMode);
     }
 
     @Override
     public void onViewStateRestored(@Nullable Bundle savedInstanceState) {
         super.onViewStateRestored(savedInstanceState);
         if (savedInstanceState != null) {
-            isEditMode = savedInstanceState.getBoolean("isEditMode", false);
+            isEditMode = savedInstanceState.getBoolean(getString(R.string.is_edit_mode_key), false);
             updateEditModeUI();
             updateCellClickability();
         }

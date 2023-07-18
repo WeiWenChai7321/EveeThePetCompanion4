@@ -90,7 +90,7 @@ public class SettingsFragment extends Fragment {
                     FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
                     if (user != null && user.getProviderData().size() > 1) {
                         // User signed in with Google, show a toast message
-                        Toast.makeText(getActivity(), "You cannot edit a Google email.", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getActivity(), R.string.google_email_edit_not_allowed, Toast.LENGTH_SHORT).show();
                     } else {
                         // User not signed in with Google, proceed with email update
                         updateEmailInFirestore(updatedEmail);
@@ -110,7 +110,7 @@ public class SettingsFragment extends Fragment {
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
 
         if (user != null) {
-            emailListener = firestore.collection("users")
+            emailListener = firestore.collection(getString(R.string.users))
                     .document(user.getUid())
                     .addSnapshotListener(new EventListener<DocumentSnapshot>() {
                         @Override
@@ -121,7 +121,7 @@ public class SettingsFragment extends Fragment {
                             }
 
                             if (documentSnapshot != null && documentSnapshot.exists()) {
-                                String email = documentSnapshot.getString("email");
+                                String email = documentSnapshot.getString(getString(R.string.email));
                                 if (email != null) {
                                     emailEditText.setText(email);
                                 }
@@ -224,9 +224,9 @@ public class SettingsFragment extends Fragment {
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
         if (user != null) {
             String uid = user.getUid();
-            firestore.collection("users")
+            firestore.collection(getString(R.string.users))
                     .document(uid)
-                    .update("email", updatedEmail)
+                    .update(getString(R.string.email), updatedEmail)
                     .addOnSuccessListener(new OnSuccessListener<Void>() {
                         @Override
                         public void onSuccess(Void aVoid) {
@@ -240,7 +240,7 @@ public class SettingsFragment extends Fragment {
                     .addOnFailureListener(new OnFailureListener() {
                         @Override
                         public void onFailure(@NonNull Exception e) {
-                            Toast.makeText(getActivity(), "Failed to update email. Please try again.", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(getActivity(), R.string.email_update_failed, Toast.LENGTH_SHORT).show();
                         }
                     });
         }

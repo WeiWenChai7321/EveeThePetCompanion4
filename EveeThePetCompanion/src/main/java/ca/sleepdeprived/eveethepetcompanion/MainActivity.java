@@ -170,15 +170,15 @@ public class MainActivity extends AppCompatActivity {
     public void onBackPressed() {
         new AlertDialog.Builder(this)
                 .setIcon(android.R.drawable.ic_dialog_alert)
-                .setTitle(R.string.exit_app)
-                .setMessage(R.string.are_you_sure_you_want_to_exit)
-                .setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
+                .setTitle(getString(R.string.exit_app))
+                .setMessage(getString(R.string.are_you_sure_you_want_to_exit))
+                .setPositiveButton(getString(R.string.yes), new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         finish();
                     }
                 })
-                .setNegativeButton(R.string.no, null)
+                .setNegativeButton(getString(R.string.no), null)
                 .show();
     }
 
@@ -208,12 +208,12 @@ public class MainActivity extends AppCompatActivity {
             // Build the notification
             NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(this, CHANNEL_ID)
                     .setSmallIcon(R.drawable.notification_icon)
-                    .setContentTitle("Enjoying our app?")
-                    .setContentText("Leave us a review!")
+                    .setContentTitle(getString(R.string.app_name))
+                    .setContentText(getString(R.string.leave_us_a_review))
                     .setPriority(NotificationCompat.PRIORITY_DEFAULT)
                     .setContentIntent(okayPendingIntent)
-                    .addAction(0, "No thanks", noThanksPendingIntent)
-                    .addAction(0, "Okay", okayPendingIntent)
+                    .addAction(0, getString(R.string.no_thanks), noThanksPendingIntent)
+                    .addAction(0, getString(R.string.okay), okayPendingIntent)
                     .setAutoCancel(true);
 
             // Create the notification channel
@@ -231,7 +231,7 @@ public class MainActivity extends AppCompatActivity {
             CharSequence name = getString(R.string.channel_name);
             String description = getString(R.string.channel_description);
             int importance = NotificationManager.IMPORTANCE_DEFAULT;
-            NotificationChannel channel = new NotificationChannel("app_review_channel", name, importance);
+            NotificationChannel channel = new NotificationChannel(getString(R.string.app_review_channel), name, importance);
             channel.setDescription(description);
             NotificationManager notificationManager = getSystemService(NotificationManager.class);
             notificationManager.createNotificationChannel(channel);

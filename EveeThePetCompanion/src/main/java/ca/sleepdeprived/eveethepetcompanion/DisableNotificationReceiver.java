@@ -18,7 +18,7 @@ public class DisableNotificationReceiver extends BroadcastReceiver {
         // Disable the notification from appearing in the future
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
         SharedPreferences.Editor editor = preferences.edit();
-        editor.putBoolean("show_review_notification", false);
+        editor.putBoolean(context.getString(R.string.show_review_notification), false);
         editor.apply();
     }
 }

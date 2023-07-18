@@ -155,7 +155,7 @@
     <string name="okay">Okay</string>
     <string name="pet_info_updated">Pet information updated</string>
     <string name="finish_edits">Finish Edits</string>
-    <string name="please_fill_fields"Please fill in all fields></string>
+    <string name="please_fill_fields">Please fill in all fields</string>
     <string name="passwds_not_match">Passwords do not match</string>
     <string name="acct_already_exists">Account already exists</string>
     <string name="fail_access_firebase">Failed to access Firebase Authentication. Please try again</string>
@@ -164,5 +164,29 @@
     <string name="fail_save_data">Failed to save user data. Please try again</string>
     <string name="cant_edit_google_email">You cannot edit a Google email</string>
     <string name="fail_update_email">Failed to update email. Please try again</string>
+    <string name="reminders_key">reminders</string>
+    <string name="saved_reminders_key">saved_reminders</string>
+    <string name="show_review_notification">show_review_notification</string>
+    <string name="feedback_collection">feedbacks</string>
+    <string name="notification_channel_id">app_review_channel</string>
+    <string name="app_review_channel">app_review_channel</string>
+    <string name="leave_us_a_review">Enjoying our app?</string>
+    <string name="is_edit_mode_key">isEditMode</string>
+    <string name="name_key">name</string>
+    <string name="age_key">age</string>
+    <string name="color_key">color</string>
+    <string name="breed_key">breed</string>
+    <string name="account_already_exists">An account already exists with this email</string>
+    <string name="failed_access_firebase">Failed to access Firebase Authentication. Please try again.</string>
+    <string name="account_created_successfully">Account created successfully</string>
+    <string name="failed_create_account">Failed to create account. Please try again.</string>
+    <string name="failed_save_user_data">Failed to save user data. Please try again.</string>
+    <string name="email">email</string>
+    <string name="users">users</string>
+    <string name="google_email_edit_not_allowed">You cannot edit a Google email.</string>
+    <string name="email_update_failed">Failed to update email. Please try again.</string>
+    <string name="treat_dispensed">Treat Dispensed</string>
+
+
 
 </resources>

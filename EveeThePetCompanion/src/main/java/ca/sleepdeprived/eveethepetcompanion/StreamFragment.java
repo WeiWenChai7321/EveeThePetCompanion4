@@ -48,11 +48,10 @@ public class StreamFragment extends Fragment {
         btnTreat.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast.makeText(getActivity(), "Treat Dispensed", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getActivity(), getString(R.string.treat_dispensed), Toast.LENGTH_SHORT).show();
             }
         });
 
         return view;
     }
 }
-

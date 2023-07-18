@@ -32,7 +32,6 @@ public class FeedbackFragment extends Fragment {
     private EditText editComment;
     private RatingBar ratingBar;
 
-
     private FirebaseFirestore db;
 
     @Nullable
@@ -46,7 +45,6 @@ public class FeedbackFragment extends Fragment {
         editEmail = view.findViewById(R.id.edit_email);
         editComment = view.findViewById(R.id.edit_comment);
         ratingBar = view.findViewById(R.id.rating_bar);
-
 
         // Initialize Firebase Firestore
         db = FirebaseFirestore.getInstance();
@@ -100,7 +98,7 @@ public class FeedbackFragment extends Fragment {
     }
 
     private void saveFeedbackToFirestore(Feedback feedback) {
-        db.collection("feedbacks")
+        db.collection(getString(R.string.feedback_collection))
                 .add(feedback)
                 .addOnSuccessListener(documentReference -> {
                     // Feedback saved successfully
@@ -122,6 +120,4 @@ public class FeedbackFragment extends Fragment {
     private void showSnackbar(String message) {
         Snackbar.make(getView(), message, Snackbar.LENGTH_SHORT).show();
     }
-
-
 }
