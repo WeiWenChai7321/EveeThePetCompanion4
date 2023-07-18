@@ -62,9 +62,9 @@ public class RegisterActivity extends AppCompatActivity {
         String confirmPassword = confirmPasswordEditText.getText().toString().trim();
 
         if (email.isEmpty() || password.isEmpty() || confirmPassword.isEmpty()) {
-            Toast.makeText(RegisterActivity.this, "Please fill in all fields", Toast.LENGTH_SHORT).show();
+            Toast.makeText(RegisterActivity.this, R.string.please_fill_fields, Toast.LENGTH_SHORT).show();
         } else if (!password.equals(confirmPassword)) {
-            Toast.makeText(RegisterActivity.this, "Passwords do not match", Toast.LENGTH_SHORT).show();
+            Toast.makeText(RegisterActivity.this, R.string.passwds_not_match, Toast.LENGTH_SHORT).show();
         } else {
             // Check if the email already exists in Firebase Authentication
             firebaseAuth.fetchSignInMethodsForEmail(email).addOnCompleteListener(new OnCompleteListener<SignInMethodQueryResult>() {

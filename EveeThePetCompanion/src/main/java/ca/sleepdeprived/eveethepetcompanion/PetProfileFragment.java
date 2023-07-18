@@ -122,9 +122,9 @@ public class PetProfileFragment extends Fragment {
 
         // Create and show the AlertDialog for editing pet info
         AlertDialog.Builder builder = new AlertDialog.Builder(requireContext());
-        builder.setTitle("Edit Pet Information")
+        builder.setTitle(R.string.edit_pet_info)
                 .setView(dialogView)
-                .setPositiveButton("Save", new DialogInterface.OnClickListener() {
+                .setPositiveButton(R.string.save, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         // Get the updated text from the EditText views
@@ -148,10 +148,10 @@ public class PetProfileFragment extends Fragment {
                         editor.apply();
 
                         // Show a toast message to indicate successful editing
-                        Toast.makeText(requireContext(), "Pet information updated", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(requireContext(), R.string.pet_info_updated, Toast.LENGTH_SHORT).show();
                     }
                 })
-                .setNegativeButton("Cancel", null)
+                .setNegativeButton(R.string.cancel, null)
                 .show();
     }
 
@@ -159,7 +159,7 @@ public class PetProfileFragment extends Fragment {
 
     private void updateEditModeUI() {
         if (isEditMode) {
-            editScheduleButton.setText("Finish Edits");
+            editScheduleButton.setText(R.string.finish_edits);
             modifyText.setVisibility(View.VISIBLE);
         } else {
             editScheduleButton.setText(R.string.edit);
@@ -292,7 +292,7 @@ public class PetProfileFragment extends Fragment {
                         editor.putString("breed", breed);
                         editor.apply();
 
-                        Toast.makeText(requireContext(), "Pet information saved", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(requireContext(), R.string.pet_info_saved, Toast.LENGTH_SHORT).show();
                     }
                 })
                 .setNegativeButton(R.string.cancel, null)

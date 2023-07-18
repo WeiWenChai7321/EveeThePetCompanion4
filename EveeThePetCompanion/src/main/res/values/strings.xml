@@ -145,6 +145,24 @@
     <string name="breed_placeholder">tortoiseshell</string>
     <string name="channel_name">App Review Channel</string>
     <string name="channel_description">Receive notifications to review our app</string>
-
+    <string name="invalid_phone">Invalid phone number</string>
+    <string name="invalid_email">Invalid email address</string>
+    <string name="send_email">Send email</string>
+    <string name="google_sign_in_failed">Google Sign-In failed</string>
+    <string name="enjoy_app">Enjoying our app?</string>
+    <string name="leave_review">Leave us a review!</string>
+    <string name="no_thanks">No thanks</string>
+    <string name="okay">Okay</string>
+    <string name="pet_info_updated">Pet information updated</string>
+    <string name="finish_edits">Finish Edits</string>
+    <string name="please_fill_fields"Please fill in all fields></string>
+    <string name="passwds_not_match">Passwords do not match</string>
+    <string name="acct_already_exists">Account already exists</string>
+    <string name="fail_access_firebase">Failed to access Firebase Authentication. Please try again</string>
+    <string name="acct_create_success">Account created successfully</string>
+    <string name="fail_create_acct">Failed to create account. Please try again</string>
+    <string name="fail_save_data">Failed to save user data. Please try again</string>
+    <string name="cant_edit_google_email">You cannot edit a Google email</string>
+    <string name="fail_update_email">Failed to update email. Please try again</string>
 
 </resources>

@@ -65,13 +65,13 @@ public class FeedbackFragment extends Fragment {
 
                 // Validate phone number
                 if (!isValidPhoneNumber(phone)) {
-                    editPhone.setError("Invalid phone number");
+                    editPhone.setError(getString(R.string.invalid_phone));
                     return;
                 }
 
                 // Validate email
                 if (!isValidEmail(email)) {
-                    editEmail.setError("Invalid email address");
+                    editEmail.setError(getString(R.string.invalid_email));
                     return;
                 }
 
