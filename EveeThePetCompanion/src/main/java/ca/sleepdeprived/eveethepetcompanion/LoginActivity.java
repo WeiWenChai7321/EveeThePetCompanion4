@@ -176,7 +176,7 @@ public class LoginActivity extends AppCompatActivity {
             GoogleSignInAccount account = task.getResult(ApiException.class);
             firebaseAuthWithGoogle(account);
         } catch (ApiException e) {
-            Toast.makeText(this, "Google Sign-In failed: " + e.getStatusCode(), Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, R.string.google_sign_in_failed + e.getStatusCode(), Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -191,7 +191,7 @@ public class LoginActivity extends AppCompatActivity {
                             performSuccessfulLogin();
                         } else {
                             // Authentication failed, show error message
-                            Toast.makeText(LoginActivity.this, "Google Sign-In failed: " + task.getException().getMessage(), Toast.LENGTH_SHORT).show();
+                            Toast.makeText(LoginActivity.this, R.string.google_sign_in_failed + task.getException().getMessage(), Toast.LENGTH_SHORT).show();
                         }
                     }
                 });

@@ -143,7 +143,16 @@
         <string name="breed_placeholder">écaille de tortue</string>
         <string name="channel_name">Canal d\'évaluation de l\'application</string>
         <string name="channel_description">Recevez des notifications pour évaluer notre application</string>
-
+        <string name="invalid_phone">Numéro de téléphone invalide</string>
+        <string name="invalid_email">Adresse électronique invalide</string>
+        <string name="send_email">Envoyer un courriel</string>
+        <string name="google_sign_in_failed">Échec de la connexion Google</string>
+        <string name="enjoy_app">Vous appréciez notre application ?</string>
+        <string name="leave_review">Laissez-nous un commentaire !</string>
+        <string name="no_thanks">Non merci</string>
+        <string name="okay">D\'accord</string>
+        <string name="pet_info_updated">Mise à jour des informations sur les animaux domestiques</string>
+        <string name="finish_edits">Terminer les modifications</string>
 
 
 </resources>

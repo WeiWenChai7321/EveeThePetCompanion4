@@ -37,6 +37,6 @@ public class HelpFragment extends Fragment {
     public void sendEmail() {
         Intent intent = new Intent(Intent.ACTION_SENDTO);
         intent.setData(Uri.parse(getString(R.string.mailto_chloeissleeping_gmail_com)));
-        startActivity(Intent.createChooser(intent, "Send Email"));
+        startActivity(Intent.createChooser(intent, getString(R.string.send_email)));
     }
 }
