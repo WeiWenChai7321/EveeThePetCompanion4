@@ -120,15 +120,21 @@ public class FeedbackFragment extends Fragment {
                     editEmail.setText("");
                     editComment.setText("");
                     ratingBar.setRating(0);
+
+                    // Once feedback is saved, hide the progress bar and enable the submit button
+                    progressBar.setVisibility(View.GONE);
+                    btnSubmitFeedback.setEnabled(true);
                 })
                 .addOnFailureListener(e -> {
                     // Failed to save feedback
                     showSnackbar(getString(R.string.failed_to_submit_feedback));
+
+                    // Once feedback submission has failed, hide the progress bar and enable the submit button
+                    progressBar.setVisibility(View.GONE);
+                    btnSubmitFeedback.setEnabled(true);
                 });
-        // Once feedback is saved or failed to save, hide the progress bar and enable the submit button
-        progressBar.setVisibility(View.GONE);
-        btnSubmitFeedback.setEnabled(true);
     }
+
 
     private void showSnackbar(String message) {
         Snackbar.make(getView(), message, Snackbar.LENGTH_SHORT).show();
