@@ -28,8 +28,10 @@ import android.util.Patterns;
 public class RegisterActivity extends AppCompatActivity {
 
     private EditText emailEditText;
+    private EditText fullNameEditText;
     private EditText passwordEditText;
     private EditText confirmPasswordEditText;
+    private EditText phoneEditText;
     private Button signUpButton;
     private FirebaseAuth firebaseAuth;
     private FirebaseFirestore db;
@@ -39,11 +41,11 @@ public class RegisterActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_register);
 
-        db = FirebaseFirestore.getInstance();
-        firebaseAuth = FirebaseAuth.getInstance();
+        fullNameEditText = findViewById(R.id.fullname_edittext);
         emailEditText = findViewById(R.id.email_edittext);
         passwordEditText = findViewById(R.id.password_edittext);
         confirmPasswordEditText = findViewById(R.id.confirm_password_edittext);
+        phoneEditText = findViewById(R.id.phone_edittext);
         signUpButton = findViewById(R.id.sign_up_button);
 
         signUpButton.setOnClickListener(new View.OnClickListener() {
@@ -55,14 +57,22 @@ public class RegisterActivity extends AppCompatActivity {
     }
 
     private void registerUser() {
+        final String fullName = fullNameEditText.getText().toString().trim();
         final String email = emailEditText.getText().toString().trim();
         String password = passwordEditText.getText().toString().trim();
         String confirmPassword = confirmPasswordEditText.getText().toString().trim();
+        String phoneNumber = phoneEditText.getText().toString().trim();
 
-        if (email.isEmpty() || password.isEmpty() || confirmPassword.isEmpty()) {
+        if (email.isEmpty() || password.isEmpty() || confirmPassword.isEmpty() || fullName.isEmpty() || phoneNumber.isEmpty()) {
             Toast.makeText(RegisterActivity.this, R.string.please_fill_fields, Toast.LENGTH_SHORT).show();
         } else if (!password.equals(confirmPassword)) {
             Toast.makeText(RegisterActivity.this, R.string.passwds_not_match, Toast.LENGTH_SHORT).show();
+        } else if (!isValidPassword(password)) {
+            Toast.makeText(RegisterActivity.this, R.string.invalid_password, Toast.LENGTH_SHORT).show();
+        } else if (!android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
+            Toast.makeText(RegisterActivity.this, R.string.invalid_email, Toast.LENGTH_SHORT).show();
+        } else if (phoneNumber.length() != 10 || !Patterns.PHONE.matcher(phoneNumber).matches()) {
+            Toast.makeText(RegisterActivity.this, R.string.invalid_phone_number, Toast.LENGTH_SHORT).show();
         } else {
             // Check if the email already exists in Firebase Authentication
             firebaseAuth.fetchSignInMethodsForEmail(email).addOnCompleteListener(new OnCompleteListener<SignInMethodQueryResult>() {
@@ -95,7 +105,6 @@ public class RegisterActivity extends AppCompatActivity {
                             // Account creation successful, show success message
                             Toast.makeText(RegisterActivity.this, R.string.account_created_successfully, Toast.LENGTH_SHORT).show();
 
-                            // Save the user's email to Firestore
                             saveUserToFirestore(email, password);
 
                             // Navigate to LoginActivity
@@ -127,6 +136,7 @@ public class RegisterActivity extends AppCompatActivity {
                     }
                 });
     }
+
 
     private void navigateToLoginActivity() {
         Intent intent = new Intent(RegisterActivity.this, LoginActivity.class);

@@ -186,6 +186,6 @@
         <string name="treat_dispensed">Friandise distribuée</string>
         <string name="invalid_email_format">Format de courrier électronique invalide. Veuillez entrer un e-mail valide.</string>
         <string name="invalid_password_format">Format de mot de passe invalide. Le mot de passe doit contenir au moins une lettre majuscule, un chiffre, un caractère spécial (@, $, !, %, *, ?, &amp;, #) et être d\'au moins 6 caractères.</string>
-
+        <string name="invalid_phone_number">Numéro de téléphone invalide</string>
 
 </resources>

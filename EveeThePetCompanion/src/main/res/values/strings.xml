@@ -188,6 +188,6 @@
     <string name="treat_dispensed">Treat Dispensed</string>
     <string name="invalid_email_format">Invalid email format. Please enter a valid email.</string>
     <string name="invalid_password_format">Invalid password format. Password should contain at least one uppercase letter, one digit, one special character (@, $, !, %, *, ?, &amp;, #) and be at least 6 characters long.</string>
-
+    <string name="invalid_phone_number">Invalid phone number</string>
 
 </resources>
