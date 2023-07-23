@@ -14,6 +14,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ProgressBar;
 import android.widget.RatingBar;
 import android.widget.Toast;
 
@@ -27,11 +28,13 @@ import com.google.firebase.firestore.FirebaseFirestore;
 public class FeedbackFragment extends Fragment {
 
     private EditText editName;
+
+    private ProgressBar progressBar;
     private EditText editPhone;
     private EditText editEmail;
     private EditText editComment;
     private RatingBar ratingBar;
-
+    private Button btnSubmitFeedback;
     private FirebaseFirestore db;
 
     @Nullable
@@ -39,18 +42,14 @@ public class FeedbackFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_feedback, container, false);
 
-        // Initialize the views
         editName = view.findViewById(R.id.edit_name);
         editPhone = view.findViewById(R.id.edit_phone);
         editEmail = view.findViewById(R.id.edit_email);
         editComment = view.findViewById(R.id.edit_comment);
         ratingBar = view.findViewById(R.id.rating_bar);
-
-        // Initialize Firebase Firestore
         db = FirebaseFirestore.getInstance();
-
-        // Set up the "Submit Feedback" button click listener
-        Button btnSubmitFeedback = view.findViewById(R.id.btn_submit_feedback);
+        progressBar = view.findViewById(R.id.progress_bar);
+        btnSubmitFeedback = view.findViewById(R.id.btn_submit_feedback);
         btnSubmitFeedback.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
