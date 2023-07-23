@@ -109,6 +109,14 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     private void validateLogin(final String email, final String password) {
+        if (!isValidEmail(email)) {
+            showSnackbar(getString(R.string.invalid_email_format));
+            return;
+        }
+        if (!isValidPassword(password)) {
+            showSnackbar(getString(R.string.invalid_password_format));
+            return;
+        }
         Snackbar loggingInSnackbar = Snackbar.make(findViewById(android.R.id.content), getString(R.string.signing_in), Snackbar.LENGTH_INDEFINITE);
         loggingInSnackbar.show();
 

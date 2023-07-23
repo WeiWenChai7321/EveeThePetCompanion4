@@ -186,7 +186,8 @@
     <string name="google_email_edit_not_allowed">You cannot edit a Google email.</string>
     <string name="email_update_failed">Failed to update email. Please try again.</string>
     <string name="treat_dispensed">Treat Dispensed</string>
-
+    <string name="invalid_email_format">Invalid email format. Please enter a valid email.</string>
+    <string name="invalid_password_format">Invalid password format. Password should contain at least one uppercase letter, one digit, one special character (@, $, !, %, *, ?, &amp;, #) and be at least 6 characters long.</string>
 
 
 </resources>

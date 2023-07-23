@@ -184,7 +184,8 @@
         <string name="google_email_edit_not_allowed">Vous ne pouvez pas modifier un e-mail Google.</string>
         <string name="email_update_failed">Échec de la mise à jour de l\'e-mail. Veuillez réessayer.</string>
         <string name="treat_dispensed">Friandise distribuée</string>
-
+        <string name="invalid_email_format">Format de courrier électronique invalide. Veuillez entrer un e-mail valide.</string>
+        <string name="invalid_password_format">Format de mot de passe invalide. Le mot de passe doit contenir au moins une lettre majuscule, un chiffre, un caractère spécial (@, $, !, %, *, ?, &amp;, #) et être d\'au moins 6 caractères.</string>
 
 
 </resources>
