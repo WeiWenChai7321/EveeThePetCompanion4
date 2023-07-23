@@ -8,6 +8,7 @@
 package ca.sleepdeprived.eveethepetcompanion;
 
 import android.os.Bundle;
+import android.os.Handler;
 import android.util.Patterns;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -78,8 +79,18 @@ public class FeedbackFragment extends Fragment {
                 // Create a new feedback document with the captured data
                 Feedback feedback = new Feedback(name, phone, email, comment, rating, deviceModel);
 
-                // Save the feedback to Firestore
-                saveFeedbackToFirestore(feedback);
+                // Display the progress bar and disable the submit button
+                progressBar.setVisibility(View.VISIBLE);
+                btnSubmitFeedback.setEnabled(false);
+
+                // Delay the submission for a few seconds
+                new Handler().postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        // Proceed with saving the feedback
+                        saveFeedbackToFirestore(feedback);
+                    }
+                }, 2000);  // 2000 milliseconds = 2 seconds
             }
         });
 
@@ -114,6 +125,9 @@ public class FeedbackFragment extends Fragment {
                     // Failed to save feedback
                     showSnackbar(getString(R.string.failed_to_submit_feedback));
                 });
+        // Once feedback is saved or failed to save, hide the progress bar and enable the submit button
+        progressBar.setVisibility(View.GONE);
+        btnSubmitFeedback.setEnabled(true);
     }
 
     private void showSnackbar(String message) {
