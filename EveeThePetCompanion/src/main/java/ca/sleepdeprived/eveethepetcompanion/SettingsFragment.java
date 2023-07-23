@@ -13,6 +13,7 @@ import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentActivity;
 
 import android.preference.PreferenceManager;
 import android.util.Log;
@@ -23,10 +24,10 @@ import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.Switch;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
+import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
@@ -41,14 +42,14 @@ import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.ListenerRegistration;
 
 public class SettingsFragment extends Fragment {
-    private EditText emailEditText;
-
-    private Switch lockOrientationSwitch;
-    private Switch pushNotificationSwitch;
-    private SharedPreferences sharedPreferences;
-    private FirebaseFirestore firestore;
-    private ListenerRegistration emailListener;
-    private Button updateButton;
+    EditText emailEditText;
+    Switch lockOrientationSwitch;
+    Switch pushNotificationSwitch;
+    SharedPreferences sharedPreferences;
+    FirebaseFirestore firestore;
+    ListenerRegistration emailListener;
+    private FirebaseAuth firebaseAuth;
+    Button updateButton;
 
     public SettingsFragment() {
     }
@@ -145,13 +146,9 @@ public class SettingsFragment extends Fragment {
         }
     }
 
-
-
-
     private void logoutUser() {
         // Clear login status
         sharedPreferences.edit().putBoolean(getString(R.string.isloggedin), false).apply();
-        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getActivity());
         sharedPreferences.edit().putBoolean(getString(R.string.isloggedin), false).apply();
 
         // Sign out from Firebase Authentication
@@ -220,6 +217,7 @@ public class SettingsFragment extends Fragment {
             }
         });
     }
+
     private void updateEmailInFirestore(String updatedEmail) {
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
         if (user != null) {
@@ -246,4 +244,27 @@ public class SettingsFragment extends Fragment {
         }
     }
 
+    public void setFirebaseAuth(FirebaseAuth firebaseAuth) {
+        this.firebaseAuth = firebaseAuth;
+    }
+
+    // Method to set FirebaseFirestore instance for testing
+    public void setFirestore(FirebaseFirestore firestore) {
+        this.firestore = firestore;
+    }
+
+    // Method to get emailListener for testing
+    public ListenerRegistration getEmailListener() {
+        return emailListener;
+    }
+
+    // Method to expose logoutUser() for testing
+    public void testLogoutUser() {
+        logoutUser();
+    }
+
+    // Method to get emailEditText for testing
+    public EditText getEmailEditText() {
+        return emailEditText;
+    }
 }

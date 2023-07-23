@@ -8,6 +8,7 @@ package ca.sleepdeprived.eveethepetcompanion;
 
 import androidx.test.espresso.Espresso;
 import androidx.test.espresso.action.ViewActions;
+import androidx.test.espresso.assertion.ViewAssertions;
 import androidx.test.espresso.matcher.ViewMatchers;
 import androidx.test.ext.junit.rules.ActivityScenarioRule;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
@@ -28,14 +29,14 @@ public class RegisterActivityTest {
     @Test
     public void checkEmptyFieldsShowToast() {
         Espresso.onView(ViewMatchers.withId(R.id.sign_up_button)).perform(ViewActions.click());
-        Espresso.onView(withText(R.string.please_fill_fields)).inRoot(new ToastMatcher()).check(matches(withText(R.string.please_fill_fields)));
+        Espresso.onView(withText(R.string.please_fill_fields)).inRoot(new ToastMatcher()).check(ViewAssertions.matches(withText(R.string.please_fill_fields)));
     }
 
     @Test
     public void checkInvalidEmailFormatShowsToast() {
         Espresso.onView(ViewMatchers.withId(R.id.email_edittext)).perform(ViewActions.typeText("invalidEmail"));
         Espresso.onView(ViewMatchers.withId(R.id.sign_up_button)).perform(ViewActions.click());
-        Espresso.onView(withText(R.string.invalid_email)).inRoot(new ToastMatcher()).check(matches(withText(R.string.invalid_email)));
+        Espresso.onView(withText(R.string.invalid_email)).inRoot(new ToastMatcher()).check(ViewAssertions.matches(withText(R.string.invalid_email)));
     }
 
     @Test
@@ -43,14 +44,14 @@ public class RegisterActivityTest {
         Espresso.onView(ViewMatchers.withId(R.id.password_edittext)).perform(ViewActions.typeText("ValidPass1!"));
         Espresso.onView(ViewMatchers.withId(R.id.confirm_password_edittext)).perform(ViewActions.typeText("ValidPass2!"));
         Espresso.onView(ViewMatchers.withId(R.id.sign_up_button)).perform(ViewActions.click());
-        Espresso.onView(withText(R.string.passwds_not_match)).inRoot(new ToastMatcher()).check(matches(withText(R.string.passwds_not_match)));
+        Espresso.onView(withText(R.string.passwds_not_match)).inRoot(new ToastMatcher()).check(ViewAssertions.matches(withText(R.string.passwds_not_match)));
     }
 
     @Test
     public void checkInvalidPhoneShowsToast() {
         Espresso.onView(ViewMatchers.withId(R.id.phone_edittext)).perform(ViewActions.typeText("12345"));
         Espresso.onView(ViewMatchers.withId(R.id.sign_up_button)).perform(ViewActions.click());
-        Espresso.onView(withText(R.string.invalid_phone_number)).inRoot(new ToastMatcher()).check(matches(withText(R.string.invalid_phone_number)));
+        Espresso.onView(withText(R.string.invalid_phone_number)).inRoot(new ToastMatcher()).check(ViewAssertions.matches(withText(R.string.invalid_phone_number)));
     }
 
     @Test
@@ -58,6 +59,6 @@ public class RegisterActivityTest {
         Espresso.onView(ViewMatchers.withId(R.id.password_edittext)).perform(ViewActions.typeText("pass"));
         Espresso.onView(ViewMatchers.withId(R.id.confirm_password_edittext)).perform(ViewActions.typeText("pass"));
         Espresso.onView(ViewMatchers.withId(R.id.sign_up_button)).perform(ViewActions.click());
-        Espresso.onView(withText(R.string.invalid_password)).inRoot(new ToastMatcher()).check(matches(withText(R.string.invalid_password)));
+        Espresso.onView(withText(R.string.invalid_password)).inRoot(new ToastMatcher()).check(ViewAssertions.matches(withText(R.string.invalid_password)));
     }
 }
