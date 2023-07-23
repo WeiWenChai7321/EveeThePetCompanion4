@@ -51,49 +51,62 @@ public class RegisterActivity extends AppCompatActivity {
         signUpButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                registerUser();
+                if (validateInput()) {
+                    checkEmailAndRegister();
+                }
             }
         });
     }
 
-    private void registerUser() {
-        final String fullName = fullNameEditText.getText().toString().trim();
-        final String email = emailEditText.getText().toString().trim();
+    private boolean validateInput() {
+        String email = emailEditText.getText().toString().trim();
         String password = passwordEditText.getText().toString().trim();
         String confirmPassword = confirmPasswordEditText.getText().toString().trim();
         String phoneNumber = phoneEditText.getText().toString().trim();
 
-        if (email.isEmpty() || password.isEmpty() || confirmPassword.isEmpty() || fullName.isEmpty() || phoneNumber.isEmpty()) {
-            Toast.makeText(RegisterActivity.this, R.string.please_fill_fields, Toast.LENGTH_SHORT).show();
-        } else if (!password.equals(confirmPassword)) {
-            Toast.makeText(RegisterActivity.this, R.string.passwds_not_match, Toast.LENGTH_SHORT).show();
-        } else if (!isValidPassword(password)) {
-            Toast.makeText(RegisterActivity.this, R.string.invalid_password, Toast.LENGTH_SHORT).show();
-        } else if (!android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
-            Toast.makeText(RegisterActivity.this, R.string.invalid_email, Toast.LENGTH_SHORT).show();
-        } else if (phoneNumber.length() != 10 || !Patterns.PHONE.matcher(phoneNumber).matches()) {
-            Toast.makeText(RegisterActivity.this, R.string.invalid_phone_number, Toast.LENGTH_SHORT).show();
-        } else {
-            // Check if the email already exists in Firebase Authentication
-            firebaseAuth.fetchSignInMethodsForEmail(email).addOnCompleteListener(new OnCompleteListener<SignInMethodQueryResult>() {
-                @Override
-                public void onComplete(@NonNull Task<SignInMethodQueryResult> task) {
-                    if (task.isSuccessful()) {
-                        SignInMethodQueryResult result = task.getResult();
-                        if (result != null && result.getSignInMethods() != null && result.getSignInMethods().size() > 0) {
-                            // Email already exists in Firebase Authentication, show error message
-                            Toast.makeText(RegisterActivity.this, R.string.account_already_exists, Toast.LENGTH_SHORT).show();
-                        } else {
-                            // Email doesn't exist in Firebase Authentication, proceed with account creation
-                            createAccount(email, password);
-                        }
-                    } else {
-                        // Error occurred while accessing Firebase Authentication, show error message
-                        Toast.makeText(RegisterActivity.this, R.string.failed_access_firebase, Toast.LENGTH_SHORT).show();
-                    }
-                }
-            });
+        if (email.isEmpty() || password.isEmpty() || confirmPassword.isEmpty() || phoneNumber.isEmpty()) {
+            Toast.makeText(this, R.string.please_fill_fields, Toast.LENGTH_SHORT).show();
+            return false;
         }
+        if (!password.equals(confirmPassword)) {
+            Toast.makeText(this, R.string.passwds_not_match, Toast.LENGTH_SHORT).show();
+            return false;
+        }
+        if (!isValidPassword(password)) {
+            Toast.makeText(this, R.string.invalid_password, Toast.LENGTH_SHORT).show();
+            return false;
+        }
+        if (!Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
+            Toast.makeText(this, R.string.invalid_email, Toast.LENGTH_SHORT).show();
+            return false;
+        }
+        if (phoneNumber.length() != 10 || !Patterns.PHONE.matcher(phoneNumber).matches()) {
+            Toast.makeText(this, R.string.invalid_phone_number, Toast.LENGTH_SHORT).show();
+            return false;
+        }
+
+        return true;
+    }
+
+    private void checkEmailAndRegister() {
+        final String email = emailEditText.getText().toString().trim();
+        final String password = passwordEditText.getText().toString().trim();
+
+        firebaseAuth.fetchSignInMethodsForEmail(email).addOnCompleteListener(new OnCompleteListener<SignInMethodQueryResult>() {
+            @Override
+            public void onComplete(@NonNull Task<SignInMethodQueryResult> task) {
+                if (task.isSuccessful()) {
+                    SignInMethodQueryResult result = task.getResult();
+                    if (result != null && result.getSignInMethods() != null && result.getSignInMethods().size() > 0) {
+                        Toast.makeText(RegisterActivity.this, R.string.account_already_exists, Toast.LENGTH_SHORT).show();
+                    } else {
+                        createAccount(email, password);
+                    }
+                } else {
+                    Toast.makeText(RegisterActivity.this, R.string.failed_access_firebase, Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
     }
 
     private void createAccount(final String email, final String password) {
