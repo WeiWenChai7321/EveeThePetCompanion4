@@ -35,6 +35,7 @@ import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.GoogleAuthProvider;
 import com.google.firebase.firestore.FirebaseFirestore;
+
 import java.util.regex.Pattern;
 
 public class LoginActivity extends AppCompatActivity {
@@ -108,6 +109,16 @@ public class LoginActivity extends AppCompatActivity {
         }
     }
 
+    public static boolean isValidEmail(String email) {
+        return android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches();
+    }
+
+    public static boolean isValidPassword(String password) {
+        String passwordPattern = "^(?=.*[A-Z])(?=.*[0-9])(?=.*[@$!%*?&#])[A-Za-z\\d@$!%*?&#]{6,}$";
+        Pattern pattern = Pattern.compile(passwordPattern);
+        return pattern.matcher(password).matches();
+    }
+
     private void validateLogin(final String email, final String password) {
         if (!isValidEmail(email)) {
             showSnackbar(getString(R.string.invalid_email_format));
@@ -117,20 +128,18 @@ public class LoginActivity extends AppCompatActivity {
             showSnackbar(getString(R.string.invalid_password_format));
             return;
         }
+
         Snackbar loggingInSnackbar = Snackbar.make(findViewById(android.R.id.content), getString(R.string.signing_in), Snackbar.LENGTH_INDEFINITE);
         loggingInSnackbar.show();
 
-        // Authenticate user with Firebase Authentication
         firebaseAuth.signInWithEmailAndPassword(email, password)
                 .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         dismissSnackbar(loggingInSnackbar);
                         if (task.isSuccessful()) {
-                            // Authentication successful, perform successful login
                             performSuccessfulLogin();
                         } else {
-                            // Authentication failed, show error message
                             showSnackbar(getString(R.string.login_failed));
                         }
                     }
@@ -193,10 +202,8 @@ public class LoginActivity extends AppCompatActivity {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if (task.isSuccessful()) {
-                            // Authentication successful, perform successful login
                             performSuccessfulLogin();
                         } else {
-                            // Authentication failed, show error message
                             Toast.makeText(LoginActivity.this, R.string.google_sign_in_failed + task.getException().getMessage(), Toast.LENGTH_SHORT).show();
                         }
                     }
@@ -207,17 +214,4 @@ public class LoginActivity extends AppCompatActivity {
         Intent intent = new Intent(LoginActivity.this, RegisterActivity.class);
         startActivity(intent);
     }
-
-    private boolean isValidEmail(String email) {
-        return android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches();
-    }
-
-    private boolean isValidPassword(String password) {
-        // Password regex pattern
-        String passwordPattern = "^(?=.*[A-Z])(?=.*[0-9])(?=.*[@$!%*?&#])[A-Za-z\\d@$!%*?&#]{6,}$";
-        Pattern pattern = Pattern.compile(passwordPattern);
-        return pattern.matcher(password).matches();
-    }
-
-
 }
