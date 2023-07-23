@@ -131,4 +131,13 @@ public class RegisterActivity extends AppCompatActivity {
         Intent intent = new Intent(RegisterActivity.this, LoginActivity.class);
         startActivity(intent);
     }
+
+    private boolean isValidPassword(String password){
+        if (password.length() < 6) return false;
+        if (!password.matches(".*[A-Z].*")) return false; // Check for an uppercase letter
+        if (!password.matches(".*[0-9].*")) return false; // Check for a digit
+        if (!password.matches(".*[^a-zA-Z0-9 ].*")) return false; // Check for a special character
+        return true;
+    }
+
 }
