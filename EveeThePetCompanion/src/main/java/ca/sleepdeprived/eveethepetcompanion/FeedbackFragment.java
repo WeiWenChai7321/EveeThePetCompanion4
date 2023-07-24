@@ -7,6 +7,9 @@
 
 package ca.sleepdeprived.eveethepetcompanion;
 
+import android.content.Context;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.Patterns;
@@ -26,6 +29,9 @@ import androidx.fragment.app.Fragment;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.firebase.firestore.FirebaseFirestore;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class FeedbackFragment extends Fragment {
 
     private EditText editName;
@@ -37,6 +43,15 @@ public class FeedbackFragment extends Fragment {
     private RatingBar ratingBar;
     private Button btnSubmitFeedback;
     private FirebaseFirestore db;
+    private List<Feedback> offlineFeedbackList;
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
+        // Initialize the list to store offline feedback data
+        offlineFeedbackList = new ArrayList<>();
+    }
 
     @Nullable
     @Override
@@ -51,6 +66,7 @@ public class FeedbackFragment extends Fragment {
         db = FirebaseFirestore.getInstance();
         progressBar = view.findViewById(R.id.progress_bar);
         btnSubmitFeedback = view.findViewById(R.id.btn_submit_feedback);
+
         btnSubmitFeedback.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -107,36 +123,100 @@ public class FeedbackFragment extends Fragment {
         return Patterns.EMAIL_ADDRESS.matcher(email).matches();
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+
+        // Check if there is an internet connection
+        boolean isConnected = checkInternetConnection();
+
+        // If there is an internet connection, attempt to submit the offline feedback
+        if (isConnected) {
+            submitOfflineFeedback();
+        }
+    }
+
     private void saveFeedbackToFirestore(Feedback feedback) {
-        db.collection(getString(R.string.feedback_collection))
-                .add(feedback)
-                .addOnSuccessListener(documentReference -> {
-                    // Feedback saved successfully
-                    showSnackbar(getString(R.string.feedback_submitted));
+        // Check for internet connection
+        boolean isConnected = checkInternetConnection();
 
-                    // Reset the form
-                    editName.setText("");
-                    editPhone.setText("");
-                    editEmail.setText("");
-                    editComment.setText("");
-                    ratingBar.setRating(0);
+        if (isConnected) {
+            // If there is an internet connection, proceed with saving the feedback to Firestore
+            db.collection(getString(R.string.feedback_collection))
+                    .add(feedback)
+                    .addOnSuccessListener(documentReference -> {
+                        // Feedback saved successfully
+                        showSnackbar(getString(R.string.feedback_submitted));
 
-                    // Once feedback is saved, hide the progress bar and enable the submit button
-                    progressBar.setVisibility(View.GONE);
-                    btnSubmitFeedback.setEnabled(true);
-                })
-                .addOnFailureListener(e -> {
-                    // Failed to save feedback
-                    showSnackbar(getString(R.string.failed_to_submit_feedback));
+                        // Reset the form
+                        editName.setText("");
+                        editPhone.setText("");
+                        editEmail.setText("");
+                        editComment.setText("");
+                        ratingBar.setRating(0);
 
-                    // Once feedback submission has failed, hide the progress bar and enable the submit button
-                    progressBar.setVisibility(View.GONE);
-                    btnSubmitFeedback.setEnabled(true);
-                });
+                        // Once feedback is saved, hide the progress bar and enable the submit button
+                        progressBar.setVisibility(View.GONE);
+                        btnSubmitFeedback.setEnabled(true);
+
+                        // Attempt to submit any offline feedback data
+                        submitOfflineFeedback();
+                    })
+                    .addOnFailureListener(e -> {
+                        // Failed to save feedback
+                        showSnackbar(getString(R.string.failed_to_submit_feedback));
+
+                        // Once feedback submission has failed, hide the progress bar and enable the submit button
+                        progressBar.setVisibility(View.GONE);
+                        btnSubmitFeedback.setEnabled(true);
+
+                        // Save the feedback data to the offline list
+                        offlineFeedbackList.add(feedback);
+
+                        // Show a toast or snackbar to inform the user that the feedback is saved offline
+                        Toast.makeText(getActivity(), R.string.feedback_saved_offline, Toast.LENGTH_SHORT).show();
+                    });
+        } else {
+            // If there is no internet connection, save the feedback data to the offline list
+            offlineFeedbackList.add(feedback);
+
+            // Show a toast or snackbar to inform the user that the feedback is saved offline
+            Toast.makeText(getActivity(), R.string.feedback_saved_offline, Toast.LENGTH_SHORT).show();
+        }
     }
 
 
     private void showSnackbar(String message) {
         Snackbar.make(getView(), message, Snackbar.LENGTH_SHORT).show();
+    }
+
+    // Method to submit offline feedback data
+    private void submitOfflineFeedback() {
+        if (!offlineFeedbackList.isEmpty()) {
+            // Iterate through the offlineFeedbackList and attempt to submit each feedback
+            for (Feedback feedback : offlineFeedbackList) {
+                // Attempt to save feedback to Firestore
+                saveFeedbackToFirestore(feedback);
+            }
+            // Clear the list after submission
+            offlineFeedbackList.clear();
+        }
+    }
+
+    private boolean checkInternetConnection() {
+        // Get the ConnectivityManager from the system service
+        ConnectivityManager connectivityManager = (ConnectivityManager) getActivity().getSystemService(Context.CONNECTIVITY_SERVICE);
+
+        // Check if the ConnectivityManager is not null
+        if (connectivityManager != null) {
+            // Get the active network information
+            NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
+
+            // Check if the network is connected and available
+            return activeNetworkInfo != null && activeNetworkInfo.isConnected();
+        }
+
+        // Return false if the ConnectivityManager is null (unable to check connectivity)
+        return false;
     }
 }
