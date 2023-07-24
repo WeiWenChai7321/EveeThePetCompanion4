@@ -14,14 +14,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 import android.widget.Button;
-import android.widget.ScrollView;
-
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.widget.NestedScrollView;
 import androidx.fragment.app.Fragment;
-
-
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 public class HelpFragment extends Fragment {
@@ -41,12 +37,12 @@ public class HelpFragment extends Fragment {
         // Find the FAB button by its ID
         FloatingActionButton fabScrollToTop = view.findViewById(R.id.fabScrollToTop);
 
-        ScrollView scrollView = view.findViewById(R.id.nestedScrollView);
+        NestedScrollView nestedScrollView = view.findViewById(R.id.nestedScrollView);
 
-        scrollView.getViewTreeObserver().addOnScrollChangedListener(new ViewTreeObserver.OnScrollChangedListener() {
+        nestedScrollView.getViewTreeObserver().addOnScrollChangedListener(new ViewTreeObserver.OnScrollChangedListener() {
             @Override
             public void onScrollChanged() {
-                boolean canScrollUp = scrollView.canScrollVertically(-1); // -1 for up direction
+                boolean canScrollUp = nestedScrollView.canScrollVertically(-1); // -1 for up direction
 
                 // Show or hide the FAB button based on scroll position
                 fabScrollToTop.setVisibility(canScrollUp ? View.VISIBLE : View.INVISIBLE);
@@ -58,9 +54,10 @@ public class HelpFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 // Scroll the NestedScrollView back to the top
-                scrollView.smoothScrollTo(0, 0);
+                nestedScrollView.smoothScrollTo(0, 0);
             }
         });
+
         return view;
     }
 
@@ -69,5 +66,5 @@ public class HelpFragment extends Fragment {
         intent.setData(Uri.parse(getString(R.string.mailto_chloeissleeping_gmail_com)));
         startActivity(Intent.createChooser(intent, getString(R.string.send_email)));
     }
-
 }
+
