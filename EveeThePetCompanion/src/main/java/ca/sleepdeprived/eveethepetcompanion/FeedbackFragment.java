@@ -191,7 +191,7 @@ public class FeedbackFragment extends Fragment {
     }
 
     // Method to submit offline feedback data
-    private void submitOfflineFeedback() {
+    public void submitOfflineFeedback() {
         if (!offlineFeedbackList.isEmpty()) {
             // Iterate through the offlineFeedbackList and attempt to submit each feedback
             for (Feedback feedback : offlineFeedbackList) {
