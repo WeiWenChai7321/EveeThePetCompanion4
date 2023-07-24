@@ -8,36 +8,36 @@
         android:orientation="vertical"
         android:background="#F5F5F5">
 
-    <TextView
-        android:id="@+id/dashboard_title"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal"
-        android:layout_marginTop="@dimen/margin_12"
-        android:text="@string/hi_chloe"
-        android:textSize="24sp"
-        android:textStyle="bold" />
+        <TextView
+            android:id="@+id/dashboard_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="@dimen/margin_12"
+            android:text="@string/hi_chloe"
+            android:textSize="24sp"
+            android:textStyle="bold" />
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/reminders"
-        android:textSize="14sp"
-        android:textStyle="bold"
-        android:layout_marginTop="@dimen/margin_16" />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/reminders"
+            android:textSize="14sp"
+            android:textStyle="bold"
+            android:layout_marginTop="@dimen/margin_16" />
 
-    <LinearLayout
-        android:id="@+id/reminders_card"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:layout_marginTop="@dimen/margin_16"
-        android:background="@drawable/card_background"
-        android:padding="@dimen/padding_8">
+        <LinearLayout
+            android:id="@+id/reminders_card"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_marginTop="@dimen/margin_16"
+            android:background="@drawable/card_background"
+            android:padding="@dimen/padding_8">
 
-        <!-- Place the reminders here -->
+            <!-- Place the reminders here -->
 
-    </LinearLayout>
+        </LinearLayout>
 
         <EditText
             android:id="@+id/edit_text_reminder"
