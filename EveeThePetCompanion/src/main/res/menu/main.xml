@@ -11,7 +11,6 @@
 
     <item
         android:id="@+id/action_petprofile"
-        android:icon="@drawable/petprofilewhite"
         android:orderInCategory="3"
         android:title="@string/action_petprofile"
         app:showAsAction="always|withText"
