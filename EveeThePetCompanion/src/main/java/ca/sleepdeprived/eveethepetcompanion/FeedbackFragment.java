@@ -114,7 +114,7 @@ public class FeedbackFragment extends Fragment {
     }
 
     private boolean isValidPhoneNumber(String phoneNumber) {
-        String phoneNumberPattern = "\\d{3}-\\d{3}-\\d{4}";
+        String phoneNumberPattern = "\\d{3}\\d{3}\\d{4}";
         return phoneNumber.matches(phoneNumberPattern);
     }
 
