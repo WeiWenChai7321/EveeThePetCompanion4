@@ -6,27 +6,23 @@
         android:id="@+id/action_help"
         android:orderInCategory="1"
         android:title="@string/action_help"
-        app:showAsAction="never"
-        app:actionLayout="@layout/menu_item" />
+        app:showAsAction="never" />
 
     <item
         android:id="@+id/action_petprofile"
         android:orderInCategory="3"
         android:title="@string/action_petprofile"
-        app:showAsAction="always|withText"
-        app:actionLayout="@layout/custom_action"/>
+        app:showAsAction="always|withText"/>
 
     <item
         android:id="@+id/action_settings"
         android:orderInCategory="4"
         android:title="@string/action_settings"
-        app:actionLayout="@layout/menu_item"
         app:showAsAction="never"/>
 
     <item
         android:id="@+id/action_feedback"
         android:orderInCategory="5"
         android:title="@string/action_feedback"
-        app:actionLayout="@layout/menu_item"
         app:showAsAction="never"/>
 </menu>
