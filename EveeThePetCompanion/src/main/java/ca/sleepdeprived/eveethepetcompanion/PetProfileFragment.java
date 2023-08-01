@@ -378,6 +378,13 @@ public class PetProfileFragment extends Fragment {
         outState.putBoolean(getString(R.string.is_edit_mode_key), isEditMode);
     }
 
+    public static void Schedule(Context context, String schedule){
+        SharedPreferences prefs = context.getSharedPreferences("myAppPackage", 0);
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putString("schedule", schedule);
+        editor.commit();
+    }
+
     @Override
     public void onViewStateRestored(@Nullable Bundle savedInstanceState) {
         super.onViewStateRestored(savedInstanceState);
