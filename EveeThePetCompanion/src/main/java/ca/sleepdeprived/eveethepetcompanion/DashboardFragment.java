@@ -189,4 +189,11 @@ public class DashboardFragment extends Fragment {
             noRemindersTextView.setVisibility(View.GONE);
         }
     }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        // Update the visibility of the "no reminder" text when the fragment is resumed
+        updateNoRemindersVisibility();
+    }
 }
