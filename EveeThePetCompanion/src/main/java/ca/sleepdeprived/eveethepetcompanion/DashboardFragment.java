@@ -31,7 +31,6 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -45,11 +44,11 @@ public class DashboardFragment extends Fragment {
     private Context context;
     private EditText editReminderEditText;
     private Set<String> savedReminders;
-
+    private boolean isInitialCreate = true;
     private boolean isEditTextVisible = false;
 
-
     private View view;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -58,9 +57,9 @@ public class DashboardFragment extends Fragment {
         // Retrieve saved reminders
         sharedPreferences = requireActivity().getPreferences(Context.MODE_PRIVATE);
         savedReminders = sharedPreferences.getStringSet(getString(R.string.reminders_key), new HashSet<>());
-        for (String reminder : savedReminders) {
-            addReminder(reminder);
-        }
+
+        // Read existing reminders from the database on fragment creation
+        readExistingReminders();
     }
 
     @Override
@@ -112,10 +111,6 @@ public class DashboardFragment extends Fragment {
             return false;
         });
 
-        // Add saved reminders and read existing reminders from the database
-        addSavedReminders();
-        readExistingReminders();
-
         return view;
     }
 
@@ -126,10 +121,10 @@ public class DashboardFragment extends Fragment {
             ArrayList<String> remindersArrayList = savedInstanceState.getStringArrayList(getString(R.string.saved_reminders_key));
             if (remindersArrayList != null) {
                 savedReminders = new HashSet<>(remindersArrayList);
-                // Add saved reminders
-                addSavedReminders();
             }
         }
+        // Set the flag to false to indicate that this is not the initial creation of the fragment
+        isInitialCreate = false;
     }
 
     @Override
@@ -141,7 +136,6 @@ public class DashboardFragment extends Fragment {
     @Override
     public void onDestroyView() {
         super.onDestroyView();
-        saveReminders();
     }
 
     private void addReminder(String reminderText) {
@@ -173,7 +167,6 @@ public class DashboardFragment extends Fragment {
                 });
     }
 
-
     private void removeReminderDelayed(CheckBox checkBox) {
         new Handler().postDelayed(() -> {
             remindersLayout.removeView(checkBox);
@@ -203,18 +196,6 @@ public class DashboardFragment extends Fragment {
         }, 5000);
     }
 
-    private void addSavedReminders() {
-        for (String reminder : savedReminders) {
-            addReminder(reminder);
-        }
-    }
-
-    private void saveReminders() {
-        SharedPreferences.Editor editor = sharedPreferences.edit();
-        editor.putStringSet(getString(R.string.reminders_key), savedReminders);
-        editor.apply();
-    }
-
     private void updateNoRemindersVisibility() {
         TextView noRemindersTextView = view.findViewById(R.id.text_no_reminders);
         if (reminderCheckboxes.isEmpty() && !isEditTextVisible) { // Check both conditions
@@ -237,12 +218,24 @@ public class DashboardFragment extends Fragment {
                     for (DocumentSnapshot documentSnapshot : queryDocumentSnapshots) {
                         String reminderText = documentSnapshot.getString("reminder");
                         if (reminderText != null && !savedReminders.contains(reminderText)) {
-                            addReminder(reminderText);
+                            // Check if the reminder is not already added to the layout
+                            if (!isReminderAdded(reminderText)) {
+                                addReminder(reminderText);
+                            }
                         }
                     }
                 })
                 .addOnFailureListener(e -> {
                     // Error handling
                 });
+    }
+
+    private boolean isReminderAdded(String reminderText) {
+        for (CheckBox checkBox : reminderCheckboxes) {
+            if (checkBox.getText().toString().equals(reminderText)) {
+                return true;
+            }
+        }
+        return false;
     }
 }
