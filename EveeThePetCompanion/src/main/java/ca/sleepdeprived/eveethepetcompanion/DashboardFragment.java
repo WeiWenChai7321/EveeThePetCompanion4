@@ -23,7 +23,8 @@ import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-
+import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.FirebaseFirestore;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
@@ -36,6 +37,8 @@ import java.util.Set;
 
 public class DashboardFragment extends Fragment {
     private List<CheckBox> reminderCheckboxes;
+    private FirebaseFirestore db = FirebaseFirestore.getInstance();
+    private CollectionReference remindersCollectionRef = db.collection("reminders");
     private SharedPreferences sharedPreferences;
     private LinearLayout remindersLayout;
     private EditText editReminderEditText;
