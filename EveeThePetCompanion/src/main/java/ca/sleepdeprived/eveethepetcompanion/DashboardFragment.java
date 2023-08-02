@@ -149,7 +149,7 @@ public class DashboardFragment extends Fragment {
             return;
         }
 
-        CheckBox reminderCheckBox = new CheckBox(context); // Use the stored context here
+        CheckBox reminderCheckBox = new CheckBox(context);
         reminderCheckBox.setText(reminderText);
         reminderCheckBox.setChecked(false);
         reminderCheckBox.setOnCheckedChangeListener((buttonView, isChecked) -> {
@@ -162,7 +162,7 @@ public class DashboardFragment extends Fragment {
         savedReminders.add(reminderText);
 
         // Update the field name to "reminder" when adding the reminder to the database
-        remindersCollectionRef.add(new Reminder(reminderText, "reminder"))
+        remindersCollectionRef.add(new Reminder(reminderText))
                 .addOnSuccessListener(documentReference -> {
                     // Success
                     String documentId = documentReference.getId();
