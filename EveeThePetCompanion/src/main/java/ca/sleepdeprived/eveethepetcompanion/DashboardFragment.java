@@ -42,10 +42,12 @@ public class DashboardFragment extends Fragment {
     private CollectionReference remindersCollectionRef = db.collection("reminders");
     private SharedPreferences sharedPreferences;
     private LinearLayout remindersLayout;
+    private Context context;
     private EditText editReminderEditText;
     private Set<String> savedReminders;
 
     private boolean isEditTextVisible = false;
+
 
     private View view;
     @Override
@@ -59,6 +61,12 @@ public class DashboardFragment extends Fragment {
         for (String reminder : savedReminders) {
             addReminder(reminder);
         }
+    }
+
+    @Override
+    public void onAttach(@NonNull Context context) {
+        super.onAttach(context);
+        this.context = context;
     }
 
     @Override
@@ -137,11 +145,11 @@ public class DashboardFragment extends Fragment {
     }
 
     private void addReminder(String reminderText) {
-        if (remindersLayout == null) {
+        if (remindersLayout == null || context == null) {
             return;
         }
 
-        CheckBox reminderCheckBox = new CheckBox(requireContext());
+        CheckBox reminderCheckBox = new CheckBox(context); // Use the stored context here
         reminderCheckBox.setText(reminderText);
         reminderCheckBox.setChecked(false);
         reminderCheckBox.setOnCheckedChangeListener((buttonView, isChecked) -> {
@@ -153,7 +161,8 @@ public class DashboardFragment extends Fragment {
         reminderCheckboxes.add(reminderCheckBox);
         savedReminders.add(reminderText);
 
-        remindersCollectionRef.add(new Reminder(reminderText))
+        // Update the field name to "reminder" when adding the reminder to the database
+        remindersCollectionRef.add(new Reminder(reminderText, "reminder"))
                 .addOnSuccessListener(documentReference -> {
                     // Success
                     String documentId = documentReference.getId();
@@ -164,6 +173,7 @@ public class DashboardFragment extends Fragment {
                 });
     }
 
+
     private void removeReminderDelayed(CheckBox checkBox) {
         new Handler().postDelayed(() -> {
             remindersLayout.removeView(checkBox);
@@ -171,8 +181,10 @@ public class DashboardFragment extends Fragment {
             savedReminders.remove(checkBox.getText().toString());
 
             String reminderText = checkBox.getText().toString();
+
+            // Update the field name to "reminder" when removing the reminder from the database
             remindersCollectionRef
-                    .whereEqualTo("text", reminderText)
+                    .whereEqualTo("reminder", reminderText)
                     .get()
                     .addOnSuccessListener(queryDocumentSnapshots -> {
                         for (DocumentSnapshot documentSnapshot : queryDocumentSnapshots) {
@@ -219,48 +231,11 @@ public class DashboardFragment extends Fragment {
         updateNoRemindersVisibility();
     }
 
-    private void createNewReminder(String reminderText) {
-        if (remindersLayout == null) {
-            return;
-        }
-
-        // Create a new LinearLayout to hold the CheckBox and the EditText
-        LinearLayout reminderLayout = new LinearLayout(requireContext());
-        reminderLayout.setOrientation(LinearLayout.HORIZONTAL);
-        reminderLayout.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
-
-        // Create a new CheckBox dynamically and add it to the LinearLayout
-        CheckBox newReminderCheckBox = new CheckBox(requireContext());
-        newReminderCheckBox.setText(reminderText);
-        newReminderCheckBox.setChecked(false);
-        newReminderCheckBox.setOnCheckedChangeListener((buttonView, isChecked) -> {
-            if (isChecked) {
-                removeReminderDelayed((CheckBox) buttonView);
-            }
-        });
-        reminderLayout.addView(newReminderCheckBox);
-
-        // Create a new EditText dynamically and add it to the LinearLayout
-        EditText newReminderEditText = new EditText(requireContext());
-        newReminderEditText.setLayoutParams(new LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT, 1));
-        newReminderEditText.setText(reminderText);
-        reminderLayout.addView(newReminderEditText);
-        newReminderEditText.setFocusableInTouchMode(true);
-        newReminderEditText.requestFocus();
-
-        // Add the new LinearLayout (containing CheckBox and EditText) to the layout
-        remindersLayout.addView(reminderLayout);
-
-        // Add the new CheckBox to the list
-        reminderCheckboxes.add(newReminderCheckBox);
-        savedReminders.add(reminderText);
-    }
-
     private void readExistingReminders() {
         remindersCollectionRef.get()
                 .addOnSuccessListener(queryDocumentSnapshots -> {
                     for (DocumentSnapshot documentSnapshot : queryDocumentSnapshots) {
-                        String reminderText = documentSnapshot.getString("text");
+                        String reminderText = documentSnapshot.getString("reminder");
                         if (reminderText != null && !savedReminders.contains(reminderText)) {
                             addReminder(reminderText);
                         }
