@@ -94,6 +94,7 @@ public class DashboardFragment extends Fragment {
 
                 // Clear the input from the previous EditText
                 editReminderEditText.setText("");
+                updateNoRemindersVisibility();
             }
         });
 
@@ -104,6 +105,7 @@ public class DashboardFragment extends Fragment {
                 if (!TextUtils.isEmpty(reminderText)) {
                     addReminder(reminderText);
                     editReminderEditText.setText("");
+                    updateNoRemindersVisibility();
                     return true;
                 }
             }
