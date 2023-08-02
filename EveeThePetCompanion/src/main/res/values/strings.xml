@@ -192,5 +192,6 @@
     <string name="feedback_saved_offline">Feedback saved offline</string>
     <string name="no_internet_connection">No internet connection</string>
     <string name="new_reminder_button_text">New Reminder</string>
+    <string name="you_do_not_currently_have_any_reminders_added">You do not currently have any reminders added.</string>
 
 </resources>

@@ -37,6 +37,16 @@
 
             <!-- Place the reminders here -->
 
+            <TextView
+                android:id="@+id/text_no_reminders"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/you_do_not_currently_have_any_reminders_added"
+                android:textSize="14sp"
+                android:textStyle="bold"
+                android:layout_marginTop="@dimen/margin_16"
+                android:visibility="gone" />
+
         </LinearLayout>
 
         <EditText
