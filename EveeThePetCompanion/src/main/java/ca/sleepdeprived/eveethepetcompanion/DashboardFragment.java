@@ -184,10 +184,12 @@ public class DashboardFragment extends Fragment {
                 .addOnFailureListener(e -> {
                     // Error handling
                 });
+        updateNoRemindersVisibility();
     }
 
 
     private void removeReminderDelayed(CheckBox checkBox) {
+
         new Handler().postDelayed(() -> {
             remindersLayout.removeView(checkBox);
             reminderCheckboxes.remove(checkBox);
@@ -227,8 +229,8 @@ public class DashboardFragment extends Fragment {
                             Log.e("DashboardFragment", "Error retrieving reminders: " + e.getMessage());
                         });
             }
+            updateNoRemindersVisibility();
         }, 5000);
-        updateUIWithExistingReminders();
     }
 
 
