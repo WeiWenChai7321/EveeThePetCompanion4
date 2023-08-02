@@ -194,5 +194,6 @@
     <string name="new_reminder_button_text">New Reminder</string>
     <string name="you_do_not_currently_have_any_reminders_added">You do not currently have any reminders added.</string>
     <string name="cancel_button_text">Cancel</string>
+    <string name="reminder">reminder</string>
 
 </resources>

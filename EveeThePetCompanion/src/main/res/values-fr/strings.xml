@@ -192,4 +192,5 @@
         <string name="new_reminder_button_text">Nouveau rappel</string>
         <string name="you_do_not_currently_have_any_reminders_added">Vous n\'avez actuellement ajouté aucun rappel.</string>
         <string name="cancel_button_text">Annuler</string>
+        <string name="reminder">rappel</string>
 </resources>

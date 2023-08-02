@@ -161,7 +161,7 @@ public class DashboardFragment extends Fragment {
             return; // Do not add duplicate reminders
         }
 
-        Reminder newReminder = new Reminder(reminderText); // Pass both the ID and reminderText
+        Reminder newReminder = new Reminder(reminderText);
 
         CheckBox reminderCheckBox = new CheckBox(context);
         reminderCheckBox.setText(reminderText);
@@ -175,7 +175,6 @@ public class DashboardFragment extends Fragment {
         reminderCheckboxes.add(reminderCheckBox);
         savedReminders.add(newReminder);
 
-        // Update the field name to "reminder" when adding the reminder to the database
         remindersCollectionRef.add(newReminder)
                 .addOnSuccessListener(documentReference -> {
                     // Success
@@ -208,19 +207,29 @@ public class DashboardFragment extends Fragment {
                 // Remove the reminder from the savedReminders set
                 savedReminders.remove(reminderToDelete);
 
-                // Delete the corresponding document from the database using the reminder ID
-                remindersCollectionRef.document(reminderToDelete.getReminderText())
-                        .delete()
-                        .addOnSuccessListener(aVoid -> {
-                            // Success
+                // Delete the corresponding document from the database using the reminder text
+                remindersCollectionRef.whereEqualTo("reminderText", reminderText)
+                        .get()
+                        .addOnSuccessListener(queryDocumentSnapshots -> {
+                            for (DocumentSnapshot documentSnapshot : queryDocumentSnapshots) {
+                                documentSnapshot.getReference().delete()
+                                        .addOnSuccessListener(aVoid -> {
+                                            // Success
+                                        })
+                                        .addOnFailureListener(e -> {
+                                            // Error handling
+                                            Log.e("DashboardFragment", "Error deleting reminder: " + e.getMessage());
+                                        });
+                            }
                         })
                         .addOnFailureListener(e -> {
                             // Error handling
-                            Log.e("DashboardFragment", "Error deleting reminder: " + e.getMessage());
+                            Log.e("DashboardFragment", "Error retrieving reminders: " + e.getMessage());
                         });
             }
         }, 5000);
     }
+
 
 
 
@@ -250,7 +259,7 @@ public class DashboardFragment extends Fragment {
                     savedReminders.clear(); // Clear the savedReminders set
                     for (DocumentSnapshot documentSnapshot : queryDocumentSnapshots) {
                         String reminderId = documentSnapshot.getId();
-                        String reminderText = documentSnapshot.getString("reminder");
+                        String reminderText = documentSnapshot.getString("reminderText");
                         if (reminderText != null) {
                             savedReminders.add(new Reminder(reminderText));
                         }
