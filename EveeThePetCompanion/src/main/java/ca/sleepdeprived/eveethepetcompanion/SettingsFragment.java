@@ -49,6 +49,8 @@ public class SettingsFragment extends Fragment {
     FirebaseFirestore firestore;
     ListenerRegistration emailListener;
     private FirebaseAuth firebaseAuth;
+    private boolean isSaveButton = true;
+
     Button updateButton;
 
     public SettingsFragment() {
@@ -96,12 +98,33 @@ public class SettingsFragment extends Fragment {
                         // User not signed in with Google, proceed with email update
                         updateEmailInFirestore(updatedEmail);
                     }
+                    emailEditText.setEnabled(true);
+                    if (isSaveButton) {
+                        // If the button is in "Save" state, change the text to "Save"
+                        updateButton.setText(R.string.save);
+                    } else {
+                        // If the button is in "Update" state, change the text to "Update"
+                        updateButton.setText(R.string.update);
+                    }
+
+                    // Toggle the button state for the next click
+                    isSaveButton = !isSaveButton;
                 } else {
                     emailEditText.setEnabled(true);
-                    updateButton.setText(R.string.save);
+                    if (isSaveButton) {
+                        // If the button is in "Save" state, change the text to "Save"
+                        updateButton.setText(R.string.save);
+                    } else {
+                        // If the button is in "Update" state, change the text to "Update"
+                        updateButton.setText(R.string.update);
+                    }
+
+                    // Toggle the button state for the next click
+                    isSaveButton = !isSaveButton;
                 }
             }
         });
+
     }
 
     @Override
