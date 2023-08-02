@@ -14,10 +14,12 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.text.TextUtils;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.EditorInfo;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
@@ -96,9 +98,8 @@ public class DashboardFragment extends Fragment {
             updateNoRemindersVisibility();
         });
 
-        // Add reminder when pressing enter on the keyboard
         editReminderEditText.setOnEditorActionListener((v, actionId, event) -> {
-            if (actionId == EditorInfo.IME_ACTION_DONE) {
+            if (actionId == EditorInfo.IME_ACTION_DONE || event != null && event.getAction() == KeyEvent.ACTION_DOWN && event.getKeyCode() == KeyEvent.KEYCODE_ENTER) {
                 String reminderText = editReminderEditText.getText().toString().trim();
                 if (!TextUtils.isEmpty(reminderText)) {
                     addReminder(reminderText);
@@ -107,11 +108,13 @@ public class DashboardFragment extends Fragment {
                     newReminderButton.setText(R.string.new_reminder_button_text);
                     isEditTextVisible = false;
                     updateNoRemindersVisibility();
+                    hideKeyboard();
                     return true;
                 }
             }
             return false;
         });
+
 
         return view;
     }
@@ -309,5 +312,9 @@ public class DashboardFragment extends Fragment {
         updateNoRemindersVisibility();
     }
 
+    private void hideKeyboard() {
+        InputMethodManager imm = (InputMethodManager) requireActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+        imm.hideSoftInputFromWindow(editReminderEditText.getWindowToken(), 0);
+    }
 
 }
