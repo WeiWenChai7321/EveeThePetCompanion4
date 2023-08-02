@@ -39,7 +39,7 @@ public class MainActivity extends AppCompatActivity {
 
     private boolean isLoggedIn = false;
     private BottomNavigationView bottomNavigationView;
-    private PetInfoViewModel petInfoViewModel; // Added
+    private PetInfoViewModel petInfoViewModel;
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -48,16 +48,6 @@ public class MainActivity extends AppCompatActivity {
         if (menu instanceof MenuBuilder) {
             ((MenuBuilder) menu).setOptionalIconsVisible(true);
         }
-
-        MenuItem actionPetProfileItem = menu.findItem(R.id.action_petprofile);
-        View actionPetProfileView = actionPetProfileItem.getActionView();
-        actionPetProfileView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                onOptionsItemSelected(actionPetProfileItem);
-            }
-        });
-
         return true;
     }
 

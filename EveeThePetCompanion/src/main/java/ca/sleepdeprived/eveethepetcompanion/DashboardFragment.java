@@ -17,6 +17,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.EditorInfo;
+import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.EditText;
@@ -59,7 +60,17 @@ public class DashboardFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_dashboard, container, false);
         remindersLayout = view.findViewById(R.id.reminders_card);
         editReminderEditText = view.findViewById(R.id.edit_text_reminder);
+        Button newReminderButton = view.findViewById(R.id.button_new_reminder);
 
+        newReminderButton.setOnClickListener(v -> {
+            String reminderText = editReminderEditText.getText().toString().trim();
+            if (!TextUtils.isEmpty(reminderText)) {
+                addReminder(reminderText);
+                editReminderEditText.setText("");
+            }
+        });
+
+        /*
         // Add reminder when pressing enter on the keyboard
         editReminderEditText.setOnEditorActionListener((v, actionId, event) -> {
             if (actionId == EditorInfo.IME_ACTION_DONE) {
@@ -71,7 +82,7 @@ public class DashboardFragment extends Fragment {
                 }
             }
             return false;
-        });
+        });*/
 
         // Add saved reminders
         addSavedReminders();
