@@ -171,7 +171,7 @@ public class DashboardFragment extends Fragment {
 
     private void updateNoRemindersVisibility() {
         TextView noRemindersTextView = view.findViewById(R.id.text_no_reminders);
-        if (reminderCheckboxes.isEmpty()) {
+        if (reminderCheckboxes.isEmpty() && !isEditTextVisible) { // Check both conditions
             noRemindersTextView.setVisibility(View.VISIBLE);
         } else {
             noRemindersTextView.setVisibility(View.GONE);
