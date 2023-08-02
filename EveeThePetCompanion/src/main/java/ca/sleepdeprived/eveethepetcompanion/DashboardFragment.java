@@ -88,6 +88,7 @@ public class DashboardFragment extends Fragment {
                 if (!TextUtils.isEmpty(reminderText)) {
                     addReminder(reminderText);
                     editReminderEditText.setText("");
+                    editReminderEditText.setVisibility(View.GONE); // Hide the EditText after creating the reminder
                     updateNoRemindersVisibility();
                     return true;
                 }
