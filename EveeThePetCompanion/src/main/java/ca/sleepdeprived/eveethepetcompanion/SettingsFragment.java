@@ -88,6 +88,7 @@ public class SettingsFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 if (emailEditText.isEnabled()) {
+                    // If the EditText is currently enabled, it means the user clicked on "Save"
                     String updatedEmail = emailEditText.getText().toString();
                     // Update the email in Firestore
 
@@ -112,7 +113,13 @@ public class SettingsFragment extends Fragment {
                     // Toggle the button state for the next click
                     isSaveButton = !isSaveButton;
                 } else {
+                    // If the EditText is currently disabled, it means the user clicked on "Update"
+
+                    // Enable the EditText
                     emailEditText.setEnabled(true);
+                    emailEditText.requestFocus(); // Set the cursor focus to the EditText
+                    emailEditText.setSelection(emailEditText.getText().length()); // Move the cursor to the end of the text
+
                     if (isSaveButton) {
                         // If the button is in "Save" state, change the text to "Save"
                         updateButton.setText(R.string.save);
@@ -126,6 +133,7 @@ public class SettingsFragment extends Fragment {
                 }
             }
         });
+
 
     }
 
