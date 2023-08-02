@@ -13,6 +13,7 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -175,7 +176,7 @@ public class DashboardFragment extends Fragment {
 
             String reminderText = checkBox.getText().toString();
 
-            // Update the field name to "reminder" when removing the reminder from the database
+            // Find the specific reminder document to delete
             remindersCollectionRef
                     .whereEqualTo("reminder", reminderText)
                     .get()
@@ -187,11 +188,13 @@ public class DashboardFragment extends Fragment {
                                     })
                                     .addOnFailureListener(e -> {
                                         // Error handling
+                                        Log.e("DashboardFragment", "Error deleting reminder: " + e.getMessage());
                                     });
                         }
                     })
                     .addOnFailureListener(e -> {
                         // Error handling
+                        Log.e("DashboardFragment", "Error retrieving reminder document: " + e.getMessage());
                     });
         }, 5000);
     }
@@ -217,16 +220,12 @@ public class DashboardFragment extends Fragment {
                 .addOnSuccessListener(queryDocumentSnapshots -> {
                     for (DocumentSnapshot documentSnapshot : queryDocumentSnapshots) {
                         String reminderText = documentSnapshot.getString("reminder");
-                        if (reminderText != null && !savedReminders.contains(reminderText)) {
-                            // Check if the reminder is not already added to the layout
-                            if (!isReminderAdded(reminderText)) {
-                                addReminder(reminderText);
-                            }
-                        }
+                        addReminder(reminderText);
                     }
                 })
                 .addOnFailureListener(e -> {
                     // Error handling
+                    Log.e("DashboardFragment", "Error retrieving reminders: " + e.getMessage());
                 });
     }
 
