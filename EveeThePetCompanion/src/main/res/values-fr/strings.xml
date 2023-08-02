@@ -191,4 +191,5 @@
         <string name="no_internet_connection">Pas de connexion Internet</string>
         <string name="new_reminder_button_text">Nouveau rappel</string>
         <string name="you_do_not_currently_have_any_reminders_added">Vous n\'avez actuellement ajouté aucun rappel.</string>
+        <string name="cancel_button_text">Annuler</string>
 </resources>

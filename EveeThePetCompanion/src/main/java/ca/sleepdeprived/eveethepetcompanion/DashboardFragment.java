@@ -40,6 +40,9 @@ public class DashboardFragment extends Fragment {
     private LinearLayout remindersLayout;
     private EditText editReminderEditText;
     private Set<String> savedReminders;
+
+    private boolean isEditTextVisible = false;
+
     private View view;
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -66,19 +69,18 @@ public class DashboardFragment extends Fragment {
         updateNoRemindersVisibility();
         newReminderButton.setOnClickListener(v -> {
             String reminderText = editReminderEditText.getText().toString().trim();
-            if (!TextUtils.isEmpty(reminderText)) {
-                createNewReminder(reminderText);
-                // Clear the input from the previous EditText
-                editReminderEditText.setText("");
-                updateNoRemindersVisibility();
-            }
-            // Toggle the visibility of the EditText
-            if (editReminderEditText.getVisibility() == View.VISIBLE) {
+            if (isEditTextVisible) {
+                // If the EditText is visible, hide it and change the button text to "New Reminder"
                 editReminderEditText.setVisibility(View.GONE);
+                newReminderButton.setText(R.string.new_reminder_button_text);
             } else {
+                // If the EditText is not visible, show it and change the button text to "Cancel"
                 editReminderEditText.setVisibility(View.VISIBLE);
                 editReminderEditText.requestFocus();
+                newReminderButton.setText(R.string.cancel_button_text);
             }
+            isEditTextVisible = !isEditTextVisible;
+            updateNoRemindersVisibility();
         });
 
         // Add reminder when pressing enter on the keyboard
@@ -89,6 +91,8 @@ public class DashboardFragment extends Fragment {
                     addReminder(reminderText);
                     editReminderEditText.setText("");
                     editReminderEditText.setVisibility(View.GONE); // Hide the EditText after creating the reminder
+                    newReminderButton.setText(R.string.new_reminder_button_text);
+                    isEditTextVisible = false;
                     updateNoRemindersVisibility();
                     return true;
                 }
