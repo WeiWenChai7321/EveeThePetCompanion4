@@ -40,6 +40,7 @@ import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.ListenerRegistration;
+import android.view.inputmethod.InputMethodManager;
 
 
 public class SettingsFragment extends Fragment {
@@ -119,6 +120,12 @@ public class SettingsFragment extends Fragment {
                     emailEditText.setEnabled(true);
                     emailEditText.requestFocus(); // Set the cursor focus to the EditText
                     emailEditText.setSelection(emailEditText.getText().length()); // Move the cursor to the end of the text
+
+                    // Show the keyboard
+                    InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(FragmentActivity.INPUT_METHOD_SERVICE);
+                    if (imm != null) {
+                        imm.showSoftInput(emailEditText, InputMethodManager.SHOW_IMPLICIT);
+                    }
 
                     if (isSaveButton) {
                         // If the button is in "Save" state, change the text to "Save"
