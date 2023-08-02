@@ -7,20 +7,24 @@
 package ca.sleepdeprived.eveethepetcompanion;
 
 public class Reminder {
+    private String id;
     private String reminderText;
 
-    public Reminder() {
-        // Empty constructor required for Firestore
-    }
-
-    public Reminder(String reminderText) {
+    public Reminder(String id, String reminderText) {
+        this.id = id;
         this.reminderText = reminderText;
     }
 
-    public String getReminder() {
+    public String getId() {
+        return id;
+    }
+
+    public String getReminderText() {
         return reminderText;
     }
 }
+
+
 
 
 

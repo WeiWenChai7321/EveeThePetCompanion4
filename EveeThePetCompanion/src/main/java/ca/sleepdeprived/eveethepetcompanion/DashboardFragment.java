@@ -122,7 +122,8 @@ public class DashboardFragment extends Fragment {
             ArrayList<String> remindersArrayList = savedInstanceState.getStringArrayList(getString(R.string.saved_reminders_key));
             if (remindersArrayList != null) {
                 for (String reminderText : remindersArrayList) {
-                    savedReminders.add(new Reminder(reminderText)); // Only pass the reminderText
+                    String reminderId = generateUniqueId(); // Generate a unique ID for the reminder
+                    savedReminders.add(new Reminder(reminderId, reminderText));
                 }
             }
         }
@@ -135,12 +136,13 @@ public class DashboardFragment extends Fragment {
 
 
 
+
     @Override
     public void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
         ArrayList<String> remindersArrayList = new ArrayList<>();
         for (Reminder reminder : savedReminders) {
-            remindersArrayList.add(reminder.getReminder());
+            remindersArrayList.add(reminder.getReminderText());
         }
         outState.putStringArrayList(getString(R.string.saved_reminders_key), remindersArrayList);
     }
@@ -161,8 +163,9 @@ public class DashboardFragment extends Fragment {
         }
 
         String reminderId = generateUniqueId(); // Generate a unique ID for the reminder
-        Reminder newReminder = new Reminder(reminderText); // Only pass the reminderText
-        CheckBox reminderCheckBox = new CheckBox(context);
+        Reminder newReminder = new Reminder(reminderId, reminderText); // Pass both the ID and reminderText
+
+    CheckBox reminderCheckBox = new CheckBox(context);
         reminderCheckBox.setText(reminderText);
         reminderCheckBox.setChecked(false);
         reminderCheckBox.setOnCheckedChangeListener((buttonView, isChecked) -> {
@@ -203,7 +206,7 @@ public class DashboardFragment extends Fragment {
             // Find the specific reminder to delete from the savedReminders set
             Reminder reminderToDelete = null;
             for (Reminder reminder : savedReminders) {
-                if (reminder.getReminder().equals(reminderText)) {
+                if (reminder.getReminderText().equals(reminderText)) {
                     reminderToDelete = reminder;
                     break;
                 }
@@ -214,7 +217,7 @@ public class DashboardFragment extends Fragment {
                 savedReminders.remove(reminderToDelete);
 
                 // Delete the corresponding document from the database using the reminder ID
-                remindersCollectionRef.document(reminderToDelete.getReminder())
+                remindersCollectionRef.document(reminderToDelete.getId())
                         .delete()
                         .addOnSuccessListener(aVoid -> {
                             // Success
@@ -226,6 +229,7 @@ public class DashboardFragment extends Fragment {
             }
         }, 5000);
     }
+
 
 
 
@@ -253,9 +257,10 @@ public class DashboardFragment extends Fragment {
                 .addOnSuccessListener(queryDocumentSnapshots -> {
                     savedReminders.clear(); // Clear the savedReminders set
                     for (DocumentSnapshot documentSnapshot : queryDocumentSnapshots) {
+                        String reminderId = documentSnapshot.getId();
                         String reminderText = documentSnapshot.getString("reminder");
                         if (reminderText != null) {
-                            savedReminders.add(new Reminder(reminderText));
+                            savedReminders.add(new Reminder(reminderId, reminderText));
                         }
                     }
                     // Update the UI after fetching reminders
@@ -268,10 +273,11 @@ public class DashboardFragment extends Fragment {
     }
 
 
+
     private boolean isReminderAdded(String reminderText) {
         for (Reminder reminder : savedReminders) {
             // Compare the text of the reminder with the provided reminderText
-            if (reminder.getReminder().equals(reminderText)) {
+            if (reminder.getReminderText().equals(reminderText)) {
                 return true; // Reminder already exists
             }
         }
@@ -283,7 +289,7 @@ public class DashboardFragment extends Fragment {
 
         for (Reminder reminder : savedReminders) {
             CheckBox reminderCheckBox = new CheckBox(context);
-            reminderCheckBox.setText(reminder.getReminder());
+            reminderCheckBox.setText(reminder.getReminderText());
             reminderCheckBox.setChecked(false);
             reminderCheckBox.setOnCheckedChangeListener((buttonView, isChecked) -> {
                 if (isChecked) {
