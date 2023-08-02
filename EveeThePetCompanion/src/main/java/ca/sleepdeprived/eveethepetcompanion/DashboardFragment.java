@@ -122,8 +122,7 @@ public class DashboardFragment extends Fragment {
             ArrayList<String> remindersArrayList = savedInstanceState.getStringArrayList(getString(R.string.saved_reminders_key));
             if (remindersArrayList != null) {
                 for (String reminderText : remindersArrayList) {
-                    String reminderId = generateUniqueId(); // Generate a unique ID for the reminder
-                    savedReminders.add(new Reminder(reminderId, reminderText));
+                    savedReminders.add(new Reminder(reminderText));
                 }
             }
         }
@@ -162,10 +161,9 @@ public class DashboardFragment extends Fragment {
             return; // Do not add duplicate reminders
         }
 
-        String reminderId = generateUniqueId(); // Generate a unique ID for the reminder
-        Reminder newReminder = new Reminder(reminderId, reminderText); // Pass both the ID and reminderText
+        Reminder newReminder = new Reminder(reminderText); // Pass both the ID and reminderText
 
-    CheckBox reminderCheckBox = new CheckBox(context);
+        CheckBox reminderCheckBox = new CheckBox(context);
         reminderCheckBox.setText(reminderText);
         reminderCheckBox.setChecked(false);
         reminderCheckBox.setOnCheckedChangeListener((buttonView, isChecked) -> {
@@ -187,12 +185,6 @@ public class DashboardFragment extends Fragment {
                 .addOnFailureListener(e -> {
                     // Error handling
                 });
-    }
-
-    private String generateUniqueId() {
-        // You can implement a method here to generate a unique ID, such as a UUID.
-        // For simplicity, we'll use a basic timestamp-based ID.
-        return String.valueOf(System.currentTimeMillis());
     }
 
 
@@ -217,7 +209,7 @@ public class DashboardFragment extends Fragment {
                 savedReminders.remove(reminderToDelete);
 
                 // Delete the corresponding document from the database using the reminder ID
-                remindersCollectionRef.document(reminderToDelete.getId())
+                remindersCollectionRef.document(reminderToDelete.getReminderText())
                         .delete()
                         .addOnSuccessListener(aVoid -> {
                             // Success
@@ -260,7 +252,7 @@ public class DashboardFragment extends Fragment {
                         String reminderId = documentSnapshot.getId();
                         String reminderText = documentSnapshot.getString("reminder");
                         if (reminderText != null) {
-                            savedReminders.add(new Reminder(reminderId, reminderText));
+                            savedReminders.add(new Reminder(reminderText));
                         }
                     }
                     // Update the UI after fetching reminders

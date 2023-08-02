@@ -36,23 +36,25 @@
             android:padding="@dimen/padding_8">
 
             <!-- Place the reminders here -->
-            <EditText
-                android:id="@+id/edit_text_reminder"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:inputType="text" />
-
-            <TextView
-                android:id="@+id/text_no_reminders"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/you_do_not_currently_have_any_reminders_added"
-                android:textSize="14sp"
-                android:textStyle="bold"
-                android:layout_marginTop="@dimen/margin_16"
-                android:visibility="gone" />
 
         </LinearLayout>
+
+        <EditText
+            android:id="@+id/edit_text_reminder"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="@string/add_more_reminders"
+            android:inputType="text" />
+
+        <TextView
+            android:id="@+id/text_no_reminders"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/you_do_not_currently_have_any_reminders_added"
+            android:textSize="14sp"
+            android:textStyle="bold"
+            android:layout_marginTop="@dimen/margin_16"
+            android:visibility="gone" />
 
         <Button
             android:id="@+id/button_new_reminder"

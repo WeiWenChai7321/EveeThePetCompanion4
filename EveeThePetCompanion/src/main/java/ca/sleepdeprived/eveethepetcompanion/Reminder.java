@@ -7,26 +7,13 @@
 package ca.sleepdeprived.eveethepetcompanion;
 
 public class Reminder {
-    private String id;
     private String reminderText;
 
-    public Reminder(String id, String reminderText) {
-        this.id = id;
+    public Reminder(String reminderText) {
         this.reminderText = reminderText;
-    }
-
-    public String getId() {
-        return id;
     }
 
     public String getReminderText() {
         return reminderText;
     }
 }
-
-
-
-
-
-
-
