@@ -228,6 +228,7 @@ public class DashboardFragment extends Fragment {
                         });
             }
         }, 5000);
+        updateUIWithExistingReminders();
     }
 
 
