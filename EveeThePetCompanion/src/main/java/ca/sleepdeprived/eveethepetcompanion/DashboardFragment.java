@@ -73,6 +73,7 @@ public class DashboardFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_dashboard, container, false);
         this.view = view;
+
         remindersLayout = view.findViewById(R.id.reminders_card);
         editReminderEditText = view.findViewById(R.id.edit_text_reminder);
         editReminderEditText.setVisibility(View.GONE); // Initially hide the EditText
