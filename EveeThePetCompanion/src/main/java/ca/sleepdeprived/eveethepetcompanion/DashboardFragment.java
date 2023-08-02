@@ -37,6 +37,7 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import android.view.inputmethod.InputMethodManager;
 
 public class DashboardFragment extends Fragment {
     private List<CheckBox> reminderCheckboxes;
@@ -88,11 +89,13 @@ public class DashboardFragment extends Fragment {
                 // If the EditText is visible, hide it and change the button text to "New Reminder"
                 editReminderEditText.setVisibility(View.GONE);
                 newReminderButton.setText(R.string.new_reminder_button_text);
+                hideKeyboard(); // Hide the keyboard when canceling
             } else {
                 // If the EditText is not visible, show it and change the button text to "Cancel"
                 editReminderEditText.setVisibility(View.VISIBLE);
                 editReminderEditText.requestFocus();
                 newReminderButton.setText(R.string.cancel_button_text);
+                showKeyboard(); // Show the keyboard when creating a new reminder
             }
             isEditTextVisible = !isEditTextVisible;
             updateNoRemindersVisibility();
@@ -310,6 +313,11 @@ public class DashboardFragment extends Fragment {
 
         // Update the visibility of the "no reminder" text when the fragment is resumed
         updateNoRemindersVisibility();
+    }
+
+    private void showKeyboard() {
+        InputMethodManager imm = (InputMethodManager) requireActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+        imm.showSoftInput(editReminderEditText, InputMethodManager.SHOW_IMPLICIT);
     }
 
     private void hideKeyboard() {
