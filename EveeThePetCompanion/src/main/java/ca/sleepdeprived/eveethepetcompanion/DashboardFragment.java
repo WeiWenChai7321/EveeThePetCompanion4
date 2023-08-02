@@ -24,6 +24,7 @@ import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -150,6 +151,16 @@ public class DashboardFragment extends Fragment {
         remindersLayout.addView(reminderCheckBox);
         reminderCheckboxes.add(reminderCheckBox);
         savedReminders.add(reminderText);
+
+        remindersCollectionRef.add(new Reminder(reminderText))
+                .addOnSuccessListener(documentReference -> {
+                    // Success
+                    String documentId = documentReference.getId();
+                    // You can store the documentId in your local savedReminders or in a separate list if needed.
+                })
+                .addOnFailureListener(e -> {
+                    // Error handling
+                });
     }
 
     private void removeReminderDelayed(CheckBox checkBox) {
@@ -157,6 +168,25 @@ public class DashboardFragment extends Fragment {
             remindersLayout.removeView(checkBox);
             reminderCheckboxes.remove(checkBox);
             savedReminders.remove(checkBox.getText().toString());
+
+            String reminderText = checkBox.getText().toString();
+            remindersCollectionRef
+                    .whereEqualTo("text", reminderText)
+                    .get()
+                    .addOnSuccessListener(queryDocumentSnapshots -> {
+                        for (DocumentSnapshot documentSnapshot : queryDocumentSnapshots) {
+                            documentSnapshot.getReference().delete()
+                                    .addOnSuccessListener(aVoid -> {
+                                        // Success
+                                    })
+                                    .addOnFailureListener(e -> {
+                                        // Error handling
+                                    });
+                        }
+                    })
+                    .addOnFailureListener(e -> {
+                        // Error handling
+                    });
         }, 5000);
     }
 
