@@ -60,41 +60,24 @@ public class DashboardFragment extends Fragment {
         this.view = view;
         remindersLayout = view.findViewById(R.id.reminders_card);
         editReminderEditText = view.findViewById(R.id.edit_text_reminder);
+        editReminderEditText.setVisibility(View.GONE); // Initially hide the EditText
+
         Button newReminderButton = view.findViewById(R.id.button_new_reminder);
         updateNoRemindersVisibility();
         newReminderButton.setOnClickListener(v -> {
             String reminderText = editReminderEditText.getText().toString().trim();
             if (!TextUtils.isEmpty(reminderText)) {
-                // Create a new LinearLayout to hold the CheckBox and the EditText
-                LinearLayout reminderLayout = new LinearLayout(requireContext());
-                reminderLayout.setOrientation(LinearLayout.HORIZONTAL);
-                reminderLayout.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
-
-                // Create a new CheckBox dynamically and add it to the LinearLayout
-                CheckBox newReminderCheckBox = new CheckBox(requireContext());
-                newReminderCheckBox.setText(reminderText);
-                newReminderCheckBox.setChecked(false);
-                newReminderCheckBox.setOnCheckedChangeListener((buttonView, isChecked) -> {
-                    if (isChecked) {
-                        removeReminderDelayed((CheckBox) buttonView);
-                    }
-                });
-                reminderLayout.addView(newReminderCheckBox);
-
-                // Create a new EditText dynamically and add it to the LinearLayout
-                EditText newReminderEditText = new EditText(requireContext());
-                newReminderEditText.setLayoutParams(new LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT, 1));
-                newReminderEditText.setText(reminderText);
-                reminderLayout.addView(newReminderEditText);
-                newReminderEditText.setFocusableInTouchMode(true);
-                newReminderEditText.requestFocus();
-
-                // Add the new LinearLayout (containing CheckBox and EditText) to the layout
-                remindersLayout.addView(reminderLayout);
-
+                createNewReminder(reminderText);
                 // Clear the input from the previous EditText
                 editReminderEditText.setText("");
                 updateNoRemindersVisibility();
+            }
+            // Toggle the visibility of the EditText
+            if (editReminderEditText.getVisibility() == View.VISIBLE) {
+                editReminderEditText.setVisibility(View.GONE);
+            } else {
+                editReminderEditText.setVisibility(View.VISIBLE);
+                editReminderEditText.requestFocus();
             }
         });
 
@@ -195,5 +178,42 @@ public class DashboardFragment extends Fragment {
         super.onResume();
         // Update the visibility of the "no reminder" text when the fragment is resumed
         updateNoRemindersVisibility();
+    }
+
+    private void createNewReminder(String reminderText) {
+        if (remindersLayout == null) {
+            return;
+        }
+
+        // Create a new LinearLayout to hold the CheckBox and the EditText
+        LinearLayout reminderLayout = new LinearLayout(requireContext());
+        reminderLayout.setOrientation(LinearLayout.HORIZONTAL);
+        reminderLayout.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
+
+        // Create a new CheckBox dynamically and add it to the LinearLayout
+        CheckBox newReminderCheckBox = new CheckBox(requireContext());
+        newReminderCheckBox.setText(reminderText);
+        newReminderCheckBox.setChecked(false);
+        newReminderCheckBox.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            if (isChecked) {
+                removeReminderDelayed((CheckBox) buttonView);
+            }
+        });
+        reminderLayout.addView(newReminderCheckBox);
+
+        // Create a new EditText dynamically and add it to the LinearLayout
+        EditText newReminderEditText = new EditText(requireContext());
+        newReminderEditText.setLayoutParams(new LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT, 1));
+        newReminderEditText.setText(reminderText);
+        reminderLayout.addView(newReminderEditText);
+        newReminderEditText.setFocusableInTouchMode(true);
+        newReminderEditText.requestFocus();
+
+        // Add the new LinearLayout (containing CheckBox and EditText) to the layout
+        remindersLayout.addView(reminderLayout);
+
+        // Add the new CheckBox to the list
+        reminderCheckboxes.add(newReminderCheckBox);
+        savedReminders.add(reminderText);
     }
 }
