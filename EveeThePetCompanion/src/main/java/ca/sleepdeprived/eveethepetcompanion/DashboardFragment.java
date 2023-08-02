@@ -44,7 +44,7 @@ public class DashboardFragment extends Fragment {
     private LinearLayout remindersLayout;
     private Context context;
     private EditText editReminderEditText;
-    private Set<String> savedReminders;
+    private Set<Reminder> savedReminders;
     private boolean isInitialCreate = true;
     private boolean isEditTextVisible = false;
 
@@ -57,7 +57,7 @@ public class DashboardFragment extends Fragment {
 
         // Retrieve saved reminders
         sharedPreferences = requireActivity().getPreferences(Context.MODE_PRIVATE);
-        savedReminders = sharedPreferences.getStringSet(getString(R.string.reminders_key), new HashSet<>());
+        savedReminders = new HashSet<>();
 
         // Read existing reminders from the database on fragment creation
         readExistingReminders();
@@ -121,18 +121,30 @@ public class DashboardFragment extends Fragment {
         if (savedInstanceState != null) {
             ArrayList<String> remindersArrayList = savedInstanceState.getStringArrayList(getString(R.string.saved_reminders_key));
             if (remindersArrayList != null) {
-                savedReminders = new HashSet<>(remindersArrayList);
+                for (String reminderText : remindersArrayList) {
+                    savedReminders.add(new Reminder(reminderText)); // Only pass the reminderText
+                }
             }
         }
         // Set the flag to false to indicate that this is not the initial creation of the fragment
         isInitialCreate = false;
+
+        // Update the UI with existing reminders
+        updateUIWithExistingReminders();
     }
+
+
 
     @Override
     public void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
-        outState.putStringArrayList(getString(R.string.saved_reminders_key), new ArrayList<>(savedReminders));
+        ArrayList<String> remindersArrayList = new ArrayList<>();
+        for (Reminder reminder : savedReminders) {
+            remindersArrayList.add(reminder.getReminder());
+        }
+        outState.putStringArrayList(getString(R.string.saved_reminders_key), remindersArrayList);
     }
+
 
     @Override
     public void onDestroyView() {
@@ -144,6 +156,12 @@ public class DashboardFragment extends Fragment {
             return;
         }
 
+        if (isReminderAdded(reminderText)) {
+            return; // Do not add duplicate reminders
+        }
+
+        String reminderId = generateUniqueId(); // Generate a unique ID for the reminder
+        Reminder newReminder = new Reminder(reminderText); // Only pass the reminderText
         CheckBox reminderCheckBox = new CheckBox(context);
         reminderCheckBox.setText(reminderText);
         reminderCheckBox.setChecked(false);
@@ -154,10 +172,10 @@ public class DashboardFragment extends Fragment {
         });
         remindersLayout.addView(reminderCheckBox);
         reminderCheckboxes.add(reminderCheckBox);
-        savedReminders.add(reminderText);
+        savedReminders.add(newReminder);
 
         // Update the field name to "reminder" when adding the reminder to the database
-        remindersCollectionRef.add(new Reminder(reminderText))
+        remindersCollectionRef.add(newReminder)
                 .addOnSuccessListener(documentReference -> {
                     // Success
                     String documentId = documentReference.getId();
@@ -168,45 +186,60 @@ public class DashboardFragment extends Fragment {
                 });
     }
 
+    private String generateUniqueId() {
+        // You can implement a method here to generate a unique ID, such as a UUID.
+        // For simplicity, we'll use a basic timestamp-based ID.
+        return String.valueOf(System.currentTimeMillis());
+    }
+
+
     private void removeReminderDelayed(CheckBox checkBox) {
         new Handler().postDelayed(() -> {
             remindersLayout.removeView(checkBox);
             reminderCheckboxes.remove(checkBox);
-            savedReminders.remove(checkBox.getText().toString());
 
             String reminderText = checkBox.getText().toString();
 
-            // Find the specific reminder document to delete
-            remindersCollectionRef
-                    .whereEqualTo("reminder", reminderText)
-                    .get()
-                    .addOnSuccessListener(queryDocumentSnapshots -> {
-                        for (DocumentSnapshot documentSnapshot : queryDocumentSnapshots) {
-                            documentSnapshot.getReference().delete()
-                                    .addOnSuccessListener(aVoid -> {
-                                        // Success
-                                    })
-                                    .addOnFailureListener(e -> {
-                                        // Error handling
-                                        Log.e("DashboardFragment", "Error deleting reminder: " + e.getMessage());
-                                    });
-                        }
-                    })
-                    .addOnFailureListener(e -> {
-                        // Error handling
-                        Log.e("DashboardFragment", "Error retrieving reminder document: " + e.getMessage());
-                    });
+            // Find the specific reminder to delete from the savedReminders set
+            Reminder reminderToDelete = null;
+            for (Reminder reminder : savedReminders) {
+                if (reminder.getReminder().equals(reminderText)) {
+                    reminderToDelete = reminder;
+                    break;
+                }
+            }
+
+            if (reminderToDelete != null) {
+                // Remove the reminder from the savedReminders set
+                savedReminders.remove(reminderToDelete);
+
+                // Delete the corresponding document from the database using the reminder ID
+                remindersCollectionRef.document(reminderToDelete.getReminder())
+                        .delete()
+                        .addOnSuccessListener(aVoid -> {
+                            // Success
+                        })
+                        .addOnFailureListener(e -> {
+                            // Error handling
+                            Log.e("DashboardFragment", "Error deleting reminder: " + e.getMessage());
+                        });
+            }
         }, 5000);
     }
 
+
+
     private void updateNoRemindersVisibility() {
         TextView noRemindersTextView = view.findViewById(R.id.text_no_reminders);
-        if (reminderCheckboxes.isEmpty() && !isEditTextVisible) { // Check both conditions
-            noRemindersTextView.setVisibility(View.VISIBLE);
-        } else {
-            noRemindersTextView.setVisibility(View.GONE);
+        if (noRemindersTextView != null) {
+            if (reminderCheckboxes.isEmpty() && !isEditTextVisible) { // Check both conditions
+                noRemindersTextView.setVisibility(View.VISIBLE);
+            } else {
+                noRemindersTextView.setVisibility(View.GONE);
+            }
         }
     }
+
 
     @Override
     public void onResume() {
@@ -218,10 +251,15 @@ public class DashboardFragment extends Fragment {
     private void readExistingReminders() {
         remindersCollectionRef.get()
                 .addOnSuccessListener(queryDocumentSnapshots -> {
+                    savedReminders.clear(); // Clear the savedReminders set
                     for (DocumentSnapshot documentSnapshot : queryDocumentSnapshots) {
                         String reminderText = documentSnapshot.getString("reminder");
-                        addReminder(reminderText);
+                        if (reminderText != null) {
+                            savedReminders.add(new Reminder(reminderText));
+                        }
                     }
+                    // Update the UI after fetching reminders
+                    updateUIWithExistingReminders();
                 })
                 .addOnFailureListener(e -> {
                     // Error handling
@@ -229,12 +267,36 @@ public class DashboardFragment extends Fragment {
                 });
     }
 
+
     private boolean isReminderAdded(String reminderText) {
-        for (CheckBox checkBox : reminderCheckboxes) {
-            if (checkBox.getText().toString().equals(reminderText)) {
-                return true;
+        for (Reminder reminder : savedReminders) {
+            // Compare the text of the reminder with the provided reminderText
+            if (reminder.getReminder().equals(reminderText)) {
+                return true; // Reminder already exists
             }
         }
-        return false;
+        return false; // Reminder is not present
     }
+
+    private void updateUIWithExistingReminders() {
+        remindersLayout.removeAllViews(); // Clear the UI first
+
+        for (Reminder reminder : savedReminders) {
+            CheckBox reminderCheckBox = new CheckBox(context);
+            reminderCheckBox.setText(reminder.getReminder());
+            reminderCheckBox.setChecked(false);
+            reminderCheckBox.setOnCheckedChangeListener((buttonView, isChecked) -> {
+                if (isChecked) {
+                    removeReminderDelayed((CheckBox) buttonView);
+                }
+            });
+            remindersLayout.addView(reminderCheckBox);
+            reminderCheckboxes.add(reminderCheckBox);
+        }
+
+        // Update the visibility of the "no reminder" text when the fragment is resumed
+        updateNoRemindersVisibility();
+    }
+
+
 }
