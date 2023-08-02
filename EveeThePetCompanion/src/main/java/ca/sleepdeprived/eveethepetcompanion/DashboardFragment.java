@@ -104,8 +104,9 @@ public class DashboardFragment extends Fragment {
             return false;
         });
 
-        // Add saved reminders
+        // Add saved reminders and read existing reminders from the database
         addSavedReminders();
+        readExistingReminders();
 
         return view;
     }
@@ -253,5 +254,20 @@ public class DashboardFragment extends Fragment {
         // Add the new CheckBox to the list
         reminderCheckboxes.add(newReminderCheckBox);
         savedReminders.add(reminderText);
+    }
+
+    private void readExistingReminders() {
+        remindersCollectionRef.get()
+                .addOnSuccessListener(queryDocumentSnapshots -> {
+                    for (DocumentSnapshot documentSnapshot : queryDocumentSnapshots) {
+                        String reminderText = documentSnapshot.getString("text");
+                        if (reminderText != null && !savedReminders.contains(reminderText)) {
+                            addReminder(reminderText);
+                        }
+                    }
+                })
+                .addOnFailureListener(e -> {
+                    // Error handling
+                });
     }
 }
