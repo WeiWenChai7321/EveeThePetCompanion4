@@ -41,11 +41,13 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.ListenerRegistration;
 
+
 public class SettingsFragment extends Fragment {
     EditText emailEditText;
     Switch lockOrientationSwitch;
     Switch pushNotificationSwitch;
     SharedPreferences sharedPreferences;
+
     FirebaseFirestore firestore;
     ListenerRegistration emailListener;
     private FirebaseAuth firebaseAuth;
@@ -98,7 +100,7 @@ public class SettingsFragment extends Fragment {
                         // User not signed in with Google, proceed with email update
                         updateEmailInFirestore(updatedEmail);
                     }
-                    emailEditText.setEnabled(true);
+                    emailEditText.setEnabled(false);
                     if (isSaveButton) {
                         // If the button is in "Save" state, change the text to "Save"
                         updateButton.setText(R.string.save);
