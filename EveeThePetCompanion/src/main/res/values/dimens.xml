@@ -18,6 +18,7 @@
     <dimen name="landscape_button_text_size">16sp</dimen>
     <dimen name="landscape_button_padding">12dp</dimen>
     <dimen name="landscape_text_size">14sp</dimen>
+    <dimen name="margin_0">0dp</dimen>
     <dimen name="margin_4">4dp</dimen>
     <dimen name="margin_8">8dp</dimen>
     <dimen name="margin_12">12dp</dimen>
