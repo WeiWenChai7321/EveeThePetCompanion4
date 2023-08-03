@@ -26,7 +26,10 @@ import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import androidx.annotation.NonNull;
@@ -61,7 +64,6 @@ public class DashboardFragment extends Fragment {
         // Retrieve saved reminders
         sharedPreferences = requireActivity().getPreferences(Context.MODE_PRIVATE);
         savedReminders = new HashSet<>();
-
         // Read existing reminders from the database on fragment creation
         readExistingReminders();
     }
@@ -195,6 +197,9 @@ public class DashboardFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
+        if (isAdded()) {
+            fetchUserNameFromDatabase();
+        }
         // Update the UI with existing reminders
         updateUIWithExistingReminders();
     }
@@ -243,10 +248,6 @@ public class DashboardFragment extends Fragment {
             updateNoRemindersVisibility();
         }, 5000);
     }
-
-
-
-
 
     private void updateNoRemindersVisibility() {
         if (view != null) {
@@ -332,5 +333,33 @@ public class DashboardFragment extends Fragment {
         InputMethodManager imm = (InputMethodManager) requireActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
         imm.hideSoftInputFromWindow(editReminderEditText.getWindowToken(), 0);
     }
+
+    private void fetchUserNameFromDatabase() {
+        // Assuming you have implemented Firebase Authentication and the user is logged in with an authenticated account.
+        // Get the currently logged-in user's ID
+        String currentUserId = FirebaseAuth.getInstance().getCurrentUser().getUid();
+
+        // Replace "users" with the appropriate collection name where you have stored the user information, and "firstName" with the field containing the first name.
+        DocumentReference userDocRef = db.collection("users").document(currentUserId);
+        userDocRef.get()
+                .addOnSuccessListener(documentSnapshot -> {
+                    if (isAdded() && documentSnapshot.exists()) { // Check if fragment is attached before proceeding
+                        String firstName = documentSnapshot.getString("firstName");
+                        if (firstName != null && !firstName.isEmpty() && view != null) { // Check if the view is not null
+                            TextView dashboardTitleTextView = view.findViewById(R.id.dashboard_title);
+                            if (dashboardTitleTextView != null) {
+                                String greeting = getString(R.string.hi) + " " + firstName;
+                                dashboardTitleTextView.setText(greeting);
+                            }
+                        }
+                    }
+                })
+                .addOnFailureListener(e -> {
+                    // Error handling
+                    Log.e("DashboardFragment", "Error fetching user information: " + e.getMessage());
+                });
+    }
+
+
 
 }
