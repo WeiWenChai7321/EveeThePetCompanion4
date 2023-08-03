@@ -6,6 +6,7 @@
 */
 package ca.sleepdeprived.eveethepetcompanion;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
@@ -41,12 +42,13 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.ListenerRegistration;
 import android.view.inputmethod.InputMethodManager;
+import android.app.AlertDialog;
+
 
 
 public class SettingsFragment extends Fragment {
     EditText emailEditText;
     Switch lockOrientationSwitch;
-    Switch pushNotificationSwitch;
     SharedPreferences sharedPreferences;
 
     FirebaseFirestore firestore;
@@ -63,7 +65,6 @@ public class SettingsFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_settings, container, false);
         lockOrientationSwitch = view.findViewById(R.id.switch_lock_orientation);
-        pushNotificationSwitch = view.findViewById(R.id.switch_push_notifications);
         sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getActivity());
         firestore = FirebaseFirestore.getInstance();
         emailEditText = view.findViewById(R.id.et_email);
@@ -141,7 +142,13 @@ public class SettingsFragment extends Fragment {
             }
         });
 
-
+        Button deleteAccountButton = view.findViewById(R.id.btn_delete);
+        deleteAccountButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showDeleteAccountDialog();
+            }
+        });
     }
 
     @Override
@@ -220,10 +227,8 @@ public class SettingsFragment extends Fragment {
 
         // Read the stored preferences and update the switches accordingly
         boolean isOrientationLocked = sharedPreferences.getBoolean(getString(R.string.lock_orientation), false);
-        boolean isPushNotificationsEnabled = sharedPreferences.getBoolean(getString(R.string.push_notifications), false);
 
         lockOrientationSwitch.setChecked(isOrientationLocked);
-        pushNotificationSwitch.setChecked(isPushNotificationsEnabled);
 
         lockOrientationSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
@@ -239,20 +244,6 @@ public class SettingsFragment extends Fragment {
                     // Reset screen orientation to sensor
                     getActivity().setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_SENSOR);
                     Toast.makeText(getActivity(), R.string.screen_orientation_unlocked, Toast.LENGTH_SHORT).show();
-                }
-            }
-        });
-
-        pushNotificationSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                // Save the push notifications preference in SharedPreferences
-                sharedPreferences.edit().putBoolean(getString(R.string.push_notifications), isChecked).apply();
-
-                if (isChecked) {
-                    Toast.makeText(getActivity(), R.string.push_notifications_enabled, Toast.LENGTH_SHORT).show();
-                } else {
-                    Toast.makeText(getActivity(), R.string.push_notifications_disabled, Toast.LENGTH_SHORT).show();
                 }
             }
         });
@@ -306,5 +297,40 @@ public class SettingsFragment extends Fragment {
     // Method to get emailEditText for testing
     public EditText getEmailEditText() {
         return emailEditText;
+    }
+
+    // Method to show the delete account confirmation dialog
+    private void showDeleteAccountDialog() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+        builder.setTitle("Delete Account");
+        builder.setMessage("Are you sure you want to delete your account? You will lose all your data associated with this account.");
+        builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                // Call the method to delete the account and associated data
+                deleteAccount();
+            }
+        });
+        builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                // If "No" is clicked, simply dismiss the dialog
+                dialog.dismiss();
+            }
+        });
+
+        // Create and show the dialog
+        AlertDialog dialog = builder.create();
+        dialog.show();
+    }
+
+    // Method to handle account deletion
+    private void deleteAccount() {
+        // Perform the necessary actions to delete the user account and associated data
+        // For example, you can use FirebaseAuth to delete the user account and Firestore to delete user data.
+
+        // After successful deletion, you can proceed to log the user out or navigate to the login screen.
+        // For example:
+        logoutUser();
     }
 }
