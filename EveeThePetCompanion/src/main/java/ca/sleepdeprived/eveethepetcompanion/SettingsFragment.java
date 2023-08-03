@@ -50,6 +50,7 @@ public class SettingsFragment extends Fragment {
     SharedPreferences sharedPreferences;
     FirebaseFirestore firestore;
     ListenerRegistration emailListener;
+    private FirebaseUser user;
     private FirebaseAuth firebaseAuth;
     private boolean isSaveButton = true;
 
@@ -304,7 +305,7 @@ public class SettingsFragment extends Fragment {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 // Call the method to delete the account and associated data
-                deleteAccount();
+                deleteUserDataFromFirestore(user.getUid());
             }
         });
         builder.setNegativeButton(R.string.no, new DialogInterface.OnClickListener() {
@@ -320,25 +321,6 @@ public class SettingsFragment extends Fragment {
         dialog.show();
     }
 
-    // Method to handle account deletion
-    private void deleteAccount() {
-        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-        if (user != null) {
-            // Delete the user from Firebase Authentication
-            user.delete().addOnCompleteListener(new OnCompleteListener<Void>() {
-                @Override
-                public void onComplete(@NonNull Task<Void> task) {
-                    if (task.isSuccessful()) {
-                        // User account successfully deleted, now delete associated data from Firestore
-                        deleteUserDataFromFirestore(user.getUid());
-                    } else {
-                        Toast.makeText(getActivity(), R.string.account_deletion_failed, Toast.LENGTH_SHORT).show();
-                    }
-                }
-            });
-        }
-    }
-
     // Method to delete user data from Firestore
     private void deleteUserDataFromFirestore(String uid) {
         firestore.collection(getString(R.string.users))
@@ -347,7 +329,9 @@ public class SettingsFragment extends Fragment {
                 .addOnSuccessListener(new OnSuccessListener<Void>() {
                     @Override
                     public void onSuccess(Void aVoid) {
-                        // User data successfully deleted, log the user out and navigate to the login screen
+                        // User data successfully deleted, now sign out the user from Firebase Authentication
+                        FirebaseAuth.getInstance().signOut();
+                        // Proceed to log out the user from the app
                         logoutUser();
                     }
                 })
