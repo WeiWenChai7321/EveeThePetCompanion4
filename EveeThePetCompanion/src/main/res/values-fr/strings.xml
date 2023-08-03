@@ -193,5 +193,6 @@
         <string name="you_do_not_currently_have_any_reminders_added">Vous n\'avez actuellement ajouté aucun rappel.</string>
         <string name="cancel_button_text">Annuler</string>
         <string name="reminder">rappel</string>
+        <string name="are_you_sure_you_want_to_delete_your_account_you_will_lose_all_your_data_associated_with_this_account">Êtes-vous sûr de vouloir supprimer votre compte ? Vous perdrez toutes vos données associées à ce compte.</string>
 
 </resources>

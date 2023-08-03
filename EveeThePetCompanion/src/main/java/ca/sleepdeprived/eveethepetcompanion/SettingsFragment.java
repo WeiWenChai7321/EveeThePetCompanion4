@@ -302,16 +302,16 @@ public class SettingsFragment extends Fragment {
     // Method to show the delete account confirmation dialog
     private void showDeleteAccountDialog() {
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-        builder.setTitle("Delete Account");
-        builder.setMessage("Are you sure you want to delete your account? You will lose all your data associated with this account.");
-        builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+        builder.setTitle(R.string.delete_account);
+        builder.setMessage(R.string.are_you_sure_you_want_to_delete_your_account_you_will_lose_all_your_data_associated_with_this_account);
+        builder.setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 // Call the method to delete the account and associated data
                 deleteAccount();
             }
         });
-        builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
+        builder.setNegativeButton(R.string.no, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 // If "No" is clicked, simply dismiss the dialog
