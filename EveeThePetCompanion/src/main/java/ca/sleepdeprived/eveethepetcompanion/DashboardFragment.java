@@ -28,6 +28,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
@@ -334,29 +335,30 @@ public class DashboardFragment extends Fragment {
     }
 
     private void fetchUserNameFromDatabase() {
-        // Assuming you have implemented Firebase Authentication and the user is logged in with an authenticated account.
-        // Get the currently logged-in user's ID
-        String currentUserId = FirebaseAuth.getInstance().getCurrentUser().getUid();
+        FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
+        if (currentUser != null) {
+            String currentUserId = FirebaseAuth.getInstance().getCurrentUser().getUid();
 
-        // Replace "users" with the appropriate collection name where you have stored the user information, and "firstName" with the field containing the first name.
-        DocumentReference userDocRef = db.collection("users").document(currentUserId);
-        userDocRef.get()
-                .addOnSuccessListener(documentSnapshot -> {
-                    if (isAdded() && documentSnapshot.exists()) { // Check if fragment is attached before proceeding
-                        String firstName = documentSnapshot.getString(getString(R.string.firstname));
-                        if (firstName != null && !firstName.isEmpty() && view != null) { // Check if the view is not null
-                            TextView dashboardTitleTextView = view.findViewById(R.id.dashboard_title);
-                            if (dashboardTitleTextView != null) {
-                                String greeting = getString(R.string.hi) + " " + firstName;
-                                dashboardTitleTextView.setText(greeting);
+            // Replace "users" with the appropriate collection name where you have stored the user information, and "firstName" with the field containing the first name.
+            DocumentReference userDocRef = db.collection("users").document(currentUserId);
+            userDocRef.get()
+                    .addOnSuccessListener(documentSnapshot -> {
+                        if (isAdded() && documentSnapshot.exists()) { // Check if fragment is attached before proceeding
+                            String firstName = documentSnapshot.getString(getString(R.string.firstname));
+                            if (firstName != null && !firstName.isEmpty() && view != null) { // Check if the view is not null
+                                TextView dashboardTitleTextView = view.findViewById(R.id.dashboard_title);
+                                if (dashboardTitleTextView != null) {
+                                    String greeting = getString(R.string.hi) + " " + firstName;
+                                    dashboardTitleTextView.setText(greeting);
+                                }
                             }
                         }
-                    }
-                })
-                .addOnFailureListener(e -> {
-                    // Error handling
-                    Log.e(getString(R.string.dashboardfragment), getString(R.string.error_fetching_user_information) + e.getMessage());
-                });
+                    })
+                    .addOnFailureListener(e -> {
+                        // Error handling
+                        Log.e(getString(R.string.dashboardfragment), getString(R.string.error_fetching_user_information) + e.getMessage());
+                    });
+        }
     }
 
 
