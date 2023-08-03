@@ -14,7 +14,6 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
             android:layout_marginTop="@dimen/margin_12"
-            android:text="@string/hi_chloe"
             android:textSize="24sp"
             android:textStyle="bold" />
 
