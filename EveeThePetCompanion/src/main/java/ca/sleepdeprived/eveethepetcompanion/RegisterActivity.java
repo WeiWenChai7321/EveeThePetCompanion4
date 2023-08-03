@@ -122,7 +122,9 @@ public class RegisterActivity extends AppCompatActivity {
                             // Account creation successful, show success message
                             Toast.makeText(RegisterActivity.this, R.string.account_created_successfully, Toast.LENGTH_SHORT).show();
 
-                            saveUserToFirestore(email, password);
+                            String firstName = firstnameEditText.getText().toString().trim();
+                            String lastName = lastnameEditText.getText().toString().trim();
+                            saveUserToFirestore(email, password, firstName, lastName);
 
                             // Navigate to LoginActivity
                             navigateToLoginActivity();
@@ -134,10 +136,8 @@ public class RegisterActivity extends AppCompatActivity {
                 });
     }
 
-    private void saveUserToFirestore(String email, String password) {
+    private void saveUserToFirestore(String email, String password, String firstName, String lastName) {
         String uid = firebaseAuth.getCurrentUser().getUid();
-        String firstName = firstnameEditText.getText().toString().trim();
-        String lastName = lastnameEditText.getText().toString().trim();
         User user = new User(email, password, firstName, lastName);
 
         db.collection("users")
