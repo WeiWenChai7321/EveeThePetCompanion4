@@ -273,6 +273,11 @@ public class DashboardFragment extends Fragment {
     }
 
     private void readExistingReminders() {
+        if (!isAdded() || getContext() == null) {
+            // Fragment is not attached or context is null, do not proceed
+            return;
+        }
+
         remindersCollectionRef.get()
                 .addOnSuccessListener(queryDocumentSnapshots -> {
                     savedReminders.clear(); // Clear the savedReminders set
@@ -287,7 +292,9 @@ public class DashboardFragment extends Fragment {
                 })
                 .addOnFailureListener(e -> {
                     // Error handling
-                    Log.e(getString(R.string.dashboardfragment), getString(R.string.error_retrieving_reminders) + e.getMessage());
+                    if (getContext() != null) {
+                        Log.e(getContext().getString(R.string.dashboardfragment), getContext().getString(R.string.error_retrieving_reminders) + e.getMessage());
+                    }
                 });
     }
 
@@ -335,6 +342,10 @@ public class DashboardFragment extends Fragment {
     }
 
     private void fetchUserNameFromDatabase() {
+        if (!isAdded() || getContext() == null) {
+            // Fragment is not attached or context is null, do not proceed
+            return;
+        }
         FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
         if (currentUser != null) {
             String currentUserId = FirebaseAuth.getInstance().getCurrentUser().getUid();
@@ -343,8 +354,8 @@ public class DashboardFragment extends Fragment {
             DocumentReference userDocRef = db.collection("users").document(currentUserId);
             userDocRef.get()
                     .addOnSuccessListener(documentSnapshot -> {
-                        if (isAdded() && documentSnapshot.exists()) { // Check if fragment is attached before proceeding
-                            String firstName = documentSnapshot.getString(getString(R.string.firstname));
+                        if (isAdded() && documentSnapshot.exists() && getContext() != null) { // Check if fragment is attached and context is not null before proceeding
+                            String firstName = documentSnapshot.getString(getContext().getString(R.string.firstname));
                             if (firstName != null && !firstName.isEmpty() && view != null) { // Check if the view is not null
                                 TextView dashboardTitleTextView = view.findViewById(R.id.dashboard_title);
                                 if (dashboardTitleTextView != null) {
@@ -356,11 +367,12 @@ public class DashboardFragment extends Fragment {
                     })
                     .addOnFailureListener(e -> {
                         // Error handling
-                        Log.e(getString(R.string.dashboardfragment), getString(R.string.error_fetching_user_information) + e.getMessage());
+                        if (getContext() != null) {
+                            Log.e(getContext().getString(R.string.dashboardfragment), getContext().getString(R.string.error_fetching_user_information) + e.getMessage());
+                        }
                     });
         }
     }
-
 
 
 }
