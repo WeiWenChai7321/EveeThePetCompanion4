@@ -334,12 +334,33 @@ public class SettingsFragment extends Fragment {
                 public void onComplete(@NonNull Task<Void> task) {
                     if (task.isSuccessful()) {
                         // User account successfully deleted, now delete associated data from Firestore
-                        //deleteUserDataFromFirestore(user.getUid());
+                        deleteUserDataFromFirestore(user.getUid());
                     } else {
                         Toast.makeText(getActivity(), R.string.account_deletion_failed, Toast.LENGTH_SHORT).show();
                     }
                 }
             });
         }
+    }
+
+    // Method to delete user data from Firestore
+    private void deleteUserDataFromFirestore(String uid) {
+        firestore.collection(getString(R.string.users))
+                .document(uid)
+                .delete()
+                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void aVoid) {
+                        // User data successfully deleted, log the user out and navigate to the login screen
+                        logoutUser();
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        // Failed to delete user data from Firestore
+                        Toast.makeText(getActivity(), R.string.account_deletion_failed, Toast.LENGTH_SHORT).show();
+                    }
+                });
     }
 }
