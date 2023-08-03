@@ -196,4 +196,11 @@
         <string name="are_you_sure_you_want_to_delete_your_account_you_will_lose_all_your_data_associated_with_this_account">Êtes-vous sûr de vouloir supprimer votre compte ? Vous perdrez toutes vos données associées à ce compte.</string>
         <string name="account_deletion_failed">Échec de la suppression du compte.</string>
         <string name="hi">Salut </string>
+        <string name="settings_greeting">Compte de</string>
+        <string name="dashboardfragment">FragmentTableauDeBord</string>
+        <string name="error_retrieving_reminders">Erreur lors de la récupération des rappels : </string>
+        <string name="error_deleting_reminder">Erreur lors de la suppression du rappel : </string>
+        <string name="firstname">prénom</string>
+        <string name="error_fetching_user_information">Erreur lors de la récupération des informations utilisateur : </string>
+
 </resources>
