@@ -236,13 +236,13 @@ public class DashboardFragment extends Fragment {
                                         })
                                         .addOnFailureListener(e -> {
                                             // Error handling
-                                            Log.e("DashboardFragment", "Error deleting reminder: " + e.getMessage());
+                                            Log.e(getString(R.string.dashboardfragment), getString(R.string.error_deleting_reminder) + e.getMessage());
                                         });
                             }
                         })
                         .addOnFailureListener(e -> {
                             // Error handling
-                            Log.e("DashboardFragment", "Error retrieving reminders: " + e.getMessage());
+                            Log.e(getString(R.string.dashboardfragment), getString(R.string.error_retrieving_reminders) + e.getMessage());
                         });
             }
             updateNoRemindersVisibility();
@@ -276,7 +276,6 @@ public class DashboardFragment extends Fragment {
                 .addOnSuccessListener(queryDocumentSnapshots -> {
                     savedReminders.clear(); // Clear the savedReminders set
                     for (DocumentSnapshot documentSnapshot : queryDocumentSnapshots) {
-                        String reminderId = documentSnapshot.getId();
                         String reminderText = documentSnapshot.getString("reminderText");
                         if (reminderText != null) {
                             savedReminders.add(new Reminder(reminderText));
@@ -287,7 +286,7 @@ public class DashboardFragment extends Fragment {
                 })
                 .addOnFailureListener(e -> {
                     // Error handling
-                    Log.e("DashboardFragment", "Error retrieving reminders: " + e.getMessage());
+                    Log.e(getString(R.string.dashboardfragment), getString(R.string.error_retrieving_reminders) + e.getMessage());
                 });
     }
 
@@ -344,7 +343,7 @@ public class DashboardFragment extends Fragment {
         userDocRef.get()
                 .addOnSuccessListener(documentSnapshot -> {
                     if (isAdded() && documentSnapshot.exists()) { // Check if fragment is attached before proceeding
-                        String firstName = documentSnapshot.getString("firstName");
+                        String firstName = documentSnapshot.getString(getString(R.string.firstname));
                         if (firstName != null && !firstName.isEmpty() && view != null) { // Check if the view is not null
                             TextView dashboardTitleTextView = view.findViewById(R.id.dashboard_title);
                             if (dashboardTitleTextView != null) {
@@ -356,7 +355,7 @@ public class DashboardFragment extends Fragment {
                 })
                 .addOnFailureListener(e -> {
                     // Error handling
-                    Log.e("DashboardFragment", "Error fetching user information: " + e.getMessage());
+                    Log.e(getString(R.string.dashboardfragment), getString(R.string.error_fetching_user_information) + e.getMessage());
                 });
     }
 
