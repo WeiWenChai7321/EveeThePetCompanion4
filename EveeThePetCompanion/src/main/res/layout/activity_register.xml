@@ -8,13 +8,23 @@
     android:padding="@dimen/activity_padding">
 
     <EditText
-        android:id="@+id/fullname_edittext"
+        android:id="@+id/firstname_edittext"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="Full Name"
+        android:hint="First Name"
         android:inputType="textPersonName"
         android:padding="16dp"
         android:layout_marginTop="8dp"/>
+
+    <EditText
+        android:id="@+id/lastname_edittext"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Last Name"
+        android:inputType="textPersonName"
+        android:padding="16dp"
+        android:layout_marginTop="8dp"/>
+
 
     <EditText
         android:id="@+id/email_edittext"

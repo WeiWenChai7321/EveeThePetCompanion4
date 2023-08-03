@@ -28,8 +28,9 @@ import android.util.Patterns;
 public class RegisterActivity extends AppCompatActivity {
 
     private EditText emailEditText;
-    private EditText fullNameEditText;
     private EditText passwordEditText;
+    private EditText firstnameEditText;
+    private EditText lastnameEditText;
     private EditText confirmPasswordEditText;
     private EditText phoneEditText;
     private Button signUpButton;
@@ -43,12 +44,13 @@ public class RegisterActivity extends AppCompatActivity {
 
         firebaseAuth = FirebaseAuth.getInstance();
         db = FirebaseFirestore.getInstance();
-        fullNameEditText = findViewById(R.id.fullname_edittext);
         emailEditText = findViewById(R.id.email_edittext);
         passwordEditText = findViewById(R.id.password_edittext);
         confirmPasswordEditText = findViewById(R.id.confirm_password_edittext);
         phoneEditText = findViewById(R.id.phone_edittext);
         signUpButton = findViewById(R.id.sign_up_button);
+        firstnameEditText = findViewById(R.id.firstname_edittext);
+        lastnameEditText = findViewById(R.id.lastname_edittext);
 
         signUpButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -134,7 +136,9 @@ public class RegisterActivity extends AppCompatActivity {
 
     private void saveUserToFirestore(String email, String password) {
         String uid = firebaseAuth.getCurrentUser().getUid();
-        User user = new User(email, password);
+        String firstName = firstnameEditText.getText().toString().trim();
+        String lastName = lastnameEditText.getText().toString().trim();
+        User user = new User(email, password, firstName, lastName);
 
         db.collection("users")
                 .document(uid)
