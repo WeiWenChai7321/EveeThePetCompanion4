@@ -135,9 +135,6 @@ public class DashboardFragment extends Fragment {
         }
         // Set the flag to false to indicate that this is not the initial creation of the fragment
         isInitialCreate = false;
-
-        // Update the UI with existing reminders
-        updateUIWithExistingReminders();
     }
 
 
@@ -194,6 +191,13 @@ public class DashboardFragment extends Fragment {
         updateNoRemindersVisibility();
     }
 
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+
+        // Update the UI with existing reminders
+        updateUIWithExistingReminders();
+    }
 
     private void removeReminderDelayed(CheckBox checkBox) {
 
@@ -245,15 +249,18 @@ public class DashboardFragment extends Fragment {
 
 
     private void updateNoRemindersVisibility() {
-        TextView noRemindersTextView = view.findViewById(R.id.text_no_reminders);
-        if (noRemindersTextView != null) {
-            if (reminderCheckboxes.isEmpty() && !isEditTextVisible) { // Check both conditions
-                noRemindersTextView.setVisibility(View.VISIBLE);
-            } else {
-                noRemindersTextView.setVisibility(View.GONE);
+        if (view != null) {
+            TextView noRemindersTextView = view.findViewById(R.id.text_no_reminders);
+            if (noRemindersTextView != null) {
+                if (reminderCheckboxes.isEmpty() && !isEditTextVisible) { // Check both conditions
+                    noRemindersTextView.setVisibility(View.VISIBLE);
+                } else {
+                    noRemindersTextView.setVisibility(View.GONE);
+                }
             }
         }
     }
+
 
 
     @Override
@@ -296,19 +303,20 @@ public class DashboardFragment extends Fragment {
     }
 
     private void updateUIWithExistingReminders() {
-        remindersLayout.removeAllViews(); // Clear the UI first
 
-        for (Reminder reminder : savedReminders) {
-            CheckBox reminderCheckBox = new CheckBox(context);
-            reminderCheckBox.setText(reminder.getReminderText());
-            reminderCheckBox.setChecked(false);
-            reminderCheckBox.setOnCheckedChangeListener((buttonView, isChecked) -> {
-                if (isChecked) {
-                    removeReminderDelayed((CheckBox) buttonView);
-                }
-            });
-            remindersLayout.addView(reminderCheckBox);
-            reminderCheckboxes.add(reminderCheckBox);
+        if (remindersLayout != null) {
+            for (Reminder reminder : savedReminders) {
+                CheckBox reminderCheckBox = new CheckBox(context);
+                reminderCheckBox.setText(reminder.getReminderText());
+                reminderCheckBox.setChecked(false);
+                reminderCheckBox.setOnCheckedChangeListener((buttonView, isChecked) -> {
+                    if (isChecked) {
+                        removeReminderDelayed((CheckBox) buttonView);
+                    }
+                });
+                remindersLayout.addView(reminderCheckBox);
+                reminderCheckboxes.add(reminderCheckBox);
+            }
         }
 
         // Update the visibility of the "no reminder" text when the fragment is resumed
