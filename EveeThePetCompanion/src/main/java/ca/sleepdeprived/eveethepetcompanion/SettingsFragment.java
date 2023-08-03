@@ -326,11 +326,20 @@ public class SettingsFragment extends Fragment {
 
     // Method to handle account deletion
     private void deleteAccount() {
-        // Perform the necessary actions to delete the user account and associated data
-        // For example, you can use FirebaseAuth to delete the user account and Firestore to delete user data.
-
-        // After successful deletion, you can proceed to log the user out or navigate to the login screen.
-        // For example:
-        logoutUser();
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        if (user != null) {
+            // Delete the user from Firebase Authentication
+            user.delete().addOnCompleteListener(new OnCompleteListener<Void>() {
+                @Override
+                public void onComplete(@NonNull Task<Void> task) {
+                    if (task.isSuccessful()) {
+                        // User account successfully deleted, now delete associated data from Firestore
+                        //deleteUserDataFromFirestore(user.getUid());
+                    } else {
+                        Toast.makeText(getActivity(), R.string.account_deletion_failed, Toast.LENGTH_SHORT).show();
+                    }
+                }
+            });
+        }
     }
 }
