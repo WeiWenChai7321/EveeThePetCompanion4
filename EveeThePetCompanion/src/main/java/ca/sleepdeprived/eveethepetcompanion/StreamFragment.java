@@ -55,8 +55,7 @@ public class StreamFragment extends Fragment {
         btnObstacleAvoidance.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // Show a toast message when the button is clicked
-                Toast.makeText(getActivity(), "Obstacle avoidance enabled", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getActivity(), R.string.obstacle_avoidance_enabled, Toast.LENGTH_SHORT).show();
             }
         });
 

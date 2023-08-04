@@ -202,5 +202,6 @@
         <string name="error_deleting_reminder">Erreur lors de la suppression du rappel : </string>
         <string name="firstname">prénom</string>
         <string name="error_fetching_user_information">Erreur lors de la récupération des informations utilisateur : </string>
+        <string name="obstacle_avoidance_enabled">Évitement d\'obstacles activé</string>
 
 </resources>

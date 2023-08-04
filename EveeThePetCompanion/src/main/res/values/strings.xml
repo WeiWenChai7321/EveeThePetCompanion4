@@ -203,6 +203,7 @@
     <string name="error_deleting_reminder">"Error deleting reminder: "</string>
     <string name="firstname">firstName</string>
     <string name="error_fetching_user_information">"Error fetching user information: "</string>
+    <string name="obstacle_avoidance_enabled">Obstacle avoidance enabled</string>
 
 
 </resources>
