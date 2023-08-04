@@ -211,4 +211,5 @@
         <string name="pet_info_retrieval_failed">Impossible de lire les informations sur l\'animal dans la base de données</string>
         <string name="pet_info_update_failed">Échec de la mise à jour des informations sur l\'animal de compagnie</string>
         <string name="failed_save_pet_info">Échec de la sauvegarde des informations sur l\'animal de compagnie</string>
+        <string name="invalid_age">Veuillez entrer un âge valide (chiffres uniquement)</string>
 </resources>

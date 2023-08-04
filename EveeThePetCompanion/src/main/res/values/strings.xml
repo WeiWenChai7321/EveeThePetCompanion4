@@ -213,6 +213,6 @@
     <string name="pet_info_retrieval_failed">Could not read pet info from database</string>
     <string name="pet_info_update_failed">Failed to update pet info</string>
     <string name="failed_save_pet_info">Failed to create pet info</string>
-
+    <string name="invalid_age">Please enter a valid age (numbers only)</string>
 
 </resources>

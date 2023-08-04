@@ -62,7 +62,8 @@
                         android:layout_height="wrap_content"
                         android:text="@string/age_placeholder"
                         android:hint="@string/age_placeholder"
-                        android:textSize="12sp" />
+                        android:textSize="12sp"
+                        android:inputType="number" />
 
                 </LinearLayout>
 

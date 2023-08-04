@@ -107,7 +107,7 @@ public class PetProfileFragment extends Fragment {
         colorEditText.setText(colorTextView.getText());
         breedEditText.setText(breedTextView.getText());
 
-        // Create and show the AlertDialog for editing pet info
+// Create and show the AlertDialog for editing pet info
         AlertDialog.Builder builder = new AlertDialog.Builder(requireContext());
         builder.setTitle(R.string.edit_pet_info)
                 .setView(dialogView)
@@ -116,56 +116,50 @@ public class PetProfileFragment extends Fragment {
                     public void onClick(DialogInterface dialog, int which) {
                         // Get the updated text from the EditText views
                         String name = nameEditText.getText().toString();
-                        String age = ageEditText.getText().toString();
+                        String ageString = ageEditText.getText().toString();
                         String color = colorEditText.getText().toString();
                         String breed = breedEditText.getText().toString();
 
+                        // Validate age as a number
+                        int age = 0;
+                        try {
+                            age = Integer.parseInt(ageString);
+                        } catch (NumberFormatException e) {
+                            // Handle the case where age is not a valid number
+                            Toast.makeText(requireContext(), R.string.invalid_age, Toast.LENGTH_SHORT).show();
+                            return;
+                        }
+
                         // Update the TextViews with the edited information
                         nameTextView.setText(name);
-                        ageTextView.setText(age);
+                        ageTextView.setText(String.valueOf(age)); // Set the parsed age as an integer
                         colorTextView.setText(color);
                         breedTextView.setText(breed);
 
-                        // Query to retrieve any document from the "pet_info" collection
-                        db.collection("pet_info")
-                                .get()
-                                .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
-                                    @Override
-                                    public void onSuccess(QuerySnapshot querySnapshot) {
-                                        if (!querySnapshot.isEmpty()) {
-                                            // Get the first document from the query result
-                                            DocumentSnapshot documentSnapshot = querySnapshot.getDocuments().get(0);
+                        // Update the Firestore database with the edited information
+                        String userId = auth.getCurrentUser().getUid();
+                        DocumentReference docRef = db.collection("users").document(userId).collection("pet_info").document();
 
-                                            // Update the existing document's fields using update()
-                                            documentSnapshot.getReference().update("petName", name,
-                                                            "petAge", age,
-                                                            "petColor", color,
-                                                            "petBreed", breed)
-                                                    .addOnSuccessListener(new OnSuccessListener<Void>() {
-                                                        @Override
-                                                        public void onSuccess(Void aVoid) {
-                                                            // Show a toast message to indicate successful editing
-                                                            Toast.makeText(requireContext(), R.string.pet_info_updated, Toast.LENGTH_SHORT).show();
-                                                        }
-                                                    })
-                                                    .addOnFailureListener(new OnFailureListener() {
-                                                        @Override
-                                                        public void onFailure(@NonNull Exception e) {
-                                                            // Show a toast message to indicate failure
-                                                            Toast.makeText(requireContext(), R.string.pet_info_update_failed, Toast.LENGTH_SHORT).show();
-                                                        }
-                                                    });
-                                        } else {
-                                            // The "pet_info" collection is empty, show a message or handle accordingly
-                                            Toast.makeText(requireContext(), R.string.pet_info_retrieval_failed, Toast.LENGTH_SHORT).show();
-                                        }
+                        // Create a Map with the edited data
+                        Map<String, Object> editedData = new HashMap<>();
+                        editedData.put("petName", name);
+                        editedData.put("petAge", age);
+                        editedData.put("petColor", color);
+                        editedData.put("petBreed", breed);
+
+                        docRef.set(editedData)
+                                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                    @Override
+                                    public void onSuccess(Void aVoid) {
+                                        // Show a toast message to indicate successful editing
+                                        Toast.makeText(requireContext(), R.string.pet_info_updated, Toast.LENGTH_SHORT).show();
                                     }
                                 })
                                 .addOnFailureListener(new OnFailureListener() {
                                     @Override
                                     public void onFailure(@NonNull Exception e) {
                                         // Show a toast message to indicate failure
-                                        Toast.makeText(requireContext(), R.string.pet_info_retrieval_failed, Toast.LENGTH_SHORT).show();
+                                        Toast.makeText(requireContext(), R.string.pet_info_update_failed, Toast.LENGTH_SHORT).show();
                                     }
                                 });
                     }
@@ -173,8 +167,6 @@ public class PetProfileFragment extends Fragment {
                 .setNegativeButton(R.string.cancel, null)
                 .show();
     }
-
-
 
     @Override
     public void onResume() {
