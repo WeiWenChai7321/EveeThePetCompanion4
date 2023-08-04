@@ -50,7 +50,6 @@ public class StreamFragment extends Fragment {
             }
         });
 
-        // Add click listener to the btnObstacleAvoidance
         btnObstacleAvoidance.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -58,7 +57,6 @@ public class StreamFragment extends Fragment {
             }
         });
 
-        // Add click listener to the btnLineFollowing
         btnLineFollowing.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

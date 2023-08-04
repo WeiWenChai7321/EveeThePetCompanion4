@@ -15,18 +15,10 @@
         android:layout_width="189dp"
         android:layout_height="136dp"
         android:layout_alignBottom="@id/stream_view"
-        android:layout_marginBottom="0dp"
-        android:src="@drawable/arrow_keys"
-        app:tint="@color/white" />
-
-    <ImageView
-        android:id="@+id/arrow_keys_bottom_right"
-        android:layout_width="108dp"
-        android:layout_height="82dp"
-        android:layout_alignBottom="@id/stream_view"
         android:layout_alignParentRight="true"
-        android:layout_marginBottom="1dp"
-        android:src="@drawable/updown"
+        android:layout_marginBottom="0dp"
+        android:layout_marginRight="16dp"
+        android:src="@drawable/arrow_keys"
         app:tint="@color/white" />
 
     <LinearLayout
