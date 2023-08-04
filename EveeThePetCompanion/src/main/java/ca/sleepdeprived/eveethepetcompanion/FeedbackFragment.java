@@ -77,6 +77,27 @@ public class FeedbackFragment extends Fragment {
                 String comment = editComment.getText().toString();
                 float rating = ratingBar.getRating();
 
+                // Check if any field is empty and display an error message if necessary
+                if (name.isEmpty()) {
+                    editName.setError(getString(R.string.empty_field));
+                    return;
+                }
+
+                if (phone.isEmpty()) {
+                    editPhone.setError(getString(R.string.empty_field));
+                    return;
+                }
+
+                if (email.isEmpty()) {
+                    editEmail.setError(getString(R.string.empty_field));
+                    return;
+                }
+
+                if (comment.isEmpty()) {
+                    editComment.setError(getString(R.string.empty_field));
+                    return;
+                }
+
                 // Validate phone number
                 if (!isValidPhoneNumber(phone)) {
                     editPhone.setError(getString(R.string.invalid_phone));
