@@ -25,6 +25,8 @@ public class StreamFragment extends Fragment {
     private ImageButton btnTreat;
     private ImageButton btnRecord;
     private ImageButton btnPicture;
+    private boolean obstacleAvoidanceEnabled = false;
+    private boolean lineFollowingEnabled = false;
 
     @Nullable
     @Override
@@ -53,14 +55,24 @@ public class StreamFragment extends Fragment {
         btnObstacleAvoidance.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast.makeText(getActivity(), R.string.obstacle_avoidance_enabled, Toast.LENGTH_SHORT).show();
+                obstacleAvoidanceEnabled = !obstacleAvoidanceEnabled;
+                if (obstacleAvoidanceEnabled) {
+                    Toast.makeText(getActivity(), R.string.obstacle_avoidance_enabled, Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(getActivity(), R.string.obstacle_avoidance_disabled, Toast.LENGTH_SHORT).show();
+                }
             }
         });
 
         btnLineFollowing.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast.makeText(getActivity(), R.string.line_following_enabled, Toast.LENGTH_SHORT).show();
+                lineFollowingEnabled = !lineFollowingEnabled;
+                if (lineFollowingEnabled) {
+                    Toast.makeText(getActivity(), R.string.line_following_enabled, Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(getActivity(), R.string.line_following_disabled, Toast.LENGTH_SHORT).show();
+                }
             }
         });
 
