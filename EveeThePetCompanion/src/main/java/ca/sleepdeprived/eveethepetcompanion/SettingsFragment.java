@@ -34,6 +34,7 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.auth.UserInfo;
 import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -93,13 +94,19 @@ public class SettingsFragment extends Fragment {
 
                     // Check if the user is signed in with Google
                     FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-                    if (user != null && user.getProviderData().size() > 1) {
-                        // User signed in with Google, show a toast message
-                        Toast.makeText(getActivity(), R.string.google_email_edit_not_allowed, Toast.LENGTH_SHORT).show();
-                    } else {
-                        // User not signed in with Google, proceed with email update
-                        updateEmailInFirestore(updatedEmail);
+                    if (user != null) {
+                        for (UserInfo profile : user.getProviderData()) {
+                            if ("google.com".equals(profile.getProviderId())) {
+                                // User signed in with Google, show a toast message
+                                Toast.makeText(getActivity(), R.string.google_email_edit_not_allowed, Toast.LENGTH_SHORT).show();
+                                return; // Return here to prevent email update for Google sign-in users
+                            }
+                        }
                     }
+
+                    // User not signed in with Google or no user, proceed with email update
+                    updateEmailInFirestore(updatedEmail);
+
                     emailEditText.setEnabled(false);
                     if (isSaveButton) {
                         // If the button is in "Save" state, change the text to "Save"
