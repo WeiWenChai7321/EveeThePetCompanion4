@@ -208,5 +208,6 @@
         <string name="line_following_disabled">Suivi de ligne désactivé</string>
         <string name="refill_treat_dispenser">Rechargez le distributeur de friandises !</string>
         <string name="treats_remaining">Restants friandises : %1$d</string>
+        <string name="no_internet_access">Vous devez vous connecter à votre compte au moins une fois avec accès à Internet pour vous connecter hors ligne.</string>
 
 </resources>

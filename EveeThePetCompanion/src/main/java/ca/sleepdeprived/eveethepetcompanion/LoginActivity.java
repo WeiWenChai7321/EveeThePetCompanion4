@@ -7,8 +7,11 @@
 
 package ca.sleepdeprived.eveethepetcompanion;
 
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.view.View;
@@ -132,18 +135,49 @@ public class LoginActivity extends AppCompatActivity {
         Snackbar loggingInSnackbar = Snackbar.make(findViewById(android.R.id.content), getString(R.string.signing_in), Snackbar.LENGTH_INDEFINITE);
         loggingInSnackbar.show();
 
-        firebaseAuth.signInWithEmailAndPassword(email, password)
-                .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
-                    @Override
-                    public void onComplete(@NonNull Task<AuthResult> task) {
-                        dismissSnackbar(loggingInSnackbar);
-                        if (task.isSuccessful()) {
-                            performSuccessfulLogin();
-                        } else {
-                            showSnackbar(getString(R.string.login_failed));
-                        }
-                    }
-                });
+        // Check if the user has logged in before (using shared preferences)
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
+        boolean isLoggedIn = preferences.getBoolean(getString(R.string.isloggedin), false);
+
+        if (isLoggedIn) {
+            // User has logged in before, proceed with login without internet access
+            dismissSnackbar(loggingInSnackbar);
+            performSuccessfulLogin();
+        } else {
+            // Check if there is internet access
+            if (hasInternetAccess()) {
+                if (isValidEmail(email) && isValidPassword(password)) {
+                    firebaseAuth.signInWithEmailAndPassword(email, password)
+                            .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
+                                @Override
+                                public void onComplete(@NonNull Task<AuthResult> task) {
+                                    if (task.isSuccessful()) {
+                                        // Successful login with internet access, save the logged-in state
+                                        SharedPreferences.Editor editor = preferences.edit();
+                                        editor.putBoolean(getString(R.string.isloggedin), true);
+                                        editor.apply();
+
+                                        dismissSnackbar(loggingInSnackbar);
+                                        performSuccessfulLogin();
+                                    } else {
+                                        // Invalid credentials, show login failed message
+                                        showSnackbar(getString(R.string.login_failed));
+                                    }
+                                }
+                            });
+                }
+            } else {
+                // No internet access, show an error message
+                dismissSnackbar(loggingInSnackbar);
+                showSnackbar(getString(R.string.no_internet_access));
+            }
+        }
+    }
+
+    private boolean hasInternetAccess() {
+        ConnectivityManager connectivityManager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo activeNetwork = connectivityManager.getActiveNetworkInfo();
+        return activeNetwork != null && activeNetwork.isConnected();
     }
 
     private void dismissSnackbar(Snackbar snackbar) {

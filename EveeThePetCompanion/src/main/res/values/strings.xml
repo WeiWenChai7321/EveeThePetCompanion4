@@ -209,7 +209,7 @@
     <string name="line_following_disabled">Line following disabled</string>
     <string name="refill_treat_dispenser">Refill treat dispenser!</string>
     <string name="treats_remaining">Treats Remaining: %1$d</string>
-
+    <string name="no_internet_access">You are required to log in to your account with internet access at least once in order to log in offline.</string>
 
 
 </resources>
