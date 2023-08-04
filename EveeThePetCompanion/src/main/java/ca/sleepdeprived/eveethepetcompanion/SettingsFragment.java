@@ -67,6 +67,16 @@ public class SettingsFragment extends Fragment {
         sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getActivity());
         firestore = FirebaseFirestore.getInstance();
         emailEditText = view.findViewById(R.id.et_email);
+
+        // Get the current user
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        if (user != null) {
+            String googleEmail = getUserGoogleEmail(user);
+            if (googleEmail != null && !googleEmail.isEmpty()) {
+                emailEditText.setText(googleEmail);
+            }
+        }
+
         return view;
     }
 
@@ -99,6 +109,8 @@ public class SettingsFragment extends Fragment {
                             if ("google.com".equals(profile.getProviderId())) {
                                 // User signed in with Google, show a toast message
                                 Toast.makeText(getActivity(), R.string.google_email_edit_not_allowed, Toast.LENGTH_SHORT).show();
+                                emailEditText.setEnabled(false);
+                                updateButton.setText(R.string.update);
                                 return; // Return here to prevent email update for Google sign-in users
                             }
                         }
@@ -349,5 +361,15 @@ public class SettingsFragment extends Fragment {
                         Toast.makeText(getActivity(), R.string.account_deletion_failed, Toast.LENGTH_SHORT).show();
                     }
                 });
+    }
+
+    // Method to get the user's Google email
+    private String getUserGoogleEmail(FirebaseUser user) {
+        for (UserInfo profile : user.getProviderData()) {
+            if ("google.com".equals(profile.getProviderId())) {
+                return profile.getEmail();
+            }
+        }
+        return null;
     }
 }
