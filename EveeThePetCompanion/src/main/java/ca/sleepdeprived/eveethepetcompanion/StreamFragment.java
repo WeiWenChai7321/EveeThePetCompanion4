@@ -27,7 +27,6 @@ public class StreamFragment extends Fragment {
     private ImageButton btnRecord;
     private ImageButton btnPicture;
 
-
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -52,6 +51,16 @@ public class StreamFragment extends Fragment {
             }
         });
 
+        // Add click listener to the btnObstacleAvoidance
+        btnObstacleAvoidance.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // Show a toast message when the button is clicked
+                Toast.makeText(getActivity(), "Obstacle avoidance enabled", Toast.LENGTH_SHORT).show();
+            }
+        });
+
         return view;
     }
 }
+
