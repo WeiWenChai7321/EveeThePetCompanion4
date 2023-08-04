@@ -29,6 +29,7 @@ import android.widget.TextView;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.auth.UserInfo;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
@@ -350,7 +351,23 @@ public class DashboardFragment extends Fragment {
         if (currentUser != null) {
             String currentUserId = FirebaseAuth.getInstance().getCurrentUser().getUid();
 
-            // Replace "users" with the appropriate collection name where you have stored the user information, and "firstName" with the field containing the first name.
+            // Check if the user is signed in with Google
+            for (UserInfo profile : currentUser.getProviderData()) {
+                if ("google.com".equals(profile.getProviderId())) {
+                    // User signed in with Google, get the Google account name
+                    String googleAccountName = profile.getDisplayName();
+                    if (googleAccountName != null && !googleAccountName.isEmpty() && view != null) { // Check if the view is not null
+                        TextView dashboardTitleTextView = view.findViewById(R.id.dashboard_title);
+                        if (dashboardTitleTextView != null) {
+                            String greeting = getString(R.string.hi) + " " + googleAccountName;
+                            dashboardTitleTextView.setText(greeting);
+                        }
+                    }
+                    return; // Return here to prevent further processing for non-Google sign-in users
+                }
+            }
+
+            // If not signed in with Google, proceed with fetching the user information from the Firestore database
             DocumentReference userDocRef = db.collection("users").document(currentUserId);
             userDocRef.get()
                     .addOnSuccessListener(documentSnapshot -> {
@@ -373,6 +390,5 @@ public class DashboardFragment extends Fragment {
                     });
         }
     }
-
 
 }
