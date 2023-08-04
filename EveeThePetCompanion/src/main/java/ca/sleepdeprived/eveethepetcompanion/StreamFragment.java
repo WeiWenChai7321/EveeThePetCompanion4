@@ -9,7 +9,9 @@ package ca.sleepdeprived.eveethepetcompanion;
 import android.graphics.drawable.GradientDrawable;
 import android.graphics.drawable.LayerDrawable;
 import android.os.Bundle;
+import android.os.Handler;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
@@ -31,6 +33,9 @@ public class StreamFragment extends Fragment {
     private final int MAX_TREATS = 30; // Maximum number of treats
     private boolean obstacleAvoidanceEnabled = false;
     private boolean lineFollowingEnabled = false;
+    private static final int LONG_PRESS_DURATION = 3000; // 3 seconds
+    private boolean treatButtonLongPressed = false;
+    private Handler handler = new Handler();
 
     @Nullable
     @Override
@@ -52,7 +57,13 @@ public class StreamFragment extends Fragment {
         btnTreat.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast.makeText(getActivity(), getString(R.string.treat_dispensed), Toast.LENGTH_SHORT).show();
+                if (treatCount > 0) {
+                    treatCount--;
+                    updateTreatButton();
+                    Toast.makeText(getActivity(), getString(R.string.treat_dispensed) + "\n" + getString(R.string.treats_remaining, treatCount), Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(getActivity(), getString(R.string.refill_treat_dispenser), Toast.LENGTH_SHORT).show();
+                }
             }
         });
 
@@ -86,19 +97,46 @@ public class StreamFragment extends Fragment {
 
         updateTreatButton();
 
-        btnTreat.setOnClickListener(new View.OnClickListener() {
+        btnTreat.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
-            public void onClick(View v) {
-                if (treatCount > 0) {
-                    treatCount--;
-                    updateTreatButton();
-                    Toast.makeText(getActivity(), getString(R.string.treat_dispensed) + "\n" + getString(R.string.treats_remaining, treatCount), Toast.LENGTH_SHORT).show();
-                } else {
-                    Toast.makeText(getActivity(), getString(R.string.refill_treat_dispenser), Toast.LENGTH_SHORT).show();
-                }
+            public boolean onLongClick(View v) {
+                // Start the long-press handler
+                handler.postDelayed(longPressRunnable, LONG_PRESS_DURATION);
+                treatButtonLongPressed = true;
+                return true;
             }
         });
 
+        btnTreat.setOnTouchListener(new View.OnTouchListener() {
+            private long touchStartTime;
+
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                if (event.getAction() == MotionEvent.ACTION_DOWN) {
+                    touchStartTime = System.currentTimeMillis();
+                    handler.postDelayed(longPressRunnable, LONG_PRESS_DURATION);
+                } else if (event.getAction() == MotionEvent.ACTION_UP) {
+                    long touchDuration = System.currentTimeMillis() - touchStartTime;
+                    handler.removeCallbacks(longPressRunnable);
+                    if (touchDuration < LONG_PRESS_DURATION) {
+                        // Short click
+                        if (treatCount > 0) {
+                            treatCount--;
+                            updateTreatButton();
+                            Toast.makeText(getActivity(), getString(R.string.treat_dispensed) + "\n" + getString(R.string.treats_remaining, treatCount), Toast.LENGTH_SHORT).show();
+                        } else {
+                            Toast.makeText(getActivity(), getString(R.string.refill_treat_dispenser), Toast.LENGTH_SHORT).show();
+                        }
+                    } else {
+                        // Long press
+                        resetTreatCounter();
+                    }
+                } else if (event.getAction() == MotionEvent.ACTION_CANCEL) {
+                    handler.removeCallbacks(longPressRunnable);
+                }
+                return true;
+            }
+        });
 
         return view;
     }
@@ -110,6 +148,16 @@ public class StreamFragment extends Fragment {
             btnTreat.setBackgroundResource(R.color.primary_color); // Revert to default color when treats available
         }
     }
+    private Runnable longPressRunnable = new Runnable() {
+        @Override
+        public void run() {
+            resetTreatCounter();
+        }
+    };
+
+    private void resetTreatCounter() {
+        // Reset the treat count and update the button background
+        treatCount = MAX_TREATS;
+        updateTreatButton();
+    }
 }
-
-
