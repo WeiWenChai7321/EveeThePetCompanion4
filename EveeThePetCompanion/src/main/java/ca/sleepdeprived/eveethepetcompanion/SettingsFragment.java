@@ -162,7 +162,12 @@ public class SettingsFragment extends Fragment {
         deleteAccountButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                showDeleteAccountDialog();
+                // Get the current user
+                FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
+                if (currentUser != null) {
+                    user = currentUser;
+                    showDeleteAccountDialog();
+                }
             }
         });
     }
