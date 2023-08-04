@@ -10,6 +10,9 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
+import java.util.HashMap;
+import java.util.Map;
+
 public class PetInfoViewModel extends ViewModel {
     private MutableLiveData<String> petNameLiveData = new MutableLiveData<>();
     private MutableLiveData<String> petAgeLiveData = new MutableLiveData<>();
@@ -55,4 +58,14 @@ public class PetInfoViewModel extends ViewModel {
     public LiveData<String> getPetBreed() {
         return petBreedLiveData;
     }
+
+    public Map<String, Object> toMap() {
+        Map<String, Object> map = new HashMap<>();
+        map.put("petName", petNameLiveData.getValue());
+        map.put("petAge", petAgeLiveData.getValue());
+        map.put("petColor", petColorLiveData.getValue());
+        map.put("petBreed", petBreedLiveData.getValue());
+        return map;
+    }
+
 }

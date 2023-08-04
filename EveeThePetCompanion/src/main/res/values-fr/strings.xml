@@ -208,4 +208,7 @@
         <string name="refill_treat_dispenser">Rechargez le distributeur de friandises !</string>
         <string name="treats_remaining">Restants friandises : %1$d</string>
         <string name="no_internet_access">Vous devez vous connecter à votre compte au moins une fois avec accès à Internet pour vous connecter hors ligne.</string>
+        <string name="pet_info_retrieval_failed">Impossible de lire les informations sur l\'animal dans la base de données</string>
+        <string name="pet_info_update_failed">Échec de la mise à jour des informations sur l\'animal de compagnie</string>
+        <string name="failed_save_pet_info">Échec de la sauvegarde des informations sur l\'animal de compagnie</string>
 </resources>

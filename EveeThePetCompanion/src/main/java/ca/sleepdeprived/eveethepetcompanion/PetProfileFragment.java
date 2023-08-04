@@ -23,15 +23,27 @@ import android.widget.GridLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.QuerySnapshot;
+import com.google.firebase.firestore.SetOptions;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
+import java.util.HashMap;
+import java.util.Map;
+
 public class PetProfileFragment extends Fragment {
     private PetInfoViewModel petInfoViewModel;
     private static final String PREFS_NAME = "CellDataPrefs";
-
-    private GridLayout scheduleGrid;
+    private FirebaseFirestore db;
+    private FirebaseAuth auth;
     private EditText cellEditText;
     private boolean isEditMode = false;
     private SharedPreferences sharedPreferences;
@@ -50,8 +62,12 @@ public class PetProfileFragment extends Fragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_petprofile, container, false);
+        auth = FirebaseAuth.getInstance();
+        db = FirebaseFirestore.getInstance();
         cellEditText = new EditText(requireContext());
+
         sharedPreferences = requireContext().getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
+
         nameTextView = view.findViewById(R.id.nameTextView);
         ageTextView = view.findViewById(R.id.ageTextView);
         colorTextView = view.findViewById(R.id.colorTextView);
@@ -68,6 +84,9 @@ public class PetProfileFragment extends Fragment {
                 editPetInfo();
             }
         });
+
+        // Read pet information from Firestore
+        readPetInfoFromFirestore();
 
         return view;
     }
@@ -88,16 +107,6 @@ public class PetProfileFragment extends Fragment {
         colorEditText.setText(colorTextView.getText());
         breedEditText.setText(breedTextView.getText());
 
-        String name = nameEditText.getText().toString();
-        String age = ageEditText.getText().toString();
-        String color = colorEditText.getText().toString();
-        String breed = breedEditText.getText().toString();
-
-        petInfoViewModel.setPetName(name);
-        petInfoViewModel.setPetAge(age);
-        petInfoViewModel.setPetColor(color);
-        petInfoViewModel.setPetBreed(breed);
-
         // Create and show the AlertDialog for editing pet info
         AlertDialog.Builder builder = new AlertDialog.Builder(requireContext());
         builder.setTitle(R.string.edit_pet_info)
@@ -117,29 +126,55 @@ public class PetProfileFragment extends Fragment {
                         colorTextView.setText(color);
                         breedTextView.setText(breed);
 
-                        // Store the edited information in SharedPreferences
-                        SharedPreferences.Editor editor = sharedPreferences.edit();
-                        editor.putString(getString(R.string.name_key), name);
-                        editor.putString(getString(R.string.age_key), age);
-                        editor.putString(getString(R.string.color_key), color);
-                        editor.putString(getString(R.string.breed_key), breed);
-                        editor.apply();
+                        // Query to retrieve any document from the "pet_info" collection
+                        db.collection("pet_info")
+                                .get()
+                                .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+                                    @Override
+                                    public void onSuccess(QuerySnapshot querySnapshot) {
+                                        if (!querySnapshot.isEmpty()) {
+                                            // Get the first document from the query result
+                                            DocumentSnapshot documentSnapshot = querySnapshot.getDocuments().get(0);
 
-                        // Show a toast message to indicate successful editing
-                        Toast.makeText(requireContext(), R.string.pet_info_updated, Toast.LENGTH_SHORT).show();
+                                            // Update the existing document's fields using update()
+                                            documentSnapshot.getReference().update("petName", name,
+                                                            "petAge", age,
+                                                            "petColor", color,
+                                                            "petBreed", breed)
+                                                    .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                        @Override
+                                                        public void onSuccess(Void aVoid) {
+                                                            // Show a toast message to indicate successful editing
+                                                            Toast.makeText(requireContext(), R.string.pet_info_updated, Toast.LENGTH_SHORT).show();
+                                                        }
+                                                    })
+                                                    .addOnFailureListener(new OnFailureListener() {
+                                                        @Override
+                                                        public void onFailure(@NonNull Exception e) {
+                                                            // Show a toast message to indicate failure
+                                                            Toast.makeText(requireContext(), R.string.pet_info_update_failed, Toast.LENGTH_SHORT).show();
+                                                        }
+                                                    });
+                                        } else {
+                                            // The "pet_info" collection is empty, show a message or handle accordingly
+                                            Toast.makeText(requireContext(), R.string.pet_info_retrieval_failed, Toast.LENGTH_SHORT).show();
+                                        }
+                                    }
+                                })
+                                .addOnFailureListener(new OnFailureListener() {
+                                    @Override
+                                    public void onFailure(@NonNull Exception e) {
+                                        // Show a toast message to indicate failure
+                                        Toast.makeText(requireContext(), R.string.pet_info_retrieval_failed, Toast.LENGTH_SHORT).show();
+                                    }
+                                });
                     }
                 })
                 .setNegativeButton(R.string.cancel, null)
                 .show();
     }
 
-    @Override
-    public void onPause() {
-        super.onPause();
-        SharedPreferences.Editor editor = sharedPreferences.edit();
-        editor.putBoolean(getString(R.string.is_edit_mode_key), isEditMode);
-        editor.apply();
-    }
+
 
     @Override
     public void onResume() {
@@ -167,6 +202,15 @@ public class PetProfileFragment extends Fragment {
         }
     }
 
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.putBoolean(getString(R.string.is_edit_mode_key), isEditMode);
+        editor.apply();
+    }
+
     @Override
     public void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
@@ -180,4 +224,49 @@ public class PetProfileFragment extends Fragment {
             isEditMode = savedInstanceState.getBoolean(getString(R.string.is_edit_mode_key), false);
         }
     }
+
+    private void readPetInfoFromFirestore() {
+        // Query to retrieve any document from the "pet_info" collection
+        db.collection("pet_info")
+                .get()
+                .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+                    @Override
+                    public void onSuccess(QuerySnapshot querySnapshot) {
+                        if (!querySnapshot.isEmpty()) {
+                            // Get the first document from the query result
+                            DocumentSnapshot documentSnapshot = querySnapshot.getDocuments().get(0);
+
+                            String name = documentSnapshot.getString("petName");
+                            String age = documentSnapshot.getString("petAge");
+                            String color = documentSnapshot.getString("petColor");
+                            String breed = documentSnapshot.getString("petBreed");
+
+                            // Update the TextViews with the retrieved pet information
+                            if (name != null && !name.isEmpty()) {
+                                nameTextView.setText(name);
+                            }
+                            if (age != null && !age.isEmpty()) {
+                                ageTextView.setText(age);
+                            }
+                            if (color != null && !color.isEmpty()) {
+                                colorTextView.setText(color);
+                            }
+                            if (breed != null && !breed.isEmpty()) {
+                                breedTextView.setText(breed);
+                            }
+                        } else {
+                            // The "pet_info" collection is empty, show a message or handle accordingly
+                            Toast.makeText(requireContext(), R.string.pet_info_retrieval_failed, Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        // Show a toast message to indicate failure
+                        Toast.makeText(requireContext(), R.string.pet_info_retrieval_failed, Toast.LENGTH_SHORT).show();
+                    }
+                });
+    }
+
 }

@@ -16,6 +16,7 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.lifecycle.ViewModelProvider;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -36,6 +37,7 @@ public class RegisterActivity extends AppCompatActivity {
     private Button signUpButton;
     private FirebaseAuth firebaseAuth;
     private FirebaseFirestore db;
+    private PetInfoViewModel petInfoViewModel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,6 +46,7 @@ public class RegisterActivity extends AppCompatActivity {
 
         firebaseAuth = FirebaseAuth.getInstance();
         db = FirebaseFirestore.getInstance();
+        petInfoViewModel = new ViewModelProvider(this).get(PetInfoViewModel.class);
         emailEditText = findViewById(R.id.email_edittext);
         passwordEditText = findViewById(R.id.password_edittext);
         confirmPasswordEditText = findViewById(R.id.confirm_password_edittext);
@@ -113,6 +116,7 @@ public class RegisterActivity extends AppCompatActivity {
         });
     }
 
+    // Inside createAccount() method in RegisterActivity
     private void createAccount(final String email, final String password) {
         firebaseAuth.createUserWithEmailAndPassword(email, password)
                 .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
@@ -122,11 +126,16 @@ public class RegisterActivity extends AppCompatActivity {
                             // Account creation successful, show success message
                             Toast.makeText(RegisterActivity.this, R.string.account_created_successfully, Toast.LENGTH_SHORT).show();
 
+                            // Set pet information in the ViewModel
                             String firstName = firstnameEditText.getText().toString().trim();
                             String lastName = lastnameEditText.getText().toString().trim();
-                            saveUserToFirestore(email, password, firstName, lastName);
+                            petInfoViewModel.setPetName("Zoe");
+                            petInfoViewModel.setPetAge("2");
+                            petInfoViewModel.setPetColor("brown");
+                            petInfoViewModel.setPetBreed("tortoiseshell");
 
-                            // Navigate to LoginActivity
+                            // Save user and pet information to Firestore
+                            saveUserAndPetToFirestore(email, password, firstName, lastName);
                             navigateToLoginActivity();
                         } else {
                             // Error occurred while creating the account, show error message
@@ -136,10 +145,12 @@ public class RegisterActivity extends AppCompatActivity {
                 });
     }
 
-    private void saveUserToFirestore(String email, String password, String firstName, String lastName) {
+    // Inside saveUserAndPetToFirestore() method in RegisterActivity
+    private void saveUserAndPetToFirestore(String email, String password, String firstName, String lastName) {
         String uid = firebaseAuth.getCurrentUser().getUid();
         User user = new User(email, password, firstName, lastName);
 
+        // Save user information to Firestore
         db.collection("users")
                 .document(uid)
                 .set(user)
@@ -148,6 +159,22 @@ public class RegisterActivity extends AppCompatActivity {
                     public void onComplete(@NonNull Task<Void> task) {
                         if (task.isSuccessful()) {
                             // User data saved to Firestore
+
+                            // Save pet information to Firestore
+                            db.collection("pet_info")
+                                    .document(uid)
+                                    .set(petInfoViewModel.toMap())
+                                    .addOnCompleteListener(new OnCompleteListener<Void>() {
+                                        @Override
+                                        public void onComplete(@NonNull Task<Void> task) {
+                                            if (task.isSuccessful()) {
+                                                // Pet information saved to Firestore
+                                            } else {
+                                                // Error occurred while saving pet information, show error message
+                                                Toast.makeText(RegisterActivity.this, R.string.failed_save_pet_info, Toast.LENGTH_SHORT).show();
+                                            }
+                                        }
+                                    });
                         } else {
                             // Error occurred while saving user data, show error message
                             Toast.makeText(RegisterActivity.this, R.string.failed_save_user_data, Toast.LENGTH_SHORT).show();
@@ -169,5 +196,4 @@ public class RegisterActivity extends AppCompatActivity {
         if (!password.matches(".*[^a-zA-Z0-9 ].*")) return false; // Check for a special character
         return true;
     }
-
 }

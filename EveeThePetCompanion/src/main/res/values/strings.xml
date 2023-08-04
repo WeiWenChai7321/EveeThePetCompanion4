@@ -210,6 +210,9 @@
     <string name="refill_treat_dispenser">Refill treat dispenser!</string>
     <string name="treats_remaining">Treats Remaining: %1$d</string>
     <string name="no_internet_access">You are required to log in to your account with internet access at least once in order to log in offline.</string>
+    <string name="pet_info_retrieval_failed">Could not read pet info from database</string>
+    <string name="pet_info_update_failed">Failed to update pet info</string>
+    <string name="failed_save_pet_info">Failed to create pet info</string>
 
 
 </resources>
