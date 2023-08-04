@@ -6,6 +6,8 @@
 */
 package ca.sleepdeprived.eveethepetcompanion;
 
+import android.graphics.drawable.GradientDrawable;
+import android.graphics.drawable.LayerDrawable;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -25,6 +27,8 @@ public class StreamFragment extends Fragment {
     private ImageButton btnTreat;
     private ImageButton btnRecord;
     private ImageButton btnPicture;
+    private int treatCount = 30; // The initial treat count, change it to any desired value
+    private final int MAX_TREATS = 30; // Maximum number of treats
     private boolean obstacleAvoidanceEnabled = false;
     private boolean lineFollowingEnabled = false;
 
@@ -80,8 +84,31 @@ public class StreamFragment extends Fragment {
             }
         });
 
+        updateTreatButton();
+
+        btnTreat.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (treatCount > 0) {
+                    treatCount--;
+                    updateTreatButton();
+                    Toast.makeText(getActivity(), getString(R.string.treat_dispensed) + "\n" + getString(R.string.treats_remaining, treatCount), Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(getActivity(), getString(R.string.refill_treat_dispenser), Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
+
 
         return view;
+    }
+
+    private void updateTreatButton() {
+        if (treatCount == 0) {
+            btnTreat.setBackgroundResource(R.color.grey); // Change background color to grey when treatCount is 0
+        } else {
+            btnTreat.setBackgroundResource(R.color.primary_color); // Revert to default color when treats available
+        }
     }
 }
 

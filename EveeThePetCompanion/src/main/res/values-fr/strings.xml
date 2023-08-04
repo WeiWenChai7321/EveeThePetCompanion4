@@ -206,5 +206,7 @@
         <string name="line_following_enabled">Suivi de ligne activé</string>
         <string name="obstacle_avoidance_disabled">Évitement des obstacles désactivé</string>
         <string name="line_following_disabled">Suivi de ligne désactivé</string>
+        <string name="refill_treat_dispenser">Rechargez le distributeur de friandises !</string>
+        <string name="treats_remaining">Restants friandises : %1$d</string>
 
 </resources>
