@@ -58,8 +58,10 @@ public class StreamFragment extends Fragment {
                 obstacleAvoidanceEnabled = !obstacleAvoidanceEnabled;
                 if (obstacleAvoidanceEnabled) {
                     Toast.makeText(getActivity(), R.string.obstacle_avoidance_enabled, Toast.LENGTH_SHORT).show();
+                    btnObstacleAvoidance.setBackgroundResource(R.color.bright_pink); // Change to bright pink when enabled
                 } else {
                     Toast.makeText(getActivity(), R.string.obstacle_avoidance_disabled, Toast.LENGTH_SHORT).show();
+                    btnObstacleAvoidance.setBackgroundResource(R.color.primary_color); // Revert to default color when disabled
                 }
             }
         });
@@ -70,11 +72,14 @@ public class StreamFragment extends Fragment {
                 lineFollowingEnabled = !lineFollowingEnabled;
                 if (lineFollowingEnabled) {
                     Toast.makeText(getActivity(), R.string.line_following_enabled, Toast.LENGTH_SHORT).show();
+                    btnLineFollowing.setBackgroundResource(R.color.bright_pink); // Change to bright pink when enabled
                 } else {
                     Toast.makeText(getActivity(), R.string.line_following_disabled, Toast.LENGTH_SHORT).show();
+                    btnLineFollowing.setBackgroundResource(R.color.primary_color); // Revert to default color when disabled
                 }
             }
         });
+
 
         return view;
     }
