@@ -175,7 +175,7 @@
     <string name="age_key">age</string>
     <string name="color_key">color</string>
     <string name="breed_key">breed</string>
-    <string name="account_already_exists">An account already exists with this email</string>
+    <string name="account_already_exists">An account already exists with this email. Please use a different email that you have not used to create an account before - this is the case even if you deleted the account.</string>
     <string name="failed_access_firebase">Failed to access Firebase Authentication. Please try again.</string>
     <string name="account_created_successfully">Account created successfully</string>
     <string name="failed_create_account">Failed to create account. Please try again.</string>

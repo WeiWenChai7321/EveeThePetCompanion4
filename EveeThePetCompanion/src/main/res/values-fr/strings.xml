@@ -38,7 +38,6 @@
         <string name="login">Connexion</string>
         <string name="forgot_password">Mot de passe oublié?</string>
         <string name="don_t_have_an_account_sign_up">Vous n\'avez pas de compte ? S\'inscrire</string>
-        <string name="hi_chloe">Salut Chloé</string>
         <string name="your_pets">Vos animaux de compagnie</string>
         <string name="petname">Zoé</string>
         <string name="eat">Manger</string>
@@ -174,7 +173,7 @@
         <string name="age_key">age</string>
         <string name="color_key">color</string>
         <string name="breed_key">breed</string>
-        <string name="account_already_exists">Un compte existe déjà avec cette adresse e-mail</string>
+        <string name="account_already_exists">Un compte existe déjà avec cette adresse e-mail. Veuillez utiliser une adresse e-mail différente que vous navez pas utilisée pour créer un compte auparavant - cela sapplique même si vous avez supprimé le compte.</string>
         <string name="failed_access_firebase">Échec de l\'accès à l\'authentification Firebase. Veuillez réessayer.</string>
         <string name="account_created_successfully">Compte créé avec succès</string>
         <string name="failed_create_account">Échec de la création du compte. Veuillez réessayer.</string>
@@ -209,5 +208,4 @@
         <string name="refill_treat_dispenser">Rechargez le distributeur de friandises !</string>
         <string name="treats_remaining">Restants friandises : %1$d</string>
         <string name="no_internet_access">Vous devez vous connecter à votre compte au moins une fois avec accès à Internet pour vous connecter hors ligne.</string>
-
 </resources>
