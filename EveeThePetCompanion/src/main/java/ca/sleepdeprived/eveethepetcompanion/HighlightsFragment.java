@@ -132,9 +132,15 @@ public class HighlightsFragment extends Fragment {
         }
     }
 
-    private void showToast(String message) {
-        Toast.makeText(requireContext(), message, Toast.LENGTH_SHORT).show();
+    private void showToast(String imagePath) {
+        int lastSlashIndex = imagePath.lastIndexOf(File.separator);
+        if (lastSlashIndex != -1) {
+            String imageName = imagePath.substring(lastSlashIndex + 1);
+            String toastMessage = getString(R.string.image_saved) + " " + imageName;
+            Toast.makeText(requireContext(), toastMessage, Toast.LENGTH_SHORT).show();
+        }
     }
+
 
     private void downloadAllImages() {
         for (ImageView imageView : imageViews) {
@@ -161,7 +167,7 @@ public class HighlightsFragment extends Fragment {
                 bitmap.compress(Bitmap.CompressFormat.JPEG, 100, outputStream);
                 outputStream.flush();
                 outputStream.close();
-                showToast(getString(R.string.image_saved) + imageFile.getAbsolutePath());
+                showToast(imageFile.getAbsolutePath());
 
                 // Add the image to the Gallery
                 addImageToGallery(imageFile);
