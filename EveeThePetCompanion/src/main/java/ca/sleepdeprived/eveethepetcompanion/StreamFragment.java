@@ -62,7 +62,7 @@ public class StreamFragment extends Fragment {
         btnLineFollowing.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast.makeText(getActivity(), "Line following enabled", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getActivity(), R.string.line_following_enabled, Toast.LENGTH_SHORT).show();
             }
         });
 

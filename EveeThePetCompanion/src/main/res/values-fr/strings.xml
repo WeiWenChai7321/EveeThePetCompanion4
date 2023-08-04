@@ -203,5 +203,5 @@
         <string name="firstname">prénom</string>
         <string name="error_fetching_user_information">Erreur lors de la récupération des informations utilisateur : </string>
         <string name="obstacle_avoidance_enabled">Évitement d\'obstacles activé</string>
-
+        <string name="line_following_enabled">Suivi de ligne activé</string>
 </resources>

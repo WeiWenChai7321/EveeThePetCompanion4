@@ -204,6 +204,7 @@
     <string name="firstname">firstName</string>
     <string name="error_fetching_user_information">"Error fetching user information: "</string>
     <string name="obstacle_avoidance_enabled">Obstacle avoidance enabled</string>
+    <string name="line_following_enabled">Line following enabled</string>
 
 
 </resources>
