@@ -10,7 +10,6 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.Toast;
 
@@ -59,7 +58,16 @@ public class StreamFragment extends Fragment {
             }
         });
 
+        // Add click listener to the btnLineFollowing
+        btnLineFollowing.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Toast.makeText(getActivity(), "Line following enabled", Toast.LENGTH_SHORT).show();
+            }
+        });
+
         return view;
     }
 }
+
 
