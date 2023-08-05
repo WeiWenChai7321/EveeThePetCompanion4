@@ -7,12 +7,17 @@
 package ca.sleepdeprived.eveethepetcompanion;
 
 import androidx.lifecycle.ViewModelProvider;
+
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
+import android.net.Uri;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.text.InputType;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -20,9 +25,11 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.GridLayout;
+import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.firestore.DocumentReference;
@@ -31,6 +38,9 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.firestore.SetOptions;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -49,13 +59,35 @@ public class PetProfileFragment extends Fragment {
     private SharedPreferences sharedPreferences;
     private TextView nameTextView;
     private TextView ageTextView;
+    private static final int PICK_IMAGE_REQUEST = 1;
     private TextView colorTextView;
     private TextView breedTextView;
+    private ImageButton petDisplayPic;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         petInfoViewModel = new ViewModelProvider(requireActivity()).get(PetInfoViewModel.class);
+    }
+
+    public void selectImageFromGallery() {
+        // Create an intent to open the gallery
+        Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+        startActivityForResult(intent, PICK_IMAGE_REQUEST);
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        // Check if the result is from the image selection request
+        if (requestCode == PICK_IMAGE_REQUEST && resultCode == Activity.RESULT_OK && data != null) {
+            // Get the selected image URI
+            Uri imageUri = data.getData();
+
+            // Upload the image to Firebase Storage and update the ImageButton
+            uploadImageToFirebaseStorage(imageUri);
+        }
     }
 
     @Nullable
@@ -72,6 +104,15 @@ public class PetProfileFragment extends Fragment {
         ageTextView = view.findViewById(R.id.ageTextView);
         colorTextView = view.findViewById(R.id.colorTextView);
         breedTextView = view.findViewById(R.id.breedTextView);
+
+        // Initialize petDisplayPic ImageButton here
+        petDisplayPic = view.findViewById(R.id.pet_display_pic);
+        petDisplayPic.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                selectImageFromGallery();
+            }
+        });
         // Set properties for cellEditText
         cellEditText.setInputType(InputType.TYPE_CLASS_TEXT);
         cellEditText.setSingleLine();
@@ -107,7 +148,7 @@ public class PetProfileFragment extends Fragment {
         colorEditText.setText(colorTextView.getText());
         breedEditText.setText(breedTextView.getText());
 
-// Create and show the AlertDialog for editing pet info
+        // Create and show the AlertDialog for editing pet info
         AlertDialog.Builder builder = new AlertDialog.Builder(requireContext());
         builder.setTitle(R.string.edit_pet_info)
                 .setView(dialogView)
@@ -192,6 +233,34 @@ public class PetProfileFragment extends Fragment {
         if (!breed.isEmpty()) {
             breedTextView.setText(breed);
         }
+
+        // Fetch the current pet_profile_pic from Firebase Storage and load it into the ImageButton
+        fetchAndLoadPetProfilePic();
+    }
+
+    private void fetchAndLoadPetProfilePic() {
+        // Get the storage reference for the pet_profile_pic image
+        String imageName = "pet_profile_pic.jpg";
+        StorageReference storageReference = FirebaseStorage.getInstance().getReference()
+                .child("pet_profile_pic").child(imageName);
+
+        // Fetch the pet_profile_pic image
+        storageReference.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+            @Override
+            public void onSuccess(Uri downloadUri) {
+                // Use Glide to load the image into the ImageButton and set the scale type to fit center
+                Glide.with(requireContext())
+                        .load(downloadUri)
+                        .fitCenter() // Set the scale type to fit center
+                        .into(petDisplayPic);
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                // Image retrieval failed, show a toast or handle the error
+                Toast.makeText(requireContext(), "Failed to retrieve pet profile pic", Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 
 
@@ -260,5 +329,41 @@ public class PetProfileFragment extends Fragment {
                     }
                 });
     }
+
+    private void uploadImageToFirebaseStorage(Uri imageUri) {
+        // Get the storage reference for the image
+        String imageName = "pet_profile_pic.jpg"; // Set a name for the image in Firebase Storage
+        StorageReference storageReference = FirebaseStorage.getInstance().getReference()
+                .child("pet_profile_pic").child(imageName);
+
+        // Upload the image to Firebase Storage
+        storageReference.putFile(imageUri)
+                .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                    @Override
+                    public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                        // Image upload successful, update the ImageButton
+                        storageReference.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+                            @Override
+                            public void onSuccess(Uri downloadUri) {
+                                // Use Glide or any other library to load the image into the ImageButton
+                                Glide.with(requireContext())
+                                        .load(downloadUri)
+                                        .into(petDisplayPic);
+
+                                // Show a toast message to indicate successful update
+                                Toast.makeText(requireContext(), "Updated profile picture", Toast.LENGTH_SHORT).show();
+                            }
+                        });
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        // Image upload failed, show a toast or handle the error
+                        Toast.makeText(requireContext(), "Image upload failed", Toast.LENGTH_SHORT).show();
+                    }
+                });
+    }
+
 
 }
