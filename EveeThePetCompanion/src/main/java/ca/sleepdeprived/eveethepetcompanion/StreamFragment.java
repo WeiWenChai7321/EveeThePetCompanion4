@@ -47,9 +47,7 @@ public class StreamFragment extends Fragment implements SurfaceHolder.Callback {
     private Camera camera;
     private ImageButton btnObstacleAvoidance;
     private ImageButton btnLineFollowing;
-    private MediaRecorder mediaRecorder;
     private ImageButton btnTreat;
-    private ImageButton btnRecord;
     private ImageButton btnPicture;
 
     private ImageButton btnArrowUp;
@@ -94,7 +92,6 @@ public class StreamFragment extends Fragment implements SurfaceHolder.Callback {
         btnObstacleAvoidance = view.findViewById(R.id.btn_obstacle_avoidance);
         btnLineFollowing = view.findViewById(R.id.btn_line_following);
         btnTreat = view.findViewById(R.id.btn_treat);
-        btnRecord = view.findViewById(R.id.btn_record);
         btnPicture = view.findViewById(R.id.btn_picture);
         btnArrowUp = view.findViewById(R.id.btn_arrow_up);
         btnArrowDown = view.findViewById(R.id.btn_arrow_down);
@@ -106,7 +103,6 @@ public class StreamFragment extends Fragment implements SurfaceHolder.Callback {
         btnObstacleAvoidance.setColorFilter(ContextCompat.getColor(requireContext(), android.R.color.white));
         btnLineFollowing.setColorFilter(ContextCompat.getColor(requireContext(), android.R.color.white));
         btnTreat.setColorFilter(ContextCompat.getColor(requireContext(), android.R.color.white));
-        btnRecord.setColorFilter(ContextCompat.getColor(requireContext(), android.R.color.white));
         btnPicture.setColorFilter(ContextCompat.getColor(requireContext(), android.R.color.white));
 
         btnTreat.setOnClickListener(new View.OnClickListener() {
@@ -282,13 +278,6 @@ public class StreamFragment extends Fragment implements SurfaceHolder.Callback {
             }
         });
 
-        btnRecord.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                checkAndRequestPermissions(); // Call the method to check and request permissions
-            }
-        });
-
         SurfaceHolder holder = streamView.getHolder();
         holder.addCallback(this);
 
@@ -354,87 +343,6 @@ public class StreamFragment extends Fragment implements SurfaceHolder.Callback {
         }
     }
 
-    private void recordVideo() {
-        try {
-            if (isRecording) {
-                return;
-            }
-
-            // Initialize media recorder
-            if (mediaRecorder == null) {
-                mediaRecorder = new MediaRecorder();
-                mediaRecorder.setVideoSource(MediaRecorder.VideoSource.SURFACE);
-                mediaRecorder.setOutputFormat(MediaRecorder.OutputFormat.MPEG_4);
-                mediaRecorder.setVideoEncoder(MediaRecorder.VideoEncoder.H264);
-                mediaRecorder.setVideoSize(streamView.getWidth(), streamView.getHeight()); // Set video size to match stream_view
-                mediaRecorder.setVideoFrameRate(30); // Set desired frame rate
-                mediaRecorder.setOutputFile(getOutputVideoFilePath());
-                mediaRecorder.setPreviewDisplay(streamView.getHolder().getSurface()); // <-- Use the correct variable name here
-            }
-
-            try {
-                mediaRecorder.prepare();
-                mediaRecorder.start();
-                isRecording = true; // Set the flag to true
-
-                // Record for a certain duration (e.g., 5 seconds)
-                Handler handler = new Handler();
-                handler.postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        stopRecording();
-                    }
-                }, 5000); // 5 seconds recording duration (adjust as needed)
-            } catch (Exception e) {
-                showToast("Failed to start recording");
-            }
-        } catch (Exception e) {
-            e.printStackTrace(); // Log the exception for debugging
-            showToast("Failed to start recording");
-        }
-    }
-
-
-    private void stopRecording() {
-        if (mediaRecorder != null) {
-            try {
-                mediaRecorder.stop();
-                mediaRecorder.reset();
-                mediaRecorder.release();
-                mediaRecorder = null;
-                isRecording = false; // Reset the flag
-                showToast("Video taken and uploaded to database");
-                uploadVideoToStorage();
-            } catch (Exception e) {
-                showToast("Failed to stop recording");
-            }
-        }
-    }
-
-    private String getOutputVideoFilePath() {
-        // Create a new unique video file name
-        String videoFileName = getString(R.string.video) + System.currentTimeMillis() + getString(R.string.video_extension);
-        return requireActivity().getExternalFilesDir(null).getAbsolutePath() + "/" + videoFileName;
-    }
-
-    private void uploadVideoToStorage() {
-        String videoFilePath = getOutputVideoFilePath();
-        Uri videoUri = Uri.fromFile(new File(videoFilePath));
-        final StorageReference videoRef = storageReference.child("videos/" + videoUri.getLastPathSegment());
-
-        videoRef.putFile(videoUri)
-                .addOnCompleteListener(requireActivity(), new OnCompleteListener<UploadTask.TaskSnapshot>() {
-                    @Override
-                    public void onComplete(@NonNull Task<UploadTask.TaskSnapshot> task) {
-                        if (task.isSuccessful()) {
-                            showToast("Video taken and uploaded to database");
-                        } else {
-                            showToast("Failed to upload video");
-                        }
-                    }
-                });
-    }
-
     private void updateTreatButton() {
         if (treatCount == 0) {
             btnTreat.setBackgroundResource(R.color.grey); // Change background color to grey when treatCount is 0
@@ -455,55 +363,8 @@ public class StreamFragment extends Fragment implements SurfaceHolder.Callback {
         updateTreatButton();
     }
 
-
-    private void saveScreenCapture(Bitmap bitmap) {
-        String imageFileName = getString(R.string.image) + System.currentTimeMillis() + getString(R.string.jpg);
-        final StorageReference imageRef = storageReference.child("photos/" + imageFileName);
-
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
-        byte[] data = baos.toByteArray();
-
-        UploadTask uploadTask = imageRef.putBytes(data);
-        uploadTask.addOnCompleteListener(requireActivity(), new OnCompleteListener<UploadTask.TaskSnapshot>() {
-            @Override
-            public void onComplete(@NonNull Task<UploadTask.TaskSnapshot> task) {
-                if (task.isSuccessful()) {
-                    showToast("Screen capture uploaded to Firebase Storage");
-                } else {
-                    showToast("Failed to upload screen capture");
-                }
-            }
-        });
-    }
-
     private void showToast(String message) {
         Toast.makeText(getActivity(), message, Toast.LENGTH_SHORT).show();
-    }
-
-    private void checkAndRequestPermissions() {
-        // Check if the necessary permissions are granted, and if not, request them
-        if (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED ||
-                ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.RECORD_AUDIO) != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(requireActivity(), new String[]{Manifest.permission.CAMERA, Manifest.permission.RECORD_AUDIO}, YOUR_PERMISSION_REQUEST_CODE);
-        } else {
-            // Start recording video if permissions are already granted
-            recordVideo();
-        }
-    }
-
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        if (requestCode == YOUR_PERMISSION_REQUEST_CODE) {
-            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                // The user granted the camera permission, start recording video
-                recordVideo();
-            } else {
-                // The user denied the camera permission, show a message or take appropriate action
-                Toast.makeText(getActivity(), "Camera permission denied. Cannot start recording.", Toast.LENGTH_SHORT).show();
-            }
-        }
     }
 
     private Camera.PictureCallback pictureCallback = new Camera.PictureCallback() {

@@ -22,8 +22,11 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.GridLayout;
 import android.widget.ImageView;
 import android.widget.Toast;
+
+import com.bumptech.glide.Glide;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
@@ -67,22 +70,6 @@ public class HighlightsFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_highlights, container, false);
 
         imageViews = new ArrayList<>();
-        ImageView videoImage1 = view.findViewById(R.id.video_image1);
-        ImageView videoImage2 = view.findViewById(R.id.video_image2);
-        ImageView photoImage1 = view.findViewById(R.id.photo_image1);
-        ImageView photoImage2 = view.findViewById(R.id.photo_image2);
-        ImageView photoImage3 = view.findViewById(R.id.photo_image3);
-        ImageView photoImage4 = view.findViewById(R.id.photo_image4);
-        ImageView photoImage5 = view.findViewById(R.id.photo_image5);
-        ImageView photoImage6 = view.findViewById(R.id.photo_image6);
-        imageViews.add(videoImage1);
-        imageViews.add(videoImage2);
-        imageViews.add(photoImage1);
-        imageViews.add(photoImage2);
-        imageViews.add(photoImage3);
-        imageViews.add(photoImage4);
-        imageViews.add(photoImage5);
-        imageViews.add(photoImage6);
 
         downloadAllButton = view.findViewById(R.id.btn_download_all);
         downloadAllButton.setOnClickListener(new View.OnClickListener() {
@@ -98,8 +85,12 @@ public class HighlightsFragment extends Fragment {
                     REQUEST_PERMISSION_WRITE_EXTERNAL_STORAGE);
         }
 
+        // Load images from Firebase Storage
+        loadImagesFromFirebaseStorage();
+
         return view;
     }
+
 
     private void requestWriteExternalStoragePermission() {
         if (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.WRITE_EXTERNAL_STORAGE)
@@ -209,4 +200,86 @@ public class HighlightsFragment extends Fragment {
 
         requireContext().getContentResolver().insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values);
     }
+
+    private void loadImagesFromFirebaseStorage() {
+        StorageReference storageRef = FirebaseStorage.getInstance().getReference().child("photos");
+
+        storageRef.listAll().addOnSuccessListener(listResult -> {
+            for (StorageReference item : listResult.getItems()) {
+                item.getDownloadUrl().addOnSuccessListener(uri -> {
+                    ImageView imageView = createImageView(uri.toString());
+                    imageViews.add(imageView);
+                    updateGridLayout();
+                }).addOnFailureListener(exception -> {
+                    // Handle the failure, if any.
+                });
+            }
+        }).addOnFailureListener(exception -> {
+            // Handle the failure, if any.
+        });
+    }
+
+    private ImageView createImageView(String imageUrl) {
+        ImageView imageView = new ImageView(requireContext());
+
+        // Load the image using Glide with a transformation to rotate it once to the right.
+        Glide.with(requireContext())
+                .load(imageUrl)
+                .transform(new RotateTransformation(90f)) // 90 degrees for right rotation
+                .into(imageView);
+
+        // Set scaling options to maintain the aspect ratio and fit within the column width.
+        imageView.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
+        imageView.setAdjustViewBounds(true);
+
+        return imageView;
+    }
+    private void updateGridLayout() {
+        GridLayout photosGrid = requireView().findViewById(R.id.photos_grid);
+        photosGrid.removeAllViews();
+
+        // Calculate the number of columns based on the screen width.
+        int screenWidth = getResources().getDisplayMetrics().widthPixels;
+        int columnCount = Math.min(2, imageViews.size());
+        int horizontalSpacing = 1; // Adjust this value as needed for closer spacing
+
+        // Calculate the total horizontal space available for the images and spacing.
+        int totalHorizontalSpace = screenWidth - (horizontalSpacing * (columnCount - 1)); // No spacing between columns
+        int imageSize = totalHorizontalSpace / columnCount;
+
+        // Add padding between the rows and columns to create spacing.
+        int verticalSpacing = 1; // Adjust this value as needed
+        int leftPadding = 1;
+        int rightPadding = 1;
+
+        photosGrid.setPadding(leftPadding, verticalSpacing, rightPadding, verticalSpacing);
+
+        // Calculate the number of rows based on the number of images and the number of columns.
+        int rowCount = (int) Math.ceil((double) imageViews.size() / columnCount);
+
+        // Set the row count for the GridLayout.
+        photosGrid.setRowCount(rowCount);
+
+        // Calculate the number of images to add to the GridLayout.
+        int imageCountToAdd = imageViews.size();
+
+        // Add the image views to the GridLayout with proper layout parameters.
+        for (int i = 0; i < imageCountToAdd; i++) {
+            ImageView imageView = imageViews.get(i);
+            GridLayout.LayoutParams layoutParams = new GridLayout.LayoutParams();
+            layoutParams.width = imageSize;
+            layoutParams.height = imageSize; // Set height equal to width to maintain aspect ratio
+
+            int row = i / columnCount; // Row index
+            int col = i % columnCount; // Column index
+
+            layoutParams.rowSpec = GridLayout.spec(row);
+            layoutParams.columnSpec = GridLayout.spec(col);
+
+            layoutParams.setMargins(horizontalSpacing, verticalSpacing, horizontalSpacing, verticalSpacing); // Add both vertical and horizontal spacing
+            imageView.setLayoutParams(layoutParams);
+            photosGrid.addView(imageView);
+        }
+    }
+
 }

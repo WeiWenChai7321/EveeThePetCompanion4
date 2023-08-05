@@ -38,4 +38,5 @@
     <dimen name="plus_button_width">40dp</dimen>
     <dimen name="plus_button_height">40dp</dimen>
     <dimen name="pet_info_card_width">240dp</dimen>
+    <dimen name="column_padding">8dp</dimen>
 </resources>
