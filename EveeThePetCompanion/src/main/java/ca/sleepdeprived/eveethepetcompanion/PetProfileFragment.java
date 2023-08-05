@@ -426,7 +426,7 @@ public class PetProfileFragment extends Fragment {
                     @Override
                     public void onFailure(@NonNull Exception e) {
                         // Image upload failed, show a toast or handle the error
-                        Toast.makeText(requireContext(), "Image upload failed", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(requireContext(), R.string.image_upload_failed, Toast.LENGTH_SHORT).show();
                     }
                 });
     }

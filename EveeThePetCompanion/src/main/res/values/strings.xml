@@ -223,5 +223,6 @@
     <string name="failed_retrieve_pet_profilepic">Failed to retrieve pet profile pic</string>
     <string name="no_pet_found">No pet info found in the database</string>
     <string name="updated_profilepic">Updated profile picture</string>
+    <string name="image_upload_failed">Image upload failed</string>
 
 </resources>
