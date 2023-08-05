@@ -64,6 +64,7 @@ public class StreamFragment extends Fragment implements SurfaceHolder.Callback {
     private boolean hasPermission = false;
 
     private FirebaseFirestore firestore;
+    private Toast currentToast;
     private StorageReference storageReference;
     private boolean turningLeft = false;
     private boolean turningRight = false;
@@ -439,7 +440,11 @@ public class StreamFragment extends Fragment implements SurfaceHolder.Callback {
     }
 
     private void showToast(String message) {
-        Toast.makeText(getActivity(), message, Toast.LENGTH_SHORT).show();
+        if (currentToast != null) {
+            currentToast.cancel();
+        }
+        currentToast = Toast.makeText(getActivity(), message, Toast.LENGTH_SHORT);
+        currentToast.show();
     }
 
     private Camera.PictureCallback pictureCallback = new Camera.PictureCallback() {
