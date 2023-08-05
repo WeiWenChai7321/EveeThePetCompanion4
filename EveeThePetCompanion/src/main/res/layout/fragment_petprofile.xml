@@ -20,7 +20,8 @@
                 android:layout_height="200dp"
                 android:layout_gravity="center_horizontal"
                 android:onClick="selectImageFromGallery"
-                android:scaleType="centerCrop" />
+                android:scaleType="centerCrop"
+                android:background="@android:color/transparent"/>
         </LinearLayout>
 
         <LinearLayout
