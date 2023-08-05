@@ -225,5 +225,6 @@
     <string name="updated_profilepic">Updated profile picture</string>
     <string name="image_upload_failed">Image upload failed</string>
     <string name="move_forward">Moving forward</string>
+    <string name="move_backward">Moving backward</string>
 
 </resources>
