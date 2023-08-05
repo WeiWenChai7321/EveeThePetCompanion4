@@ -19,11 +19,12 @@ public class DisableNotificationReceiver extends BroadcastReceiver {
 
     @Override
     public void onReceive(Context context, Intent intent) {
-        // Get the notification ID from the intent
-        int notificationId = intent.getIntExtra(EXTRA_NOTIFICATION_ID, -1);
+        // Get the notification ID and request code from the intent
+        int notificationId = intent.getIntExtra("notificationId", -1);
+        int requestCode = intent.getIntExtra("requestCode", -1);
 
-        // Cancel the notification
-        if (notificationId != -1) {
+        // Check if the request code is the one for "No thanks"
+        if (notificationId != -1 && requestCode == 1) { // Ensure the requestCode matches the one used when creating the PendingIntent
             NotificationManagerCompat notificationManager = NotificationManagerCompat.from(context);
             notificationManager.cancel(notificationId);
 

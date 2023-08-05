@@ -87,11 +87,6 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    public void onPetProfileClicked(View view) {
-        getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container,
-                new PetProfileFragment()).commit();
-    }
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -111,8 +106,23 @@ public class MainActivity extends AppCompatActivity {
             startLoginActivity();
         }
 
-        //Refactoring: Removed duplicate code for setting up bottomNavigationView (already exists in showMainActivity() method
-
+        if (getIntent().getBooleanExtra("FROM_NOTIFICATION", false)) {
+            String action = getIntent().getStringExtra("ACTION");
+            if (action != null) {
+                if (action.equals("OKAY")) {
+                    // Handle "Okay" action here
+                    getSupportFragmentManager().beginTransaction()
+                            .replace(R.id.fragment_container, new FeedbackFragment()).commit();
+                } else if (action.equals("NO_THANKS")) {
+                    // Handle "No thanks" action here (dismiss the notification only)
+                    int notificationId = getIntent().getIntExtra("NOTIFICATION_ID", -1);
+                    if (notificationId != -1) {
+                        NotificationManagerCompat notificationManager = NotificationManagerCompat.from(this);
+                        notificationManager.cancel(notificationId);
+                    }
+                }
+            }
+        }
         petInfoViewModel = new ViewModelProvider(this).get(PetInfoViewModel.class);
     }
 
@@ -191,7 +201,8 @@ public class MainActivity extends AppCompatActivity {
             // Create an Intent for the "No thanks" action (disable the notification)
             Intent noThanksIntent = new Intent(this, DisableNotificationReceiver.class);
             noThanksIntent.putExtra("notificationId", notificationId);
-            PendingIntent noThanksPendingIntent = PendingIntent.getBroadcast(this, 0,
+            noThanksIntent.putExtra("requestCode", 1); // Set a unique request code for "No thanks"
+            PendingIntent noThanksPendingIntent = PendingIntent.getBroadcast(this, 1, // Use the same unique request code here
                     noThanksIntent, PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE);
 
             // Build the notification

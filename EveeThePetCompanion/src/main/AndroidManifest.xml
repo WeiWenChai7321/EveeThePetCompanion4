@@ -35,7 +35,7 @@
 
         <activity android:name="ca.sleepdeprived.eveethepetcompanion.LoginActivity" />
         <activity android:name="ca.sleepdeprived.eveethepetcompanion.RegisterActivity" />
-        <receiver android:name=".DisableNotificationReceiver" />
+        <receiver android:name=".DisableNotificationReceiver" android:exported="false" />
     </application>
 
 </manifest>

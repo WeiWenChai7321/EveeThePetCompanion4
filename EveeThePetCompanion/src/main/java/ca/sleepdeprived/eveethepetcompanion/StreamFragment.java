@@ -109,6 +109,12 @@ public class StreamFragment extends Fragment implements SurfaceHolder.Callback {
         arrowRightText = view.findViewById(R.id.arrowRightText);
         turnLeftText = view.findViewById(R.id.turnLeftText);
         turnRightText = view.findViewById(R.id.turnRightText);
+        arrowUpText.setVisibility(View.INVISIBLE);
+        arrowDownText.setVisibility(View.INVISIBLE);
+        arrowLeftText.setVisibility(View.INVISIBLE);
+        arrowRightText.setVisibility(View.INVISIBLE);
+        turnLeftText.setVisibility(View.INVISIBLE);
+        turnRightText.setVisibility(View.INVISIBLE);
         btnObstacleAvoidance.setColorFilter(ContextCompat.getColor(requireContext(), android.R.color.white));
         btnLineFollowing.setColorFilter(ContextCompat.getColor(requireContext(), android.R.color.white));
         btnTreat.setColorFilter(ContextCompat.getColor(requireContext(), android.R.color.white));
