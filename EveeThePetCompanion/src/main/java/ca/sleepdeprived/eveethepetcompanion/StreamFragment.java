@@ -18,6 +18,7 @@ import android.view.Surface;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
+import android.widget.TextView;
 import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -38,6 +39,13 @@ import java.io.ByteArrayOutputStream;
 import java.util.List;
 
 public class StreamFragment extends Fragment implements SurfaceHolder.Callback {
+
+    private TextView arrowUpText;
+    private TextView arrowDownText;
+    private TextView arrowLeftText;
+    private TextView arrowRightText;
+    private TextView turnLeftText;
+    private TextView turnRightText;
     private SurfaceView streamView;
     private Camera camera;
     private ImageButton btnObstacleAvoidance;
@@ -95,7 +103,12 @@ public class StreamFragment extends Fragment implements SurfaceHolder.Callback {
         btnArrowRight = view.findViewById(R.id.btn_arrow_right);
         btnLookLeft = view.findViewById(R.id.btn_look_left);
         btnLookRight = view.findViewById(R.id.btn_look_right);
-
+        arrowUpText = view.findViewById(R.id.arrowUpText);
+        arrowDownText = view.findViewById(R.id.arrowDownText);
+        arrowLeftText = view.findViewById(R.id.arrowLeftText);
+        arrowRightText = view.findViewById(R.id.arrowRightText);
+        turnLeftText = view.findViewById(R.id.turnLeftText);
+        turnRightText = view.findViewById(R.id.turnRightText);
         btnObstacleAvoidance.setColorFilter(ContextCompat.getColor(requireContext(), android.R.color.white));
         btnLineFollowing.setColorFilter(ContextCompat.getColor(requireContext(), android.R.color.white));
         btnTreat.setColorFilter(ContextCompat.getColor(requireContext(), android.R.color.white));
@@ -203,10 +216,9 @@ public class StreamFragment extends Fragment implements SurfaceHolder.Callback {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
                 if (event.getAction() == MotionEvent.ACTION_DOWN) {
-                    // Start moving forward logic and show the toast
-                    Toast.makeText(getActivity(), R.string.move_forward, Toast.LENGTH_SHORT).show();
+                    arrowUpText.setVisibility(View.VISIBLE);
                 } else if (event.getAction() == MotionEvent.ACTION_UP) {
-                    // Stop moving forward logic and remove the toast (if required)
+                    arrowUpText.setVisibility(View.INVISIBLE);
                 }
                 return true;
             }
@@ -216,10 +228,9 @@ public class StreamFragment extends Fragment implements SurfaceHolder.Callback {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
                 if (event.getAction() == MotionEvent.ACTION_DOWN) {
-                    // Start moving backward logic and show the toast
-                    Toast.makeText(getActivity(), R.string.move_backward, Toast.LENGTH_SHORT).show();
+                    arrowDownText.setVisibility(View.VISIBLE);
                 } else if (event.getAction() == MotionEvent.ACTION_UP) {
-                    // Stop moving backward logic and remove the toast (if required)
+                    arrowDownText.setVisibility(View.INVISIBLE);
                 }
                 return true;
             }
@@ -229,10 +240,9 @@ public class StreamFragment extends Fragment implements SurfaceHolder.Callback {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
                 if (event.getAction() == MotionEvent.ACTION_DOWN) {
-                    // Start moving left logic and show the toast
-                    Toast.makeText(getActivity(), R.string.move_left, Toast.LENGTH_SHORT).show();
+                    arrowLeftText.setVisibility(View.VISIBLE);
                 } else if (event.getAction() == MotionEvent.ACTION_UP) {
-                    // Stop moving left logic and remove the toast (if required)
+                    arrowLeftText.setVisibility(View.INVISIBLE);
                 }
                 return true;
             }
@@ -242,10 +252,9 @@ public class StreamFragment extends Fragment implements SurfaceHolder.Callback {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
                 if (event.getAction() == MotionEvent.ACTION_DOWN) {
-                    // Start moving right logic and show the toast
-                    Toast.makeText(getActivity(), R.string.move_right, Toast.LENGTH_SHORT).show();
+                    arrowRightText.setVisibility(View.VISIBLE);
                 } else if (event.getAction() == MotionEvent.ACTION_UP) {
-                    // Stop moving right logic and remove the toast (if required)
+                    arrowRightText.setVisibility(View.INVISIBLE);
                 }
                 return true;
             }
@@ -255,12 +264,9 @@ public class StreamFragment extends Fragment implements SurfaceHolder.Callback {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
                 if (event.getAction() == MotionEvent.ACTION_DOWN) {
-                    // Start turning left logic and show the toast
-                    turningLeft = true;
-                    Toast.makeText(getActivity(), R.string.turn_left, Toast.LENGTH_SHORT).show();
+                    turnLeftText.setVisibility(View.VISIBLE);
                 } else if (event.getAction() == MotionEvent.ACTION_UP || event.getAction() == MotionEvent.ACTION_CANCEL) {
-                    // Stop turning left logic and remove the toast
-                    turningLeft = false;
+                    turnLeftText.setVisibility(View.INVISIBLE);
                 }
                 return true;
             }
@@ -270,12 +276,9 @@ public class StreamFragment extends Fragment implements SurfaceHolder.Callback {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
                 if (event.getAction() == MotionEvent.ACTION_DOWN) {
-                    // Start turning right logic and show the toast
-                    turningRight = true;
-                    Toast.makeText(getActivity(), R.string.turn_right, Toast.LENGTH_SHORT).show();
+                    turnRightText.setVisibility(View.VISIBLE);
                 } else if (event.getAction() == MotionEvent.ACTION_UP || event.getAction() == MotionEvent.ACTION_CANCEL) {
-                    // Stop turning right logic and remove the toast
-                    turningRight = false;
+                    turnRightText.setVisibility(View.INVISIBLE);
                 }
                 return true;
             }

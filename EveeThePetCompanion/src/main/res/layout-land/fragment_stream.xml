@@ -40,6 +40,79 @@
 
     </LinearLayout>
 
+    <FrameLayout
+        android:id="@+id/look_arrows_layout"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:padding="16dp"
+        android:layout_marginBottom="63dp">
+
+        <TextView
+            android:id="@+id/turnLeftText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/turn_left"
+            android:textStyle="bold"
+            android:textColor="@android:color/white" />
+
+        <TextView
+            android:id="@+id/turnRightText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/turn_right"
+            android:textStyle="bold"
+            android:textColor="@android:color/white"
+            android:layout_gravity="center" />
+    </FrameLayout>
+
+    <FrameLayout
+        android:id="@+id/arrows_layout"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:padding="16dp"
+        android:layout_marginBottom="47dp">
+
+        <TextView
+            android:id="@+id/arrowUpText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/move_forward"
+            android:textStyle="bold"
+            android:textColor="@android:color/white" />
+
+        <TextView
+            android:id="@+id/arrowDownText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/move_backward"
+            android:textStyle="bold"
+            android:textColor="@android:color/white"
+            android:layout_gravity="center" />
+
+        <TextView
+            android:id="@+id/arrowLeftText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/move_left"
+            android:textStyle="bold"
+            android:textColor="@android:color/white"
+            android:layout_gravity="center" />
+
+        <TextView
+            android:id="@+id/arrowRightText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/move_right"
+            android:textStyle="bold"
+            android:textColor="@android:color/white"
+            android:layout_gravity="center" />
+
+    </FrameLayout>
+
     <LinearLayout
         android:id="@+id/arrow_button_layout"
         android:layout_width="wrap_content"
