@@ -273,7 +273,7 @@ public class StreamFragment extends Fragment implements SurfaceHolder.Callback {
                 if (event.getAction() == MotionEvent.ACTION_DOWN) {
                     // Start turning right logic and show the toast
                     turningRight = true;
-                    Toast.makeText(getActivity(), "Turning right", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getActivity(), R.string.turn_right, Toast.LENGTH_SHORT).show();
                 } else if (event.getAction() == MotionEvent.ACTION_UP || event.getAction() == MotionEvent.ACTION_CANCEL) {
                     // Stop turning right logic and remove the toast
                     turningRight = false;
