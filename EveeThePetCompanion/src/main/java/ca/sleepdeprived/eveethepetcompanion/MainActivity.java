@@ -112,6 +112,7 @@ public class MainActivity extends AppCompatActivity {
 
         if (isLoggedIn) {
             showMainActivity();
+            showReviewNotification();
         } else {
             startLoginActivity();
         }
@@ -136,7 +137,7 @@ public class MainActivity extends AppCompatActivity {
         }
 
         petInfoViewModel = new ViewModelProvider(this).get(PetInfoViewModel.class);
-        showReviewNotification();
+
     }
 
     private boolean checkLoginStatus() {
