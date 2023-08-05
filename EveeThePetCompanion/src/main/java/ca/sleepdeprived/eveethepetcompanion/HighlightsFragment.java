@@ -25,12 +25,11 @@ import android.widget.Button;
 import android.widget.GridLayout;
 import android.widget.ImageView;
 import android.widget.Toast;
-
+import com.bumptech.glide.load.resource.bitmap.CenterCrop;
 import com.bumptech.glide.Glide;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
-import com.google.firebase.storage.UploadTask;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.content.ContextCompat;
@@ -222,13 +221,13 @@ public class HighlightsFragment extends Fragment {
     private ImageView createImageView(String imageUrl) {
         ImageView imageView = new ImageView(requireContext());
 
-        // Load the image using Glide with a transformation to rotate it once to the right.
+        // Load the image using Glide with a transformation to rotate and crop it.
         Glide.with(requireContext())
                 .load(imageUrl)
-                .transform(new RotateTransformation(90f)) // 90 degrees for right rotation
+                .transform(new RotateTransformation(90f), new CenterCrop()) // Rotate and crop
                 .into(imageView);
 
-        // Set scaling options to maintain the aspect ratio and fit within the column width.
+        // Set scaling options to maintain the aspect ratio and fit within the cell.
         imageView.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
         imageView.setAdjustViewBounds(true);
 
@@ -238,45 +237,37 @@ public class HighlightsFragment extends Fragment {
         GridLayout photosGrid = requireView().findViewById(R.id.photos_grid);
         photosGrid.removeAllViews();
 
-        // Calculate the number of columns based on the screen width.
+        // Calculate the number of columns based on the screen width and desired size of each image.
         int screenWidth = getResources().getDisplayMetrics().widthPixels;
-        int columnCount = Math.min(2, imageViews.size());
-        int horizontalSpacing = 1; // Adjust this value as needed for closer spacing
-
-        // Calculate the total horizontal space available for the images and spacing.
-        int totalHorizontalSpace = screenWidth - (horizontalSpacing * (columnCount - 1)); // No spacing between columns
-        int imageSize = totalHorizontalSpace / columnCount;
+        int desiredColumns = 2; // You can adjust this value to set the number of columns you want.
+        int imageSize = (int) (screenWidth / (desiredColumns * 1.20));
 
         // Add padding between the rows and columns to create spacing.
         int verticalSpacing = 1; // Adjust this value as needed
+        int horizontalSpacing = 1; // Adjust this value as needed
         int leftPadding = 1;
         int rightPadding = 1;
 
-        photosGrid.setPadding(leftPadding, verticalSpacing, rightPadding, verticalSpacing);
-
         // Calculate the number of rows based on the number of images and the number of columns.
-        int rowCount = (int) Math.ceil((double) imageViews.size() / columnCount);
+        int rowCount = (int) Math.ceil((double) imageViews.size() / desiredColumns);
 
         // Set the row count for the GridLayout.
         photosGrid.setRowCount(rowCount);
 
-        // Calculate the number of images to add to the GridLayout.
-        int imageCountToAdd = imageViews.size();
-
         // Add the image views to the GridLayout with proper layout parameters.
-        for (int i = 0; i < imageCountToAdd; i++) {
+        for (int i = 0; i < imageViews.size(); i++) {
             ImageView imageView = imageViews.get(i);
             GridLayout.LayoutParams layoutParams = new GridLayout.LayoutParams();
             layoutParams.width = imageSize;
             layoutParams.height = imageSize; // Set height equal to width to maintain aspect ratio
 
-            int row = i / columnCount; // Row index
-            int col = i % columnCount; // Column index
+            int row = i / desiredColumns; // Row index
+            int col = i % desiredColumns; // Column index
 
             layoutParams.rowSpec = GridLayout.spec(row);
             layoutParams.columnSpec = GridLayout.spec(col);
 
-            layoutParams.setMargins(horizontalSpacing, verticalSpacing, horizontalSpacing, verticalSpacing); // Add both vertical and horizontal spacing
+            layoutParams.setMargins(horizontalSpacing, verticalSpacing, horizontalSpacing, verticalSpacing);
             imageView.setLayoutParams(layoutParams);
             photosGrid.addView(imageView);
         }
