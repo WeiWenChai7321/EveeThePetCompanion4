@@ -306,6 +306,13 @@ public class StreamFragment extends Fragment implements SurfaceHolder.Callback {
         }
     }
 
+    private Runnable longPressRunnable = new Runnable() {
+        @Override
+        public void run() {
+            resetTreatCounter();
+        }
+    };
+
     private void startCameraPreview() {
         try {
             camera = Camera.open();
@@ -371,6 +378,11 @@ public class StreamFragment extends Fragment implements SurfaceHolder.Callback {
             camera = null;
         }
     }
+    private void resetTreatCounter() {
+        // Reset the treat count and update the button background
+        treatCount = MAX_TREATS;
+        updateTreatButton();
+    }
 
     private void updateTreatButton() {
         if (treatCount == 0) {
@@ -378,18 +390,6 @@ public class StreamFragment extends Fragment implements SurfaceHolder.Callback {
         } else {
             btnTreat.setBackgroundResource(R.color.primary_color); // Revert to default color when treats available
         }
-    }
-    private Runnable longPressRunnable = new Runnable() {
-        @Override
-        public void run() {
-            resetTreatCounter();
-        }
-    };
-
-    private void resetTreatCounter() {
-        // Reset the treat count and update the button background
-        treatCount = MAX_TREATS;
-        updateTreatButton();
     }
 
     private void showToast(String message) {
@@ -452,7 +452,6 @@ public class StreamFragment extends Fragment implements SurfaceHolder.Callback {
                 }
             }
         });
-
     }
 
     @Override
@@ -480,7 +479,6 @@ public class StreamFragment extends Fragment implements SurfaceHolder.Callback {
             isCameraPreviewing = true;
         }
     }
-
     @Override
     public void onDestroy() {
         super.onDestroy();

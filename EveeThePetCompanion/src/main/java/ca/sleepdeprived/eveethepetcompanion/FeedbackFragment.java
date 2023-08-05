@@ -7,10 +7,8 @@
 
 package ca.sleepdeprived.eveethepetcompanion;
 
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
-import android.preference.PreferenceManager;
 import android.util.Patterns;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -19,25 +17,22 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.RatingBar;
-
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
-
 import com.google.android.material.snackbar.Snackbar;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 public class FeedbackFragment extends Fragment {
 
     private EditText editName;
-
-    private ProgressBar progressBar;
     private EditText editPhone;
     private EditText editEmail;
     private EditText editComment;
     private RatingBar ratingBar;
     private Button btnSubmitFeedback;
     private FirebaseFirestore db;
+    private ProgressBar progressBar;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -57,72 +52,69 @@ public class FeedbackFragment extends Fragment {
         db = FirebaseFirestore.getInstance();
         progressBar = view.findViewById(R.id.progress_bar);
         btnSubmitFeedback = view.findViewById(R.id.btn_submit_feedback);
-
-        btnSubmitFeedback.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                // Get the user input
-                String name = editName.getText().toString();
-                String phone = editPhone.getText().toString();
-                String email = editEmail.getText().toString();
-                String comment = editComment.getText().toString();
-                float rating = ratingBar.getRating();
-
-                // Check if any field is empty and display an error message if necessary
-                if (name.isEmpty()) {
-                    editName.setError(getString(R.string.empty_field));
-                    return;
-                }
-
-                if (phone.isEmpty()) {
-                    editPhone.setError(getString(R.string.empty_field));
-                    return;
-                }
-
-                if (email.isEmpty()) {
-                    editEmail.setError(getString(R.string.empty_field));
-                    return;
-                }
-
-                if (comment.isEmpty()) {
-                    editComment.setError(getString(R.string.empty_field));
-                    return;
-                }
-
-                // Validate phone number
-                if (!isValidPhoneNumber(phone)) {
-                    editPhone.setError(getString(R.string.invalid_phone));
-                    return;
-                }
-
-                // Validate email
-                if (!isValidEmail(email)) {
-                    editEmail.setError(getString(R.string.invalid_email));
-                    return;
-                }
-
-                // Get the device model programmatically
-                String deviceModel = android.os.Build.MODEL;
-
-                // Create a new feedback document with the captured data
-                Feedback feedback = new Feedback(name, phone, email, comment, rating, deviceModel);
-
-                // Display the progress bar and disable the submit button
-                progressBar.setVisibility(View.VISIBLE);
-                btnSubmitFeedback.setEnabled(false);
-
-                // Delay the submission for a few seconds
-                new Handler().postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        // Proceed with saving the feedback
-                        saveFeedbackToFirestore(feedback);
-                    }
-                }, 2000);  // 2000 milliseconds = 2 seconds
-            }
-        });
+        btnSubmitFeedback.setOnClickListener(v -> onSubmitFeedback());
 
         return view;
+    }
+
+    //Moved the logic of submitting feedback to a separate method onSubmitFeedback() for better readability and code organization.
+    //Was previously under btnSubmitFeedback.setonClickListener
+    private void onSubmitFeedback() {
+        // Get the user input
+        String name = editName.getText().toString();
+        String phone = editPhone.getText().toString();
+        String email = editEmail.getText().toString();
+        String comment = editComment.getText().toString();
+        float rating = ratingBar.getRating();
+
+        // Check if any field is empty and display an error message if necessary
+        if (name.isEmpty()) {
+            editName.setError(getString(R.string.empty_field));
+            return;
+        }
+
+        if (phone.isEmpty()) {
+            editPhone.setError(getString(R.string.empty_field));
+            return;
+        }
+
+        if (email.isEmpty()) {
+            editEmail.setError(getString(R.string.empty_field));
+            return;
+        }
+
+        if (comment.isEmpty()) {
+            editComment.setError(getString(R.string.empty_field));
+            return;
+        }
+
+        // Validate phone number
+        if (!isValidPhoneNumber(phone)) {
+            editPhone.setError(getString(R.string.invalid_phone));
+            return;
+        }
+
+        // Validate email
+        if (!isValidEmail(email)) {
+            editEmail.setError(getString(R.string.invalid_email));
+            return;
+        }
+
+        // Get the device model programmatically
+        String deviceModel = android.os.Build.MODEL;
+
+        // Create a new feedback document with the captured data
+        Feedback feedback = new Feedback(name, phone, email, comment, rating, deviceModel);
+
+        // Display the progress bar and disable the submit button
+        progressBar.setVisibility(View.VISIBLE);
+        btnSubmitFeedback.setEnabled(false);
+
+        // Delay the submission for a few seconds
+        new Handler().postDelayed(() -> {
+            // Proceed with saving the feedback
+            saveFeedbackToFirestore(feedback);
+        }, 2000);  // 2000 milliseconds = 2 seconds
     }
 
     private boolean isValidPhoneNumber(String phoneNumber) {
@@ -135,13 +127,7 @@ public class FeedbackFragment extends Fragment {
         return Patterns.EMAIL_ADDRESS.matcher(email).matches();
     }
 
-    @Override
-    public void onResume() {
-        super.onResume();
-    }
-
     private void saveFeedbackToFirestore(Feedback feedback) {
-
         db.collection(getString(R.string.feedback_collection))
                 .add(feedback)
                 .addOnSuccessListener(documentReference -> {
@@ -167,9 +153,7 @@ public class FeedbackFragment extends Fragment {
                     progressBar.setVisibility(View.GONE);
                     btnSubmitFeedback.setEnabled(true);
                 });
-
     }
-
 
     private void showSnackbar(String message) {
         Snackbar.make(getView(), message, Snackbar.LENGTH_SHORT).show();

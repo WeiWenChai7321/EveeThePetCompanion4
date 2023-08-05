@@ -4,6 +4,7 @@
   Jennifer Nguyen, N01435464
   Ubay Abdulaziz, N01437353
 */
+
 package ca.sleepdeprived.eveethepetcompanion;
 
 import android.Manifest;
@@ -18,6 +19,7 @@ import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
+import android.provider.MediaStore;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -25,22 +27,23 @@ import android.widget.Button;
 import android.widget.GridLayout;
 import android.widget.ImageView;
 import android.widget.Toast;
-import com.bumptech.glide.load.resource.bitmap.CenterCrop;
-import com.bumptech.glide.Glide;
-import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.storage.FirebaseStorage;
-import com.google.firebase.storage.StorageReference;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
+
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.resource.bitmap.CenterCrop;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import android.provider.MediaStore;
 
 public class GalleryFragment extends Fragment {
 
@@ -71,23 +74,9 @@ public class GalleryFragment extends Fragment {
         imageViews = new ArrayList<>();
 
         downloadAllButton = view.findViewById(R.id.btn_download_all);
-        downloadAllButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.WRITE_EXTERNAL_STORAGE)
-                        == PackageManager.PERMISSION_GRANTED) {
-                    // Permission already granted
-                    hasPermission = true;
-                    showToast(getString(R.string.permissiongranted));
-                    downloadAllImages();
-                } else {
-                    // Permission not granted, ask for permission
-                    hasPermission = false;
-                    requestPermissions(new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
-                            REQUEST_PERMISSION_WRITE_EXTERNAL_STORAGE);
-                }
-            }
-        });
+        downloadAllButton.setOnClickListener(v ->
+                //Refactoring: Removed repeated code here that already existed in requestWriteExternalStoragePermission method
+                requestWriteExternalStoragePermission());
 
         // Load images from Firebase Storage
         loadImagesFromFirebaseStorage();
@@ -95,7 +84,7 @@ public class GalleryFragment extends Fragment {
         return view;
     }
 
-
+    // Check and request permission to write external storage
     private void requestWriteExternalStoragePermission() {
         if (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.WRITE_EXTERNAL_STORAGE)
                 == PackageManager.PERMISSION_GRANTED) {
@@ -104,27 +93,26 @@ public class GalleryFragment extends Fragment {
             showToast(getString(R.string.permissiongranted));
             downloadAllImages();
         } else {
-            // Permission not granted
+            // Permission not granted, request it
             hasPermission = false;
             showPermissionAlertDialog();
         }
     }
 
+    // Show an AlertDialog to request the permission
     private void showPermissionAlertDialog() {
         AlertDialog.Builder builder = new AlertDialog.Builder(requireContext());
         builder.setTitle(getString(R.string.permission_dialog_title))
                 .setMessage(getString(R.string.permission_dialog_message))
-                .setPositiveButton(getString(R.string.permission_dialog_positive_button), new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        requestPermissions(new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
-                                REQUEST_PERMISSION_WRITE_EXTERNAL_STORAGE);
-                    }
+                .setPositiveButton(getString(R.string.permission_dialog_positive_button), (dialog, which) -> {
+                    requestPermissions(new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
+                            REQUEST_PERMISSION_WRITE_EXTERNAL_STORAGE);
                 })
                 .setNegativeButton(getString(R.string.permission_dialog_negative_button), null)
                 .show();
     }
 
+    // Handle the result of permission request
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
@@ -138,11 +126,11 @@ public class GalleryFragment extends Fragment {
                 // Permission denied
                 hasPermission = false;
                 showToast(getString(R.string.permissiondenied));
-
             }
         }
     }
 
+    // Show a Toast with the image path
     private void showToast(String imagePath) {
         int lastSlashIndex = imagePath.lastIndexOf(File.separator);
         if (lastSlashIndex != -1) {
@@ -152,13 +140,14 @@ public class GalleryFragment extends Fragment {
         }
     }
 
-
+    // Download all images
     private void downloadAllImages() {
         for (ImageView imageView : imageViews) {
             downloadImage(imageView);
         }
     }
 
+    // Download a single image
     private void downloadImage(final ImageView imageView) {
         Drawable drawable = imageView.getDrawable();
         if (drawable instanceof BitmapDrawable) {
@@ -167,6 +156,7 @@ public class GalleryFragment extends Fragment {
         }
     }
 
+    // Save the image to external storage
     private void saveImage(Bitmap bitmap) {
         if (hasPermission) {
             String imageFileName = getString(R.string.image) + System.currentTimeMillis() + getString(R.string.jpg);
@@ -187,6 +177,7 @@ public class GalleryFragment extends Fragment {
                 showToast(getString(R.string.failed_to_save_image));
             }
         } else {
+            // Redirect to app settings if permission is not granted
             Intent intent = new Intent(android.provider.Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
             Uri uri = Uri.fromParts("package", requireContext().getPackageName(), null);
             intent.setData(uri);
@@ -194,6 +185,7 @@ public class GalleryFragment extends Fragment {
         }
     }
 
+    // Add the image to the Android Media Store (Gallery)
     private void addImageToGallery(File imageFile) {
         ContentValues values = new ContentValues();
         values.put(MediaStore.Images.Media.TITLE, "EveeImage");
@@ -205,6 +197,7 @@ public class GalleryFragment extends Fragment {
         requireContext().getContentResolver().insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values);
     }
 
+    // Load images from Firebase Storage
     private void loadImagesFromFirebaseStorage() {
         StorageReference storageRef = FirebaseStorage.getInstance().getReference().child("photos");
 
@@ -223,6 +216,7 @@ public class GalleryFragment extends Fragment {
         });
     }
 
+    // Create an ImageView with Glide for loading images from URL
     private ImageView createImageView(String imageUrl) {
         ImageView imageView = new ImageView(requireContext());
 
@@ -238,6 +232,8 @@ public class GalleryFragment extends Fragment {
 
         return imageView;
     }
+
+    // Update the GridLayout to display the images in the correct layout
     private void updateGridLayout() {
         GridLayout photosGrid = requireView().findViewById(R.id.photos_grid);
         photosGrid.removeAllViews();

@@ -13,9 +13,7 @@ import androidx.appcompat.view.menu.MenuBuilder;
 import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
 import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentManager;
 import androidx.lifecycle.ViewModelProvider;
-
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
@@ -24,17 +22,13 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.SystemClock;
 import android.preference.PreferenceManager;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.FirebaseApp;
-
-import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -117,27 +111,9 @@ public class MainActivity extends AppCompatActivity {
             startLoginActivity();
         }
 
-
-        if (getIntent().getBooleanExtra("FROM_NOTIFICATION", false)) {
-            String action = getIntent().getStringExtra("ACTION");
-            if (action != null) {
-                if (action.equals("OKAY")) {
-                    // Handle "Okay" action here
-                    getSupportFragmentManager().beginTransaction()
-                            .replace(R.id.fragment_container, new FeedbackFragment()).commit();
-                } else if (action.equals("NO_THANKS")) {
-                    // Handle "No thanks" action here (dismiss the notification only)
-                    int notificationId = getIntent().getIntExtra("NOTIFICATION_ID", -1);
-                    if (notificationId != -1) {
-                        NotificationManagerCompat notificationManager = NotificationManagerCompat.from(this);
-                        notificationManager.cancel(notificationId);
-                    }
-                }
-            }
-        }
+        //Refactoring: Removed duplicate code for setting up bottomNavigationView (already exists in showMainActivity() method
 
         petInfoViewModel = new ViewModelProvider(this).get(PetInfoViewModel.class);
-
     }
 
     private boolean checkLoginStatus() {
@@ -146,9 +122,6 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void showMainActivity() {
-        BottomNavigationView bottomNavigationView = findViewById(R.id.bottom_navigation);
-        bottomNavigationView.setOnNavigationItemSelectedListener(navListener);
-
         getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container,
                 new DashboardFragment()).commit();
     }
@@ -245,7 +218,6 @@ public class MainActivity extends AppCompatActivity {
             editor.apply();
         }
     }
-
 
     // Create the notification channel
     private void createNotificationChannel() {

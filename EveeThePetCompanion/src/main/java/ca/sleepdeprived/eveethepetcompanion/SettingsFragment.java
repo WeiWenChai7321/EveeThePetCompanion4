@@ -45,20 +45,23 @@ import android.app.AlertDialog;
 
 
 
+
 public class SettingsFragment extends Fragment {
+
+    // Declare UI elements and variables
     EditText emailEditText;
     Switch lockOrientationSwitch;
     SharedPreferences sharedPreferences;
     FirebaseFirestore firestore;
+    Button updateButton;
     ListenerRegistration emailListener;
     private FirebaseUser user;
     private FirebaseAuth firebaseAuth;
     private boolean isSaveButton = true;
 
-    Button updateButton;
-
-    public SettingsFragment() {
-    }
+    // SharedPreferences keys
+    private static final String PREF_LOCK_ORIENTATION = "lock_orientation";
+    private static final String PREF_SAVED_EMAIL = "saved_email";
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -82,10 +85,10 @@ public class SettingsFragment extends Fragment {
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
-        updateButton = view.findViewById(R.id.btn_update);
-
-        Button logoutButton = view.findViewById(R.id.btn_logout);
         super.onViewCreated(view, savedInstanceState);
+        Button updateButton = view.findViewById(R.id.btn_update);
+        Button logoutButton = view.findViewById(R.id.btn_logout);
+        Button deleteAccountButton = view.findViewById(R.id.btn_delete);
 
         logoutButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -157,8 +160,6 @@ public class SettingsFragment extends Fragment {
                 }
             }
         });
-
-        Button deleteAccountButton = view.findViewById(R.id.btn_delete);
         deleteAccountButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -202,7 +203,6 @@ public class SettingsFragment extends Fragment {
                     });
         }
     }
-
 
     @Override
     public void onStop() {
@@ -367,6 +367,7 @@ public class SettingsFragment extends Fragment {
                     }
                 });
     }
+
 
     // Method to get the user's Google email
     private String getUserGoogleEmail(FirebaseUser user) {

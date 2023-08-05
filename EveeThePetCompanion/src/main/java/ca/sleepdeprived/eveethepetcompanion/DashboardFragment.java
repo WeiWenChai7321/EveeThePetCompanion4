@@ -6,6 +6,8 @@
 */
 package ca.sleepdeprived.eveethepetcompanion;
 
+// Import statements
+
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import android.content.Context;
@@ -47,9 +49,9 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import android.view.inputmethod.InputMethodManager;
 
 public class DashboardFragment extends Fragment {
+    // Member variables
     private List<CheckBox> reminderCheckboxes;
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
     private CollectionReference remindersCollectionRef = db.collection("reminders");
@@ -60,52 +62,37 @@ public class DashboardFragment extends Fragment {
     private Set<Reminder> savedReminders;
     private boolean isInitialCreate = true;
     private boolean isEditTextVisible = false;
-
     private View view;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         reminderCheckboxes = new ArrayList<>();
-
-        // Retrieve saved reminders
         sharedPreferences = requireActivity().getPreferences(Context.MODE_PRIVATE);
         savedReminders = new HashSet<>();
-        // Read existing reminders from the database on fragment creation
         readExistingReminders();
     }
 
-    @Override
-    public void onAttach(@NonNull Context context) {
-        super.onAttach(context);
-        this.context = context;
-    }
-
+    // Refactored code in onCreateView()
+    // Replaced direct view assignments with findViewById() to improve code readability
+    // Used lambda expression to simplify the click listener implementation
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_dashboard, container, false);
         remindersLayout = view.findViewById(R.id.reminders_card);
         editReminderEditText = view.findViewById(R.id.edit_text_reminder);
-        editReminderEditText.setVisibility(View.GONE); // Initially hide the EditText
-
+        editReminderEditText.setVisibility(View.GONE);
         Button newReminderButton = view.findViewById(R.id.button_new_reminder);
         updateNoRemindersVisibility();
         newReminderButton.setOnClickListener(v -> {
             String reminderText = editReminderEditText.getText().toString().trim();
             if (isEditTextVisible) {
-                // If the EditText is visible, hide it and change the button text to "New Reminder"
-                editReminderEditText.setVisibility(View.GONE);
-                newReminderButton.setText(R.string.new_reminder_button_text);
-                hideKeyboard(); // Hide the keyboard when canceling
+                toggleReminderEditText(false);
+                hideKeyboard();
             } else {
-                // If the EditText is not visible, show it and change the button text to "Cancel"
-                editReminderEditText.setVisibility(View.VISIBLE);
-                editReminderEditText.requestFocus();
-                newReminderButton.setText(R.string.cancel_button_text);
-                showKeyboard(); // Show the keyboard when creating a new reminder
+                toggleReminderEditText(true);
+                showKeyboard();
             }
-            isEditTextVisible = !isEditTextVisible;
-            updateNoRemindersVisibility();
         });
 
         editReminderEditText.setOnEditorActionListener((v, actionId, event) -> {
@@ -114,10 +101,7 @@ public class DashboardFragment extends Fragment {
                 if (!TextUtils.isEmpty(reminderText)) {
                     addReminder(reminderText);
                     editReminderEditText.setText("");
-                    editReminderEditText.setVisibility(View.GONE); // Hide the EditText after creating the reminder
-                    newReminderButton.setText(R.string.new_reminder_button_text);
-                    isEditTextVisible = false;
-                    updateNoRemindersVisibility();
+                    toggleReminderEditText(false);
                     hideKeyboard();
                     return true;
                 }
@@ -125,9 +109,21 @@ public class DashboardFragment extends Fragment {
             return false;
         });
 
+        context = requireContext();
+
         return view;
     }
 
+
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        this.view = view;
+        if (isAdded()) {
+            fetchUserNameFromDatabase();
+        }
+        loadImagesFromFirebaseStorage();
+    }
 
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
@@ -140,10 +136,14 @@ public class DashboardFragment extends Fragment {
                 }
             }
         }
-        // Set the flag to false to indicate that this is not the initial creation of the fragment
         isInitialCreate = false;
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        updateNoRemindersVisibility();
+    }
 
     @Override
     public void onSaveInstanceState(@NonNull Bundle outState) {
@@ -155,23 +155,93 @@ public class DashboardFragment extends Fragment {
         outState.putStringArrayList(getString(R.string.saved_reminders_key), remindersArrayList);
     }
 
-
     @Override
     public void onDestroyView() {
         super.onDestroyView();
     }
 
-    private void addReminder(String reminderText) {
-        if (remindersLayout == null || context == null) {
+    // UI-related methods
+
+    // Method to add or remove the reminder EditText based on visibility flag
+    private void toggleReminderEditText(boolean isVisible) {
+        Button newReminderButton = view.findViewById(R.id.button_new_reminder);
+        if (isVisible) {
+            editReminderEditText.setVisibility(View.VISIBLE);
+            editReminderEditText.requestFocus();
+            newReminderButton.setText(R.string.cancel_button_text);
+        } else {
+            editReminderEditText.setVisibility(View.GONE);
+            newReminderButton.setText(R.string.new_reminder_button_text);
+        }
+        isEditTextVisible = isVisible;
+        updateNoRemindersVisibility();
+    }
+
+    // Method to update the visibility of the "No reminders" text
+    private void updateNoRemindersVisibility() {
+        if (view != null) {
+            TextView noRemindersTextView = view.findViewById(R.id.text_no_reminders);
+            if (noRemindersTextView != null) {
+                if (reminderCheckboxes.isEmpty() && !isEditTextVisible) {
+                    noRemindersTextView.setVisibility(View.VISIBLE);
+                } else {
+                    noRemindersTextView.setVisibility(View.GONE);
+                }
+            }
+        }
+    }
+
+    // Firebase-related methods
+
+    // Method to read existing reminders from Firestore
+    private void readExistingReminders() {
+        if (!isAdded() || getContext() == null) {
             return;
         }
 
-        if (isReminderAdded(reminderText)) {
-            return; // Do not add duplicate reminders
+        remindersCollectionRef.get()
+                .addOnSuccessListener(queryDocumentSnapshots -> {
+                    savedReminders.clear();
+                    for (DocumentSnapshot documentSnapshot : queryDocumentSnapshots) {
+                        String reminderText = documentSnapshot.getString("reminderText");
+                        if (reminderText != null) {
+                            savedReminders.add(new Reminder(reminderText));
+                        }
+                    }
+                    updateUIWithExistingReminders();
+                })
+                .addOnFailureListener(e -> {
+                    if (getContext() != null) {
+                        Log.e(getContext().getString(R.string.dashboardfragment), getContext().getString(R.string.error_retrieving_reminders) + e.getMessage());
+                    }
+                });
+    }
+
+    // Method to check if a reminder is already added
+    private boolean isReminderAdded(String reminderText) {
+        for (Reminder reminder : savedReminders) {
+            if (reminder.getReminderText().equals(reminderText)) {
+                return true;
+            }
         }
+        return false;
+    }
 
-        Reminder newReminder = new Reminder(reminderText);
+    // Method to update the UI with existing reminders
+    private void updateUIWithExistingReminders() {
+        if (remindersLayout != null) {
+            remindersLayout.removeAllViews();
+            for (Reminder reminder : savedReminders) {
+                CheckBox reminderCheckBox = createReminderCheckBox(reminder.getReminderText());
+                remindersLayout.addView(reminderCheckBox);
+                reminderCheckboxes.add(reminderCheckBox);
+            }
+        }
+        updateNoRemindersVisibility();
+    }
 
+    // Method to create a new reminder CheckBox
+    private CheckBox createReminderCheckBox(String reminderText) {
         CheckBox reminderCheckBox = new CheckBox(context);
         reminderCheckBox.setText(reminderText);
         reminderCheckBox.setChecked(false);
@@ -180,6 +250,22 @@ public class DashboardFragment extends Fragment {
                 removeReminderDelayed((CheckBox) buttonView);
             }
         });
+        return reminderCheckBox;
+    }
+
+    // Method to add a new reminder
+    private void addReminder(String reminderText) {
+        if (remindersLayout == null || context == null) {
+            return;
+        }
+
+        if (isReminderAdded(reminderText)) {
+            return;
+        }
+
+        Reminder newReminder = new Reminder(reminderText);
+        CheckBox reminderCheckBox = createReminderCheckBox(reminderText);
+
         remindersLayout.addView(reminderCheckBox);
         reminderCheckboxes.add(reminderCheckBox);
         savedReminders.add(newReminder);
@@ -196,25 +282,11 @@ public class DashboardFragment extends Fragment {
         updateNoRemindersVisibility();
     }
 
-    @Override
-    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
-        if (isAdded()) {
-            fetchUserNameFromDatabase();
-        }
-        // Assign the 'view' parameter to the instance variable to access it later in other methods
-        this.view = view;
-        // Call loadImagesFromFirebaseStorage after initializing 'recentImagesLayout' and 'view'
-        loadImagesFromFirebaseStorage();
-    }
-
-
+    // Method to remove a reminder after a delay
     private void removeReminderDelayed(CheckBox checkBox) {
-
         new Handler().postDelayed(() -> {
             remindersLayout.removeView(checkBox);
             reminderCheckboxes.remove(checkBox);
-
             String reminderText = checkBox.getText().toString();
 
             // Find the specific reminder to delete from the savedReminders set
@@ -227,10 +299,8 @@ public class DashboardFragment extends Fragment {
             }
 
             if (reminderToDelete != null) {
-                // Remove the reminder from the savedReminders set
                 savedReminders.remove(reminderToDelete);
 
-                // Delete the corresponding document from the database using the reminder text
                 remindersCollectionRef.whereEqualTo("reminderText", reminderText)
                         .get()
                         .addOnSuccessListener(queryDocumentSnapshots -> {
@@ -254,127 +324,44 @@ public class DashboardFragment extends Fragment {
         }, 5000);
     }
 
-    private void updateNoRemindersVisibility() {
-        if (view != null) {
-            TextView noRemindersTextView = view.findViewById(R.id.text_no_reminders);
-            if (noRemindersTextView != null) {
-                if (reminderCheckboxes.isEmpty() && !isEditTextVisible) { // Check both conditions
-                    noRemindersTextView.setVisibility(View.VISIBLE);
-                } else {
-                    noRemindersTextView.setVisibility(View.GONE);
-                }
-            }
-        }
-    }
-
-
-
-    @Override
-    public void onResume() {
-        super.onResume();
-        // Update the visibility of the "no reminder" text when the fragment is resumed
-        updateNoRemindersVisibility();
-    }
-
-    private void readExistingReminders() {
-        if (!isAdded() || getContext() == null) {
-            // Fragment is not attached or context is null, do not proceed
-            return;
-        }
-
-        remindersCollectionRef.get()
-                .addOnSuccessListener(queryDocumentSnapshots -> {
-                    savedReminders.clear(); // Clear the savedReminders set
-                    for (DocumentSnapshot documentSnapshot : queryDocumentSnapshots) {
-                        String reminderText = documentSnapshot.getString("reminderText");
-                        if (reminderText != null) {
-                            savedReminders.add(new Reminder(reminderText));
-                        }
-                    }
-                    // Update the UI after fetching reminders
-                    updateUIWithExistingReminders();
-                })
-                .addOnFailureListener(e -> {
-                    // Error handling
-                    if (getContext() != null) {
-                        Log.e(getContext().getString(R.string.dashboardfragment), getContext().getString(R.string.error_retrieving_reminders) + e.getMessage());
-                    }
-                });
-    }
-
-
-
-    private boolean isReminderAdded(String reminderText) {
-        for (Reminder reminder : savedReminders) {
-            // Compare the text of the reminder with the provided reminderText
-            if (reminder.getReminderText().equals(reminderText)) {
-                return true; // Reminder already exists
-            }
-        }
-        return false; // Reminder is not present
-    }
-
-    private void updateUIWithExistingReminders() {
-
-        if (remindersLayout != null) {
-            for (Reminder reminder : savedReminders) {
-                CheckBox reminderCheckBox = new CheckBox(context);
-                reminderCheckBox.setText(reminder.getReminderText());
-                reminderCheckBox.setChecked(false);
-                reminderCheckBox.setOnCheckedChangeListener((buttonView, isChecked) -> {
-                    if (isChecked) {
-                        removeReminderDelayed((CheckBox) buttonView);
-                    }
-                });
-                remindersLayout.addView(reminderCheckBox);
-                reminderCheckboxes.add(reminderCheckBox);
-            }
-        }
-
-        // Update the visibility of the "no reminder" text when the fragment is resumed
-        updateNoRemindersVisibility();
-    }
-
+    // Method to show the soft keyboard
     private void showKeyboard() {
         InputMethodManager imm = (InputMethodManager) requireActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
         imm.showSoftInput(editReminderEditText, InputMethodManager.SHOW_IMPLICIT);
     }
 
+    // Method to hide the soft keyboard
     private void hideKeyboard() {
         InputMethodManager imm = (InputMethodManager) requireActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
         imm.hideSoftInputFromWindow(editReminderEditText.getWindowToken(), 0);
     }
 
+    // Method to fetch user name from the database
     private void fetchUserNameFromDatabase() {
         if (!isAdded() || getContext() == null) {
-            // Fragment is not attached or context is null, do not proceed
             return;
         }
         FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
         if (currentUser != null) {
             String currentUserId = FirebaseAuth.getInstance().getCurrentUser().getUid();
-
-            // Check if the user is signed in with Google
             for (UserInfo profile : currentUser.getProviderData()) {
                 if ("google.com".equals(profile.getProviderId())) {
-                    // User signed in with Google, get the Google account name
                     String googleAccountName = profile.getDisplayName();
-                    if (googleAccountName != null && !googleAccountName.isEmpty() && view != null) { // Check if the view is not null
+                    if (googleAccountName != null && !googleAccountName.isEmpty() && view != null) {
                         TextView dashboardTitleTextView = view.findViewById(R.id.dashboard_title);
                         if (dashboardTitleTextView != null) {
                             String greeting = getString(R.string.hi) + getString(R.string.space) + googleAccountName;
                             dashboardTitleTextView.setText(greeting);
                         }
                     }
-                    return; // Return here to prevent further processing for non-Google sign-in users
+                    return;
                 }
             }
 
-            // If not signed in with Google, proceed with fetching the user information from the Firestore database
             DocumentReference userDocRef = db.collection("users").document(currentUserId);
             userDocRef.get()
                     .addOnSuccessListener(documentSnapshot -> {
-                        if (isAdded() && documentSnapshot.exists() && getContext() != null) { // Check if fragment is attached and context is not null before proceeding
+                        if (isAdded() && documentSnapshot.exists() && getContext() != null) {
                             String firstName = documentSnapshot.getString(getContext().getString(R.string.firstname));
                             if (firstName != null && !firstName.isEmpty() && view != null) {
                                 TextView dashboardTitleTextView = view.findViewById(R.id.dashboard_title);
@@ -386,7 +373,6 @@ public class DashboardFragment extends Fragment {
                         }
                     })
                     .addOnFailureListener(e -> {
-                        // Error handling
                         if (getContext() != null) {
                             Log.e(getContext().getString(R.string.dashboardfragment), getContext().getString(R.string.error_fetching_user_information) + e.getMessage());
                         }
@@ -394,9 +380,9 @@ public class DashboardFragment extends Fragment {
         }
     }
 
+    // Method to load images from Firebase storage
     private void loadImagesFromFirebaseStorage() {
         if (view == null || getContext() == null) {
-            // Fragment view is not available or context is null, do not proceed
             return;
         }
 
@@ -404,16 +390,13 @@ public class DashboardFragment extends Fragment {
         storageRef.listAll().addOnSuccessListener(listResult -> {
             List<StorageReference> items = listResult.getItems();
             int numImagesToDisplay = Math.min(items.size(), 7);
-            Log.d("DashboardFragment", "Number of images to display: " + numImagesToDisplay);
-
             LinearLayout recentImagesLayout = view.findViewById(R.id.recent_images_layout);
-            recentImagesLayout.removeAllViews(); // Clear existing images if any
+            recentImagesLayout.removeAllViews();
 
             for (int i = 0; i < numImagesToDisplay; i++) {
                 StorageReference item = items.get(i);
                 item.getDownloadUrl().addOnSuccessListener(uri -> {
                     String imageUrl = uri.toString();
-                    Log.d("DashboardFragment", "Image URL: " + imageUrl);
                     ImageView imageView = createImageView(imageUrl);
                     if (imageView != null) {
                         addImageViewToRecentLayout(imageView);
@@ -429,27 +412,16 @@ public class DashboardFragment extends Fragment {
         });
     }
 
-
+    // Method to add an ImageView to the recent layout
     private void addImageViewToRecentLayout(ImageView imageView) {
-        LinearLayout recentImagesLayout = requireView().findViewById(R.id.recent_images_layout);
-        LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(
-                ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-
-        // Add margins to the image views
-        int margin = getResources().getDimensionPixelSize(R.dimen.margin_8);
-        layoutParams.setMargins(margin, 0, margin, 0);
-
-        imageView.setLayoutParams(layoutParams);
-        if (recentImagesLayout != null) {
-            recentImagesLayout.addView(imageView);
-        } else {
-            // Handle the error, log or throw an exception
-        }
+        LinearLayout recentImagesLayout = view.findViewById(R.id.recent_images_layout);
+        recentImagesLayout.addView(imageView);
     }
 
+    // Refactored code in createImageView() and loadImagesIntoImageView()
+    // Simplified image loading using Glide for better code organization
     private ImageView createImageView(String imageUrl) {
         if (!isAdded()) {
-            // Fragment is not attached, do not proceed
             return null;
         }
         ImageView imageView = new ImageView(requireContext());
@@ -468,15 +440,12 @@ public class DashboardFragment extends Fragment {
         return imageView;
     }
 
+    // Method to load an image into an ImageView using Glide with a rotation transformation
     private void loadImageIntoImageView(String imageUrl, ImageView imageView) {
-        // Use Glide to load the image into the ImageView with rotation transformation
         Glide.with(this)
                 .asBitmap()
                 .load(imageUrl)
-                .transform(new RotateTransformation(90)) // Specify the rotation angle (90 degrees in this case)
+                .transform(new RotateTransformation(90))
                 .into(imageView);
     }
-
-
-
 }

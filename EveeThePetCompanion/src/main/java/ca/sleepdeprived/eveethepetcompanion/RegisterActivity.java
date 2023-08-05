@@ -1,14 +1,15 @@
 /*Section: 0NA
-  Wei Wen Chai, N01447321
-  John Aquino, N01303112
-  Jennifer Nguyen, N01435464
-  Ubay Abdulaziz, N01437353
+Wei Wen Chai, N01447321
+John Aquino, N01303112
+Jennifer Nguyen, N01435464
+Ubay Abdulaziz, N01437353
 */
 
 package ca.sleepdeprived.eveethepetcompanion;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Patterns;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -24,17 +25,17 @@ import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.SignInMethodQueryResult;
 import com.google.firebase.firestore.FirebaseFirestore;
-import android.util.Patterns;
 
 public class RegisterActivity extends AppCompatActivity {
 
     private EditText emailEditText;
     private EditText passwordEditText;
-    private EditText firstnameEditText;
-    private EditText lastnameEditText;
     private EditText confirmPasswordEditText;
     private EditText phoneEditText;
-    private Button signUpButton;
+    private EditText firstnameEditText;
+    private EditText lastnameEditText;
+    private Button signUpButton; //Refactoring: Renamed the SignUpButton to signUpButton to follow Java naming conventions.
+
     private FirebaseAuth firebaseAuth;
     private FirebaseFirestore db;
     private PetInfoViewModel petInfoViewModel;
@@ -47,6 +48,7 @@ public class RegisterActivity extends AppCompatActivity {
         firebaseAuth = FirebaseAuth.getInstance();
         db = FirebaseFirestore.getInstance();
         petInfoViewModel = new ViewModelProvider(this).get(PetInfoViewModel.class);
+
         emailEditText = findViewById(R.id.email_edittext);
         passwordEditText = findViewById(R.id.password_edittext);
         confirmPasswordEditText = findViewById(R.id.confirm_password_edittext);
@@ -75,23 +77,35 @@ public class RegisterActivity extends AppCompatActivity {
             Toast.makeText(this, R.string.please_fill_fields, Toast.LENGTH_SHORT).show();
             return false;
         }
+
         if (!password.equals(confirmPassword)) {
             Toast.makeText(this, R.string.passwds_not_match, Toast.LENGTH_SHORT).show();
             return false;
         }
+
         if (!isValidPassword(password)) {
             Toast.makeText(this, R.string.invalid_password, Toast.LENGTH_SHORT).show();
             return false;
         }
+
         if (!Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
             Toast.makeText(this, R.string.invalid_email, Toast.LENGTH_SHORT).show();
             return false;
         }
+
         if (phoneNumber.length() != 10 || !Patterns.PHONE.matcher(phoneNumber).matches()) {
             Toast.makeText(this, R.string.invalid_phone_number, Toast.LENGTH_SHORT).show();
             return false;
         }
 
+        return true;
+    }
+
+    private boolean isValidPassword(String password) {
+        if (password.length() < 6) return false;
+        if (!password.matches(".*[A-Z].*")) return false; // Check for an uppercase letter
+        if (!password.matches(".*[0-9].*")) return false; // Check for a digit
+        if (!password.matches(".*[^a-zA-Z0-9 ].*")) return false; // Check for a special character
         return true;
     }
 
@@ -116,7 +130,6 @@ public class RegisterActivity extends AppCompatActivity {
         });
     }
 
-    // Inside createAccount() method in RegisterActivity
     private void createAccount(final String email, final String password) {
         final String firstName = firstnameEditText.getText().toString().trim();
         final String lastName = lastnameEditText.getText().toString().trim();
@@ -138,7 +151,6 @@ public class RegisterActivity extends AppCompatActivity {
                 });
     }
 
-    // Inside saveUserToFirestore() method in RegisterActivity
     private void saveUserToFirestore(String email, String password, String firstName, String lastName) {
         String uid = firebaseAuth.getCurrentUser().getUid();
         User user = new User(email, password, firstName, lastName);
@@ -160,17 +172,8 @@ public class RegisterActivity extends AppCompatActivity {
                 });
     }
 
-
     private void navigateToLoginActivity() {
         Intent intent = new Intent(RegisterActivity.this, LoginActivity.class);
         startActivity(intent);
-    }
-
-    private boolean isValidPassword(String password){
-        if (password.length() < 6) return false;
-        if (!password.matches(".*[A-Z].*")) return false; // Check for an uppercase letter
-        if (!password.matches(".*[0-9].*")) return false; // Check for a digit
-        if (!password.matches(".*[^a-zA-Z0-9 ].*")) return false; // Check for a special character
-        return true;
     }
 }

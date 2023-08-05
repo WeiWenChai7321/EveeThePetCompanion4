@@ -53,7 +53,6 @@ public class SettingsFragmentTest {
         settingsFragment.sharedPreferences = mockSharedPreferences;
         settingsFragment.emailEditText = mockEmailEditText;
         settingsFragment.lockOrientationSwitch = mockLockOrientationSwitch;
-        settingsFragment.pushNotificationSwitch = mockPushNotificationSwitch;
 
         // Set the mocked FirebaseAuth instance
         settingsFragment.setFirebaseAuth(mockFirebaseAuth);

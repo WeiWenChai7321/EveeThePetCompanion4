@@ -82,11 +82,8 @@ public class LoginActivity extends AppCompatActivity {
         loginButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String username = usernameEditText.getText().toString();
-                String password = passwordEditText.getText().toString();
-
-                // Perform login validation against the Firestore database
-                validateLogin(username, password);
+                //Refactored: moved login functionality to separate method for easier maintanability
+                onLoginButtonClicked();
             }
         });
 
@@ -250,5 +247,14 @@ public class LoginActivity extends AppCompatActivity {
     private void navigateToRegisterActivity() {
         Intent intent = new Intent(LoginActivity.this, RegisterActivity.class);
         startActivity(intent);
+    }
+
+    //Refactored: moved login functionality to separate method for easier maintanability
+    private void onLoginButtonClicked() {
+        String username = usernameEditText.getText().toString();
+        String password = passwordEditText.getText().toString();
+
+        // Perform login validation against the Firestore database
+        validateLogin(username, password);
     }
 }
