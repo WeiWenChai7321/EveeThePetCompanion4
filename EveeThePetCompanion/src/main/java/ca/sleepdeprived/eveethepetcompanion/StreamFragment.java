@@ -244,7 +244,7 @@ public class StreamFragment extends Fragment implements SurfaceHolder.Callback {
             public boolean onTouch(View v, MotionEvent event) {
                 if (event.getAction() == MotionEvent.ACTION_DOWN) {
                     // Start moving right logic and show the toast
-                    Toast.makeText(getActivity(), "Moving right", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getActivity(), R.string.move_right, Toast.LENGTH_SHORT).show();
                 } else if (event.getAction() == MotionEvent.ACTION_UP) {
                     // Stop moving right logic and remove the toast (if required)
                 }

@@ -227,5 +227,6 @@
     <string name="move_forward">Moving forward</string>
     <string name="move_backward">Moving backward</string>
     <string name="move_left">Moving left</string>
+    <string name="move_right">Moving right</string>
 
 </resources>
