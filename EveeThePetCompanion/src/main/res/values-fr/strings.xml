@@ -213,4 +213,5 @@
         <string name="failed_save_pet_info">Échec de la sauvegarde des informations sur l\'animal de compagnie</string>
         <string name="invalid_age">Veuillez entrer un âge valide (chiffres uniquement)</string>
         <string name="empty_field">Vous ne pouvez pas laisser ce champ vide</string>
+        <string name="video">vidéo</string>
 </resources>
