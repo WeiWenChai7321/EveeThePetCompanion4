@@ -486,7 +486,7 @@ public class StreamFragment extends Fragment implements SurfaceHolder.Callback {
             @Override
             public void onComplete(@NonNull Task<UploadTask.TaskSnapshot> task) {
                 if (task.isSuccessful()) {
-                    Toast.makeText(getActivity(), "Picture captured and uploaded to Firebase Storage", Toast.LENGTH_LONG).show();
+                    Toast.makeText(getActivity(), R.string.pic_captured_uploaded, Toast.LENGTH_LONG).show();
                 } else {
                     showToast("Failed to upload picture");
                 }

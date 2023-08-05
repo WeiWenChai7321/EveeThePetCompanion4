@@ -230,5 +230,6 @@
     <string name="move_right">Moving right</string>
     <string name="turn_left">Turning left</string>
     <string name="turn_right">Turning right</string>
+    <string name="pic_captured_uploaded">Picture captured and uploaded to Firebase Storage</string>
 
 </resources>
