@@ -12,13 +12,21 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 
+import androidx.core.app.NotificationManagerCompat;
+
 public class DisableNotificationReceiver extends BroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {
-        // Disable the notification from appearing in the future
-        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
-        SharedPreferences.Editor editor = preferences.edit();
-        editor.putBoolean(context.getString(R.string.show_review_notification), false);
-        editor.apply();
+        int notificationId = intent.getIntExtra("notificationId", -1);
+        if (notificationId != -1) {
+            NotificationManagerCompat notificationManager = NotificationManagerCompat.from(context);
+            notificationManager.cancel(notificationId);
+            // Disable the notification from appearing in the future
+            SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+            SharedPreferences.Editor editor = preferences.edit();
+            editor.putBoolean(context.getString(R.string.show_review_notification), false);
+            editor.apply();
+        }
     }
 }
+

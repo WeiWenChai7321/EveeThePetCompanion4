@@ -32,15 +32,8 @@
         <activity android:name="ca.sleepdeprived.eveethepetcompanion.LoginActivity" />
         <activity android:name="ca.sleepdeprived.eveethepetcompanion.RegisterActivity" />
         <activity android:name="ca.sleepdeprived.eveethepetcompanion.MainActivity" />
+        <receiver android:name=".DisableNotificationReceiver" />
 
-        <receiver
-            android:name=".NetworkChangeReceiver"
-            android:enabled="true"
-            android:exported="false">
-            <intent-filter>
-                <action android:name="android.net.conn.CONNECTIVITY_CHANGE" />
-            </intent-filter>
-        </receiver>
 
     </application>
 

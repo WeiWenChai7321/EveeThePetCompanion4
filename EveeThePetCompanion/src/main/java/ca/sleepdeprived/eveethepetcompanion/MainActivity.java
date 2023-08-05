@@ -116,8 +116,27 @@ public class MainActivity extends AppCompatActivity {
             startLoginActivity();
         }
 
-        petInfoViewModel = new ViewModelProvider(this).get(PetInfoViewModel.class); // Added
-        showReviewNotification(); // Added
+
+        if (getIntent().getBooleanExtra("FROM_NOTIFICATION", false)) {
+            String action = getIntent().getStringExtra("ACTION");
+            if (action != null) {
+                if (action.equals("OKAY")) {
+                    // Handle "Okay" action here
+                    getSupportFragmentManager().beginTransaction()
+                            .replace(R.id.fragment_container, new FeedbackFragment()).commit();
+                } else if (action.equals("NO_THANKS")) {
+                    // Handle "No thanks" action here (dismiss the notification only)
+                    int notificationId = getIntent().getIntExtra("NOTIFICATION_ID", -1);
+                    if (notificationId != -1) {
+                        NotificationManagerCompat notificationManager = NotificationManagerCompat.from(this);
+                        notificationManager.cancel(notificationId);
+                    }
+                }
+            }
+        }
+
+        petInfoViewModel = new ViewModelProvider(this).get(PetInfoViewModel.class);
+        showReviewNotification();
     }
 
     private boolean checkLoginStatus() {
@@ -177,11 +196,6 @@ public class MainActivity extends AppCompatActivity {
                 .show();
     }
 
-    // Add this method inside MainActivity class
-    public PetInfoViewModel getPetInfoViewModel() {
-        return petInfoViewModel;
-    }
-
     private void showReviewNotification() {
         long appStartTimeInMillis = SystemClock.elapsedRealtime();
         long oneHourInMillis = 60 * 60 * 1000;
@@ -191,12 +205,15 @@ public class MainActivity extends AppCompatActivity {
             int notificationId = 1;
 
             // Create an Intent for the "Okay" action (leads to FeedbackFragment)
-            Intent okayIntent = new Intent(this, FeedbackFragment.class);
+            Intent okayIntent = new Intent(this, MainActivity.class);
+            okayIntent.putExtra("FROM_NOTIFICATION", true);
+            okayIntent.putExtra("ACTION", "OKAY");
             PendingIntent okayPendingIntent = PendingIntent.getActivity(this, 0,
                     okayIntent, PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE);
 
             // Create an Intent for the "No thanks" action (disable the notification)
             Intent noThanksIntent = new Intent(this, DisableNotificationReceiver.class);
+            noThanksIntent.putExtra("notificationId", notificationId);
             PendingIntent noThanksPendingIntent = PendingIntent.getBroadcast(this, 0,
                     noThanksIntent, PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE);
 
@@ -231,19 +248,6 @@ public class MainActivity extends AppCompatActivity {
             NotificationManager notificationManager = getSystemService(NotificationManager.class);
             notificationManager.createNotificationChannel(channel);
         }
-    }
-
-    public Fragment getVisibleFragment() {
-        FragmentManager fragmentManager = getSupportFragmentManager();
-        List<Fragment> fragments = fragmentManager.getFragments();
-        if (fragments != null) {
-            for (Fragment fragment : fragments) {
-                if (fragment != null && fragment.isVisible()) {
-                    return fragment;
-                }
-            }
-        }
-        return null;
     }
 
 }

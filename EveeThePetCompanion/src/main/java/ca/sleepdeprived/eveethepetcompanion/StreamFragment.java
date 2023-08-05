@@ -368,7 +368,21 @@ public class StreamFragment extends Fragment implements SurfaceHolder.Callback {
     @Override
     public void surfaceChanged(SurfaceHolder holder, int format, int width, int height) {
         // Handle surface changes, if needed
+        // Restart the preview after surface changes (e.g., during screen rotation)
+        if (camera != null) {
+            try {
+                camera.stopPreview();
+                camera.setPreviewDisplay(holder);
+
+                // Set the camera orientation and other configuration if needed
+
+                camera.startPreview();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
     }
+
 
     @Override
     public void surfaceDestroyed(SurfaceHolder holder) {
@@ -453,4 +467,45 @@ public class StreamFragment extends Fragment implements SurfaceHolder.Callback {
         });
 
     }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        if (camera != null) {
+            camera.stopPreview();
+            camera.release();
+            camera = null;
+        }
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        if (camera != null) {
+            camera.stopPreview();
+            camera.release();
+            camera = null;
+        }
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        if (camera == null) {
+            // Check if the CAMERA permission is granted, if not request it
+            if (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
+                // You can show a rationale for needing the permission if desired
+                if (ActivityCompat.shouldShowRequestPermissionRationale(requireActivity(), Manifest.permission.CAMERA)) {
+                    // Show a dialog or explanation to the user why you need the permission
+                }
+
+                // Request the permission
+                ActivityCompat.requestPermissions(requireActivity(), new String[]{Manifest.permission.CAMERA}, YOUR_PERMISSION_REQUEST_CODE);
+            } else {
+                // The permission is already granted, start the camera preview
+                startCameraPreview();
+            }
+        }
+    }
+
 }
