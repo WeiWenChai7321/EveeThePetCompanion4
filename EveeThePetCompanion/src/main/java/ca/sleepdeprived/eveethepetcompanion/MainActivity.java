@@ -151,8 +151,8 @@ public class MainActivity extends AppCompatActivity {
                         case R.id.nav_stream:
                             selectedFragment = new StreamFragment();
                             break;
-                        case R.id.nav_highlights:
-                            selectedFragment = new HighlightsFragment();
+                        case R.id.nav_gallery:
+                            selectedFragment = new GalleryFragment();
                             break;
                     }
                     getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container,

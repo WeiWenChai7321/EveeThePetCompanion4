@@ -12,8 +12,8 @@
         android:title="@string/stream_fragment"/>
 
     <item
-        android:id="@+id/nav_highlights"
+        android:id="@+id/nav_gallery"
         android:icon="@drawable/ic_baseline_search_24"
-        android:title="@string/highlights_fragment"/>
+        android:title="@string/gallery_fragment"/>
 
 </menu>

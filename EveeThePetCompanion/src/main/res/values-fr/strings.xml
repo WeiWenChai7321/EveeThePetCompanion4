@@ -9,7 +9,7 @@
         <string name="splashtext">"Evee est un appareil de surveillance pour animaux de compagnie télécommandé qui vous permet de surveiller vos amis à fourrure lorsque vous n\'êtes pas chez vous !"</string>
         <string name="dashboard_fragment">Tableau de bord</string>
         <string name="stream_fragment">Flux</string>
-        <string name="highlights_fragment">Points forts</string>
+        <string name="gallery_fragment">Points forts</string>
         <string name="action_help">Aider</string>
         <string name="action_petprofile">Profil de l\'animal</string>
         <string name="action_login">Connexion</string>
@@ -63,7 +63,7 @@
         <string name="howtolivefeed">Comment afficher le flux vidéo en direct ?</string>
         <string name="questions">Vous avez encore une question ?</string>
         <string name="contact_us">Contactez-nous</string>
-        <string name="highlights">Points forts</string>
+        <string name="gallery">Points forts</string>
         <string name="videos">Vidéos</string>
         <string name="photos">Photos</string>
         <string name="download_all">Tout télécharger</string>

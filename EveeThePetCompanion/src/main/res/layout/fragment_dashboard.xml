@@ -23,7 +23,8 @@
             android:text="@string/reminders"
             android:textSize="14sp"
             android:textStyle="bold"
-            android:layout_marginTop="@dimen/margin_16" />
+            android:layout_marginTop="@dimen/margin_16"
+            android:layout_marginStart="@dimen/margin_16"/>
 
         <LinearLayout
             android:id="@+id/outer_reminders_card"
@@ -81,7 +82,8 @@
             android:text="@string/recently_taken"
             android:textSize="14sp"
             android:textStyle="bold"
-            android:layout_marginTop="@dimen/margin_16" />
+            android:layout_marginTop="@dimen/margin_16"
+            android:layout_marginStart="@dimen/margin_16"/>
 
         <HorizontalScrollView
             android:id="@+id/recent_images_scrollview"
@@ -94,31 +96,6 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal">
-
-                <ImageView
-                    android:id="@+id/recent_image1"
-                    android:layout_width="@dimen/recent_image_width"
-                    android:layout_height="@dimen/recent_image_height"
-                    android:src="@drawable/photo_placeholder"
-                    android:scaleType="centerCrop"
-                    android:layout_marginStart="@dimen/margin_8"
-                    android:layout_marginEnd="@dimen/margin_4" />
-
-                <ImageView
-                    android:id="@+id/recent_image2"
-                    android:layout_width="@dimen/recent_image_width"
-                    android:layout_height="@dimen/recent_image_height"
-                    android:src="@drawable/photo_placeholder"
-                    android:scaleType="centerCrop"
-                    android:layout_marginEnd="@dimen/margin_4" />
-
-                <ImageView
-                    android:id="@+id/recent_image3"
-                    android:layout_width="@dimen/recent_image_width"
-                    android:layout_height="@dimen/recent_image_height"
-                    android:src="@drawable/photo_placeholder"
-                    android:scaleType="centerCrop"
-                    android:layout_marginEnd="@dimen/margin_4" />
 
             </LinearLayout>
         </HorizontalScrollView>

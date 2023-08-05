@@ -42,7 +42,7 @@ import java.util.ArrayList;
 import java.util.List;
 import android.provider.MediaStore;
 
-public class HighlightsFragment extends Fragment {
+public class GalleryFragment extends Fragment {
 
     private static final int REQUEST_PERMISSION_WRITE_EXTERNAL_STORAGE = 1;
 
@@ -66,7 +66,7 @@ public class HighlightsFragment extends Fragment {
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_highlights, container, false);
+        View view = inflater.inflate(R.layout.fragment_gallery, container, false);
 
         imageViews = new ArrayList<>();
 

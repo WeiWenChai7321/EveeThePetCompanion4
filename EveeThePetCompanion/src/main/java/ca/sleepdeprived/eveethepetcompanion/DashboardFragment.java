@@ -24,9 +24,11 @@ import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.UserInfo;
@@ -34,6 +36,9 @@ import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
@@ -202,8 +207,8 @@ public class DashboardFragment extends Fragment {
         if (isAdded()) {
             fetchUserNameFromDatabase();
         }
-        // Update the UI with existing reminders
         updateUIWithExistingReminders();
+        loadImagesFromFirebaseStorage();
     }
 
     private void removeReminderDelayed(CheckBox checkBox) {
@@ -390,5 +395,75 @@ public class DashboardFragment extends Fragment {
                     });
         }
     }
+
+    private void loadImagesFromFirebaseStorage() {
+        StorageReference storageRef = FirebaseStorage.getInstance().getReference().child("recent_images");
+
+        storageRef.listAll().addOnSuccessListener(listResult -> {
+            List<StorageReference> items = listResult.getItems();
+            int numImagesToDisplay = Math.min(items.size(), 7); // Get the minimum of 7 and the number of items in the list
+
+            LinearLayout recentImagesLayout = view.findViewById(R.id.recent_images_layout);
+            recentImagesLayout.removeAllViews(); // Clear existing images if any
+
+            for (int i = 0; i < numImagesToDisplay; i++) {
+                StorageReference item = items.get(i);
+                item.getDownloadUrl().addOnSuccessListener(uri -> {
+                    String imageUrl = uri.toString();
+                    ImageView imageView = createImageView(imageUrl);
+                    addImageViewToRecentLayout(imageView); // Add the ImageView to the recent layout
+                }).addOnFailureListener(exception -> {
+                    // Handle the failure, if any.
+                    Log.e("DashboardFragment", "Error downloading image: " + exception.getMessage());
+                });
+            }
+        }).addOnFailureListener(exception -> {
+            // Handle the failure, if any.
+            Log.e("DashboardFragment", "Error listing images: " + exception.getMessage());
+        });
+    }
+
+
+    private void addImageViewToRecentLayout(ImageView imageView) {
+        LinearLayout recentImagesLayout = requireView().findViewById(R.id.recent_images_layout);
+        LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(
+                ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+
+        // Add margins to the image views
+        int margin = getResources().getDimensionPixelSize(R.dimen.margin_8);
+        layoutParams.setMargins(margin, 0, margin, 0);
+
+        imageView.setLayoutParams(layoutParams);
+        recentImagesLayout.addView(imageView);
+    }
+
+    private ImageView createImageView(String imageUrl) {
+        ImageView imageView = new ImageView(requireContext());
+        LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(
+                getResources().getDimensionPixelSize(R.dimen.recent_image_width),
+                getResources().getDimensionPixelSize(R.dimen.recent_image_height)
+        );
+
+        int margin = getResources().getDimensionPixelSize(R.dimen.margin_8);
+        layoutParams.setMargins(margin, 0, margin, 0);
+        imageView.setLayoutParams(layoutParams);
+        imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
+
+        // You can use any image loading library or method here to load the image into the ImageView.
+        // For example, you can use Glide or Picasso.
+        // For simplicity, I'll assume you have a method to load the image into the ImageView directly.
+        // Replace 'loadImageIntoImageView' with the actual method to load the image.
+        loadImageIntoImageView(imageUrl, imageView);
+
+        return imageView;
+    }
+
+    private void loadImageIntoImageView(String imageUrl, ImageView imageView) {
+        // Use any image loading library or method here to load the image into the ImageView.
+        // For example, you can use Glide or Picasso.
+        // Replace 'Glide' with the actual library you're using.
+        Glide.with(this).load(imageUrl).into(imageView);
+    }
+
 
 }

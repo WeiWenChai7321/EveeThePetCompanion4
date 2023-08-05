@@ -9,7 +9,7 @@
     <string name="splashtext">"Evee is a remote-controlled pet monitoring device that allows you to check in on your furry friends when you're away from home!"</string>
     <string name="dashboard_fragment">Dashboard</string>
     <string name="stream_fragment">Stream</string>
-    <string name="highlights_fragment">Highlights</string>
+    <string name="gallery_fragment">Gallery</string>
     <string name="action_help">Help</string>
     <string name="action_petprofile">Pet Profile</string>
     <string name="action_login">Login</string>
@@ -63,7 +63,7 @@
     <string name="howtolivefeed">How to view the live video feed?</string>
     <string name="questions">Still have a question?</string>
     <string name="contact_us">Contact Us</string>
-    <string name="highlights">Highlights</string>
+    <string name="gallery">Gallery</string>
     <string name="videos">Videos</string>
     <string name="photos">Photos</string>
     <string name="download_all">Download All</string>
