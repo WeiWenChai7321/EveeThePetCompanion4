@@ -118,6 +118,9 @@ public class RegisterActivity extends AppCompatActivity {
 
     // Inside createAccount() method in RegisterActivity
     private void createAccount(final String email, final String password) {
+        final String firstName = firstnameEditText.getText().toString().trim();
+        final String lastName = lastnameEditText.getText().toString().trim();
+
         firebaseAuth.createUserWithEmailAndPassword(email, password)
                 .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
                     @Override
@@ -125,17 +128,7 @@ public class RegisterActivity extends AppCompatActivity {
                         if (task.isSuccessful()) {
                             // Account creation successful, show success message
                             Toast.makeText(RegisterActivity.this, R.string.account_created_successfully, Toast.LENGTH_SHORT).show();
-
-                            // Set pet information in the ViewModel
-                            String firstName = firstnameEditText.getText().toString().trim();
-                            String lastName = lastnameEditText.getText().toString().trim();
-                            petInfoViewModel.setPetName("Zoe");
-                            petInfoViewModel.setPetAge("2");
-                            petInfoViewModel.setPetColor("brown");
-                            petInfoViewModel.setPetBreed("tortoiseshell");
-
-                            // Save user and pet information to Firestore
-                            saveUserAndPetToFirestore(email, password, firstName, lastName);
+                            saveUserToFirestore(email, password, firstName, lastName);
                             navigateToLoginActivity();
                         } else {
                             // Error occurred while creating the account, show error message
@@ -145,8 +138,8 @@ public class RegisterActivity extends AppCompatActivity {
                 });
     }
 
-    // Inside saveUserAndPetToFirestore() method in RegisterActivity
-    private void saveUserAndPetToFirestore(String email, String password, String firstName, String lastName) {
+    // Inside saveUserToFirestore() method in RegisterActivity
+    private void saveUserToFirestore(String email, String password, String firstName, String lastName) {
         String uid = firebaseAuth.getCurrentUser().getUid();
         User user = new User(email, password, firstName, lastName);
 
@@ -159,22 +152,6 @@ public class RegisterActivity extends AppCompatActivity {
                     public void onComplete(@NonNull Task<Void> task) {
                         if (task.isSuccessful()) {
                             // User data saved to Firestore
-
-                            // Save pet information to Firestore
-                            db.collection("pet_info")
-                                    .document(uid)
-                                    .set(petInfoViewModel.toMap())
-                                    .addOnCompleteListener(new OnCompleteListener<Void>() {
-                                        @Override
-                                        public void onComplete(@NonNull Task<Void> task) {
-                                            if (task.isSuccessful()) {
-                                                // Pet information saved to Firestore
-                                            } else {
-                                                // Error occurred while saving pet information, show error message
-                                                Toast.makeText(RegisterActivity.this, R.string.failed_save_pet_info, Toast.LENGTH_SHORT).show();
-                                            }
-                                        }
-                                    });
                         } else {
                             // Error occurred while saving user data, show error message
                             Toast.makeText(RegisterActivity.this, R.string.failed_save_user_data, Toast.LENGTH_SHORT).show();

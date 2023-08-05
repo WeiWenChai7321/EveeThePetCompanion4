@@ -133,71 +133,102 @@ public class PetProfileFragment extends Fragment {
     }
 
     private void editPetInfo() {
-        // Inflate the dialog_pet_info_edit.xml layout
-        View dialogView = LayoutInflater.from(requireContext()).inflate(R.layout.dialog_pet_info_edit, null);
-
-        // Find the EditText views
-        EditText nameEditText = dialogView.findViewById(R.id.nameEditText);
-        EditText ageEditText = dialogView.findViewById(R.id.ageEditText);
-        EditText colorEditText = dialogView.findViewById(R.id.colorEditText);
-        EditText breedEditText = dialogView.findViewById(R.id.breedEditText);
-
-        // Set the initial text for the EditText views
-        nameEditText.setText(nameTextView.getText());
-        ageEditText.setText(ageTextView.getText());
-        colorEditText.setText(colorTextView.getText());
-        breedEditText.setText(breedTextView.getText());
-
-        // Create and show the AlertDialog for editing pet info
-        AlertDialog.Builder builder = new AlertDialog.Builder(requireContext());
-        builder.setTitle(R.string.edit_pet_info)
-                .setView(dialogView)
-                .setPositiveButton(R.string.save, new DialogInterface.OnClickListener() {
+        db.collection("pet_info")
+                .limit(1) // Limit to one result, you can remove this to get all documents
+                .get()
+                .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
                     @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        // Get the updated text from the EditText views
-                        String name = nameEditText.getText().toString();
-                        int age = Integer.parseInt(ageEditText.getText().toString());
-                        String color = colorEditText.getText().toString();
-                        String breed = breedEditText.getText().toString();
+                    public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
+                        // Check if any documents exist in the query result
+                        if (!queryDocumentSnapshots.isEmpty()) {
+                            // Get the first document in the result
+                            DocumentSnapshot documentSnapshot = queryDocumentSnapshots.getDocuments().get(0);
 
-                        // Update the TextViews with the edited information
-                        nameTextView.setText(name);
-                        ageTextView.setText(String.valueOf(age));
-                        colorTextView.setText(color);
-                        breedTextView.setText(breed);
+                            // Retrieve the pet information from the document
+                            String name = documentSnapshot.getString("petName");
+                            int age = documentSnapshot.getLong("petAge").intValue();
+                            String color = documentSnapshot.getString("petColor");
+                            String breed = documentSnapshot.getString("petBreed");
 
-                        // Update the Firestore database with the edited information
-                        String userId = auth.getCurrentUser().getUid();
-                        DocumentReference docRef = db.collection("pet_info").document(userId);
+                            // Inflate the dialog_pet_info_edit.xml layout
+                            View dialogView = LayoutInflater.from(requireContext()).inflate(R.layout.dialog_pet_info_edit, null);
 
-                        // Create a Map with the edited data
-                        Map<String, Object> editedData = new HashMap<>();
-                        editedData.put("petName", name);
-                        editedData.put("petAge", age);
-                        editedData.put("petColor", color);
-                        editedData.put("petBreed", breed);
+                            // Find the EditText views
+                            EditText nameEditText = dialogView.findViewById(R.id.nameEditText);
+                            EditText ageEditText = dialogView.findViewById(R.id.ageEditText);
+                            EditText colorEditText = dialogView.findViewById(R.id.colorEditText);
+                            EditText breedEditText = dialogView.findViewById(R.id.breedEditText);
 
-                        docRef.set(editedData)
-                                .addOnSuccessListener(new OnSuccessListener<Void>() {
-                                    @Override
-                                    public void onSuccess(Void aVoid) {
-                                        // Show a toast message to indicate successful editing
-                                        Toast.makeText(requireContext(), R.string.pet_info_updated, Toast.LENGTH_SHORT).show();
-                                    }
-                                })
-                                .addOnFailureListener(new OnFailureListener() {
-                                    @Override
-                                    public void onFailure(@NonNull Exception e) {
-                                        // Show a toast message to indicate failure
-                                        Toast.makeText(requireContext(), R.string.pet_info_update_failed, Toast.LENGTH_SHORT).show();
-                                    }
-                                });
+                            // Set the initial text for the EditText views with the retrieved data
+                            nameEditText.setText(name);
+                            ageEditText.setText(String.valueOf(age));
+                            colorEditText.setText(color);
+                            breedEditText.setText(breed);
+
+                            // Create and show the AlertDialog for editing pet info
+                            AlertDialog.Builder builder = new AlertDialog.Builder(requireContext());
+                            builder.setTitle(R.string.edit_pet_info)
+                                    .setView(dialogView)
+                                    .setPositiveButton(R.string.save, new DialogInterface.OnClickListener() {
+                                        @Override
+                                        public void onClick(DialogInterface dialog, int which) {
+                                            // Get the updated text from the EditText views
+                                            String name = nameEditText.getText().toString();
+                                            int age = Integer.parseInt(ageEditText.getText().toString());
+                                            String color = colorEditText.getText().toString();
+                                            String breed = breedEditText.getText().toString();
+
+                                            // Update the TextViews with the edited information
+                                            nameTextView.setText(name);
+                                            ageTextView.setText(String.valueOf(age));
+                                            colorTextView.setText(color);
+                                            breedTextView.setText(breed);
+
+                                            // Create a Map with the edited data
+                                            Map<String, Object> editedData = new HashMap<>();
+                                            editedData.put("petName", name);
+                                            editedData.put("petAge", age);
+                                            editedData.put("petColor", color);
+                                            editedData.put("petBreed", breed);
+
+                                            // Update any entry in the "pet_info" collection with the edited data
+                                            db.collection("pet_info")
+                                                    .document(documentSnapshot.getId())
+                                                    .update(editedData)
+                                                    .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                        @Override
+                                                        public void onSuccess(Void aVoid) {
+                                                            // Show a toast message to indicate successful editing
+                                                            Toast.makeText(requireContext(), R.string.pet_info_updated, Toast.LENGTH_SHORT).show();
+                                                        }
+                                                    })
+                                                    .addOnFailureListener(new OnFailureListener() {
+                                                        @Override
+                                                        public void onFailure(@NonNull Exception e) {
+                                                            // Show a toast message to indicate failure
+                                                            Toast.makeText(requireContext(), R.string.pet_info_update_failed, Toast.LENGTH_SHORT).show();
+                                                        }
+                                                    });
+                                        }
+                                    })
+                                    .setNegativeButton(R.string.cancel, null)
+                                    .show();
+                        } else {
+                            // The collection is empty, handle the case where there are no entries
+                            Toast.makeText(requireContext(), "No pet info found in the database", Toast.LENGTH_SHORT).show();
+                        }
                     }
                 })
-                .setNegativeButton(R.string.cancel, null)
-                .show();
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        // Show a toast message to indicate failure
+                        Toast.makeText(requireContext(), "Failed to retrieve pet info", Toast.LENGTH_SHORT).show();
+                    }
+                });
     }
+
+
 
     @Override
     public void onResume() {
@@ -277,44 +308,51 @@ public class PetProfileFragment extends Fragment {
     }
 
     private void readPetInfoFromFirestore() {
-        String userId = auth.getCurrentUser().getUid();
-        DocumentReference docRef = db.collection("pet_info").document(userId);
+        db.collection("pet_info")
+                .limit(1) // Limit to one result, you can remove this to get all documents
+                .get()
+                .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+                    @Override
+                    public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
+                        // Check if any documents exist in the query result
+                        if (!queryDocumentSnapshots.isEmpty()) {
+                            // Get the first document in the result
+                            DocumentSnapshot documentSnapshot = queryDocumentSnapshots.getDocuments().get(0);
 
-        docRef.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
-            @Override
-            public void onSuccess(DocumentSnapshot documentSnapshot) {
-                if (documentSnapshot.exists()) {
-                    String name = documentSnapshot.getString("petName");
-                    Long age = documentSnapshot.getLong("petAge"); // Use getLong for integer fields
-                    String color = documentSnapshot.getString("petColor");
-                    String breed = documentSnapshot.getString("petBreed");
+                            String name = documentSnapshot.getString("petName");
+                            Long ageLong = documentSnapshot.getLong("petAge");
+                            String color = documentSnapshot.getString("petColor");
+                            String breed = documentSnapshot.getString("petBreed");
 
-                    // Update the TextViews with the retrieved pet information
-                    if (name != null && !name.isEmpty()) {
-                        nameTextView.setText(name);
+                            int age = (ageLong != null) ? ageLong.intValue() : 0;
+
+                            // Update the TextViews with the retrieved pet information
+                            if (name != null && !name.isEmpty()) {
+                                nameTextView.setText(name);
+                            }
+                            // ageTextView expects an int, so no need to check for null here
+                            ageTextView.setText(String.valueOf(age));
+                            if (color != null && !color.isEmpty()) {
+                                colorTextView.setText(color);
+                            }
+                            if (breed != null && !breed.isEmpty()) {
+                                breedTextView.setText(breed);
+                            }
+                        } else {
+                            // The collection is empty, handle the case where there are no entries
+                            Toast.makeText(requireContext(), "No pet info found in the database", Toast.LENGTH_SHORT).show();
+                        }
                     }
-                    if (age != null) {
-                        ageTextView.setText(String.valueOf(age));
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        // Show a toast message to indicate failure
+                        Toast.makeText(requireContext(), "Failed to retrieve pet info", Toast.LENGTH_SHORT).show();
                     }
-                    if (color != null && !color.isEmpty()) {
-                        colorTextView.setText(color);
-                    }
-                    if (breed != null && !breed.isEmpty()) {
-                        breedTextView.setText(breed);
-                    }
-                } else {
-                    // The document does not exist, show a message or handle accordingly
-                    Toast.makeText(requireContext(), R.string.pet_info_retrieval_failed, Toast.LENGTH_SHORT).show();
-                }
-            }
-        }).addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception e) {
-                // Show a toast message to indicate failure
-                Toast.makeText(requireContext(), R.string.pet_info_retrieval_failed, Toast.LENGTH_SHORT).show();
-            }
-        });
+                });
     }
+
 
 
     private void uploadImageToFirebaseStorage(Uri imageUri) {
