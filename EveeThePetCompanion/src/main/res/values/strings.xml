@@ -224,5 +224,6 @@
     <string name="no_pet_found">No pet info found in the database</string>
     <string name="updated_profilepic">Updated profile picture</string>
     <string name="image_upload_failed">Image upload failed</string>
+    <string name="move_forward">Moving forward</string>
 
 </resources>
