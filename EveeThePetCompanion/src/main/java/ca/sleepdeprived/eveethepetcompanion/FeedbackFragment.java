@@ -7,9 +7,6 @@
 
 package ca.sleepdeprived.eveethepetcompanion;
 
-import android.content.Context;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.Patterns;
@@ -20,7 +17,6 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.RatingBar;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -28,9 +24,6 @@ import androidx.fragment.app.Fragment;
 
 import com.google.android.material.snackbar.Snackbar;
 import com.google.firebase.firestore.FirebaseFirestore;
-
-import java.util.ArrayList;
-import java.util.List;
 
 public class FeedbackFragment extends Fragment {
 
@@ -43,14 +36,10 @@ public class FeedbackFragment extends Fragment {
     private RatingBar ratingBar;
     private Button btnSubmitFeedback;
     private FirebaseFirestore db;
-    private List<Feedback> offlineFeedbackList;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        // Initialize the list to store offline feedback data
-        offlineFeedbackList = new ArrayList<>();
     }
 
     @Nullable

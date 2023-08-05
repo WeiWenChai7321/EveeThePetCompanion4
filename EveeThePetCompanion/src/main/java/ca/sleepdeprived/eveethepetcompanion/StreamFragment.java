@@ -105,6 +105,20 @@ public class StreamFragment extends Fragment implements SurfaceHolder.Callback {
         btnTreat.setColorFilter(ContextCompat.getColor(requireContext(), android.R.color.white));
         btnPicture.setColorFilter(ContextCompat.getColor(requireContext(), android.R.color.white));
 
+        // Check if the CAMERA permission is granted, if not request it
+        if (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
+            // You can show a rationale for needing the permission if desired
+            if (ActivityCompat.shouldShowRequestPermissionRationale(requireActivity(), Manifest.permission.CAMERA)) {
+                // Show a dialog or explanation to the user why you need the permission
+            }
+
+            // Request the permission
+            ActivityCompat.requestPermissions(requireActivity(), new String[]{Manifest.permission.CAMERA}, YOUR_PERMISSION_REQUEST_CODE);
+        } else {
+            // The permission is already granted, start the camera preview
+            startCameraPreview();
+        }
+
         btnTreat.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -282,6 +296,32 @@ public class StreamFragment extends Fragment implements SurfaceHolder.Callback {
         holder.addCallback(this);
 
         return view;
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        if (requestCode == YOUR_PERMISSION_REQUEST_CODE) {
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                // The CAMERA permission is granted, start the camera preview
+                startCameraPreview();
+            } else {
+                // The user denied the permission, handle this situation (e.g., show a message)
+            }
+        }
+    }
+
+    private void startCameraPreview() {
+        // Open the camera and start the preview when the surface is created
+        try {
+            camera = Camera.open();
+            camera.setPreviewDisplay(streamView.getHolder());
+
+            // Set the camera orientation and other configuration if needed
+
+            camera.startPreview();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
