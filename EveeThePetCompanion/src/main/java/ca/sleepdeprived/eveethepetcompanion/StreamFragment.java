@@ -368,8 +368,6 @@ public class StreamFragment extends Fragment implements SurfaceHolder.Callback {
             try {
                 camera.stopPreview();
                 camera.setPreviewDisplay(holder);
-
-                // Set the camera orientation based on the device orientation
                 Camera.CameraInfo info = new Camera.CameraInfo();
                 Camera.getCameraInfo(0, info);
                 int rotation = getActivity().getWindowManager().getDefaultDisplay().getRotation();
@@ -388,14 +386,18 @@ public class StreamFragment extends Fragment implements SurfaceHolder.Callback {
                         degrees = 270;
                         break;
                 }
-
                 int result;
                 if (info.facing == Camera.CameraInfo.CAMERA_FACING_FRONT) {
                     result = (info.orientation + degrees) % 360;
                     result = (360 - result) % 360;  // compensate the mirror
                 } else {
-                    // back-facing
                     result = (info.orientation - degrees + 360) % 360;
+                }
+
+                // Add this block to handle the orientation for portrait mode
+                int cameraRotation = getActivity().getWindowManager().getDefaultDisplay().getRotation();
+                if (cameraRotation == Surface.ROTATION_0 || cameraRotation == Surface.ROTATION_180) {
+                    result = (result + 90) % 360;
                 }
 
                 camera.setDisplayOrientation(result);
@@ -405,8 +407,6 @@ public class StreamFragment extends Fragment implements SurfaceHolder.Callback {
             }
         }
     }
-
-
 
     @Override
     public void surfaceDestroyed(SurfaceHolder holder) {
