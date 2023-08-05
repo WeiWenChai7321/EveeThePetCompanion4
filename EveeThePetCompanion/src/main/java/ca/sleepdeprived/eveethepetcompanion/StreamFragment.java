@@ -309,20 +309,15 @@ public class StreamFragment extends Fragment implements SurfaceHolder.Callback {
     private void startCameraPreview() {
         try {
             camera = Camera.open();
-
-            // Get the supported preview sizes of the camera
             Camera.Parameters parameters = camera.getParameters();
             List<Camera.Size> supportedSizes = parameters.getSupportedPreviewSizes();
-
-            // Set the optimal preview size based on the device's current orientation
             int width = streamView.getWidth();
             int height = streamView.getHeight();
             Camera.Size optimalSize = getOptimalPreviewSize(supportedSizes, width, height);
             parameters.setPreviewSize(optimalSize.width, optimalSize.height);
-
-            // Apply the parameters and start the preview
             camera.setParameters(parameters);
             camera.setPreviewDisplay(streamView.getHolder());
+            setCameraOrientation(); // Set camera orientation here
             camera.startPreview();
         } catch (Exception e) {
             e.printStackTrace();
@@ -503,7 +498,6 @@ public class StreamFragment extends Fragment implements SurfaceHolder.Callback {
         if (camera == null) {
             return;
         }
-
         int rotation = getActivity().getWindowManager().getDefaultDisplay().getRotation();
         int degrees = 0;
         switch (rotation) {
@@ -520,7 +514,6 @@ public class StreamFragment extends Fragment implements SurfaceHolder.Callback {
                 degrees = 270;
                 break;
         }
-
         Camera.CameraInfo info = new Camera.CameraInfo();
         Camera.getCameraInfo(0, info);
         int result;
@@ -565,40 +558,4 @@ public class StreamFragment extends Fragment implements SurfaceHolder.Callback {
 
         return optimalSize;
     }
-
-    private void setCameraDisplayOrientation(Camera camera) {
-        if (camera == null) return;
-
-        Camera.CameraInfo info = new Camera.CameraInfo();
-        Camera.getCameraInfo(0, info);
-        int rotation = getActivity().getWindowManager().getDefaultDisplay().getRotation();
-        int degrees = 0;
-        switch (rotation) {
-            case Surface.ROTATION_0:
-                degrees = 0;
-                break;
-            case Surface.ROTATION_90:
-                degrees = 90;
-                break;
-            case Surface.ROTATION_180:
-                degrees = 180;
-                break;
-            case Surface.ROTATION_270:
-                degrees = 270;
-                break;
-        }
-
-        int result;
-        if (info.facing == Camera.CameraInfo.CAMERA_FACING_FRONT) {
-            result = (info.orientation + degrees) % 360;
-            result = (360 - result) % 360;  // compensate the mirror
-        } else {
-            result = (info.orientation - degrees + 360) % 360;
-        }
-
-        camera.setDisplayOrientation(result);
-    }
-
-
-
 }
