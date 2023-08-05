@@ -221,5 +221,6 @@
         <string name="no_pet_found">Aucune information sur les animaux n\'a été trouvée dans la base de données</string>
         <string name="updated_profilepic">Mise à jour de la photo de profil</string>
         <string name="image_upload_failed">Le téléchargement de l\'image a échoué</string>
+        <string name="move_forward">Aller de l\'avant</string>
 
 </resources>
