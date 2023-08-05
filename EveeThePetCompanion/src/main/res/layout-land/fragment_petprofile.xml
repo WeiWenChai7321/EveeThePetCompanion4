@@ -14,14 +14,6 @@
             android:orientation="vertical"
             android:padding="36dp">
 
-            <ImageButton
-                android:id="@+id/pet_display_pic"
-                android:layout_width="200dp"
-                android:layout_height="200dp"
-                android:layout_gravity="center_horizontal"
-                android:onClick="selectImageFromGallery"
-                android:scaleType="centerCrop"
-                android:background="@android:color/transparent"/>
         </LinearLayout>
 
         <LinearLayout
@@ -35,6 +27,15 @@
             android:background="@drawable/card_background"
             android:orientation="horizontal"
             android:padding="@dimen/padding_8">
+
+            <ImageButton
+                android:id="@+id/pet_display_pic"
+                android:layout_width="97dp"
+                android:layout_height="95dp"
+                android:layout_gravity="center_horizontal"
+                android:background="@android:color/transparent"
+                android:onClick="selectImageFromGallery"
+                android:scaleType="centerCrop" />
 
             <LinearLayout
                 android:layout_width="match_parent"
