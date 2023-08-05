@@ -197,13 +197,16 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void showReviewNotification() {
-        long appStartTimeInMillis = SystemClock.elapsedRealtime();
+        String CHANNEL_ID = "app_review_channel";
+        int notificationId = 1;
+
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
+        long lastNotificationTime = preferences.getLong("last_notification_time", 0);
+
+        long currentTimeMillis = System.currentTimeMillis();
         long oneHourInMillis = 60 * 60 * 1000;
 
-        if (appStartTimeInMillis >= oneHourInMillis) {
-            String CHANNEL_ID = "app_review_channel";
-            int notificationId = 1;
-
+        if (currentTimeMillis - lastNotificationTime >= oneHourInMillis) {
             // Create an Intent for the "Okay" action (leads to FeedbackFragment)
             Intent okayIntent = new Intent(this, MainActivity.class);
             okayIntent.putExtra("FROM_NOTIFICATION", true);
@@ -234,8 +237,14 @@ public class MainActivity extends AppCompatActivity {
             // Create the notification manager and display the notification
             NotificationManagerCompat notificationManager = NotificationManagerCompat.from(this);
             notificationManager.notify(notificationId, notificationBuilder.build());
+
+            // Save the current time as the last notification time in SharedPreferences
+            SharedPreferences.Editor editor = preferences.edit();
+            editor.putLong("last_notification_time", currentTimeMillis);
+            editor.apply();
         }
     }
+
 
     // Create the notification channel
     private void createNotificationChannel() {
