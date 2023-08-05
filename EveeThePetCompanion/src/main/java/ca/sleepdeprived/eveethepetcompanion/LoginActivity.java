@@ -225,9 +225,12 @@ public class LoginActivity extends AppCompatActivity {
             GoogleSignInAccount account = task.getResult(ApiException.class);
             firebaseAuthWithGoogle(account);
         } catch (ApiException e) {
-            Toast.makeText(this, R.string.google_sign_in_failed + e.getStatusCode(), Toast.LENGTH_SHORT).show();
+            int statusCode = e.getStatusCode();
+            String errorMessage = getString(R.string.google_sign_in_failed) + getString(R.string.space) + statusCode;
+            Toast.makeText(this, errorMessage, Toast.LENGTH_SHORT).show();
         }
     }
+
 
     private void firebaseAuthWithGoogle(GoogleSignInAccount account) {
         AuthCredential credential = GoogleAuthProvider.getCredential(account.getIdToken(), null);
