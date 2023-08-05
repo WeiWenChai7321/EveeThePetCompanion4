@@ -24,7 +24,10 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.Toast;
-
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.content.ContextCompat;
@@ -44,6 +47,19 @@ public class HighlightsFragment extends Fragment {
     private boolean hasPermission = false;
     private Button downloadAllButton;
     private List<ImageView> imageViews;
+    private static final String FIREBASE_COLLECTION_NAME = "highlights";
+
+    private FirebaseFirestore firestore;
+    private StorageReference storageReference;
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
+        // Initialize Firestore and Storage
+        firestore = FirebaseFirestore.getInstance();
+        storageReference = FirebaseStorage.getInstance().getReference();
+    }
 
     @Nullable
     @Override

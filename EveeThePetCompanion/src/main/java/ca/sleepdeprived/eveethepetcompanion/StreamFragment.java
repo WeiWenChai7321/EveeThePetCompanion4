@@ -6,8 +6,9 @@
 */
 package ca.sleepdeprived.eveethepetcompanion;
 
-import android.graphics.drawable.GradientDrawable;
-import android.graphics.drawable.LayerDrawable;
+import android.content.Intent;
+import android.graphics.Bitmap;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.view.LayoutInflater;
@@ -21,6 +22,20 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
+
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
+
+import java.io.ByteArrayOutputStream;
+import java.util.HashMap;
+import java.util.Map;
 
 public class StreamFragment extends Fragment {
 
@@ -44,9 +59,21 @@ public class StreamFragment extends Fragment {
     private static final int LONG_PRESS_DURATION = 3000; // 3 seconds
     private boolean treatButtonLongPressed = false;
     private Handler handler = new Handler();
+    private boolean hasPermission = false;
 
+    private FirebaseFirestore firestore;
+    private StorageReference storageReference;
     private boolean turningLeft = false;
     private boolean turningRight = false;
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
+        // Initialize Firestore and Storage
+        firestore = FirebaseFirestore.getInstance();
+        storageReference = FirebaseStorage.getInstance().getReference();
+    }
 
     @Nullable
     @Override
@@ -236,6 +263,14 @@ public class StreamFragment extends Fragment {
                 return true;
             }
         });
+
+        btnPicture.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                takeScreenCapture();
+            }
+        });
+
         return view;
     }
 
@@ -258,4 +293,77 @@ public class StreamFragment extends Fragment {
         treatCount = MAX_TREATS;
         updateTreatButton();
     }
+
+    private void takeScreenCapture() {
+        View streamView = requireActivity().findViewById(R.id.stream_view);
+        streamView.setDrawingCacheEnabled(true);
+        streamView.buildDrawingCache();
+        Bitmap streamBitmap = Bitmap.createBitmap(streamView.getDrawingCache());
+        streamView.setDrawingCacheEnabled(false);
+
+        saveScreenCapture(streamBitmap);
+    }
+
+
+    private void saveScreenCapture(Bitmap bitmap) {
+        String imageFileName = getString(R.string.image) + System.currentTimeMillis() + getString(R.string.jpg);
+        final StorageReference imageRef = storageReference.child("photos/" + imageFileName);
+
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
+        byte[] data = baos.toByteArray();
+
+        UploadTask uploadTask = imageRef.putBytes(data);
+        uploadTask.addOnCompleteListener(requireActivity(), new OnCompleteListener<UploadTask.TaskSnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<UploadTask.TaskSnapshot> task) {
+                if (task.isSuccessful()) {
+                    showToast("Screen capture uploaded to Firebase Storage");
+                    // You can save the download URL to Firestore here if needed
+                    imageRef.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+                        @Override
+                        public void onSuccess(Uri uri) {
+                            String downloadUrl = uri.toString();
+                            saveImageUrlToFirestore(downloadUrl);
+                        }
+                    }).addOnFailureListener(new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception e) {
+                            showToast("Failed to retrieve download URL");
+                        }
+                    });
+                } else {
+                    showToast("Failed to upload screen capture");
+                }
+            }
+        });
+    }
+
+    private void showToast(String message) {
+        Toast.makeText(getActivity(), message, Toast.LENGTH_SHORT).show();
+    }
+
+    private void saveImageUrlToFirestore(String imageUrl) {
+        // You can save the image URL to Firestore here
+        // For example, create a new document in a collection named "highlights" with the image URL
+        Map<String, Object> highlightData = new HashMap<>();
+        highlightData.put("imageUrl", imageUrl);
+
+        firestore.collection("image_URLs")
+                .add(highlightData)
+                .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
+                    @Override
+                    public void onSuccess(DocumentReference documentReference) {
+                        showToast("Image URL saved to Firestore");
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        showToast("Failed to save image URL to Firestore");
+                    }
+                });
+    }
+
+
 }
