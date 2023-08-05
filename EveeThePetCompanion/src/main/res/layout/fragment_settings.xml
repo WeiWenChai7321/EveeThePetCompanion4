@@ -63,7 +63,7 @@
 
             <EditText
                 android:id="@+id/et_email"
-                android:layout_width="141dp"
+                android:layout_width="121dp"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="16dp"
                 android:enabled="false"

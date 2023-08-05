@@ -147,63 +147,36 @@ public class FeedbackFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-
-        // Check if there is an internet connection
-        boolean isConnected = checkInternetConnection();
-
-        // If there is an internet connection, attempt to submit the offline feedback
-        if (isConnected) {
-            submitOfflineFeedback();
-        }
     }
 
     private void saveFeedbackToFirestore(Feedback feedback) {
-        // Check for internet connection
-        boolean isConnected = checkInternetConnection();
 
-        if (isConnected) {
-            // If there is an internet connection, proceed with saving the feedback to Firestore
-            db.collection(getString(R.string.feedback_collection))
-                    .add(feedback)
-                    .addOnSuccessListener(documentReference -> {
-                        // Feedback saved successfully
-                        showSnackbar(getString(R.string.feedback_submitted));
+        db.collection(getString(R.string.feedback_collection))
+                .add(feedback)
+                .addOnSuccessListener(documentReference -> {
+                    // Feedback saved successfully
+                    showSnackbar(getString(R.string.feedback_submitted));
 
-                        // Reset the form
-                        editName.setText("");
-                        editPhone.setText("");
-                        editEmail.setText("");
-                        editComment.setText("");
-                        ratingBar.setRating(0);
+                    // Reset the form
+                    editName.setText("");
+                    editPhone.setText("");
+                    editEmail.setText("");
+                    editComment.setText("");
+                    ratingBar.setRating(0);
 
-                        // Once feedback is saved, hide the progress bar and enable the submit button
-                        progressBar.setVisibility(View.GONE);
-                        btnSubmitFeedback.setEnabled(true);
+                    // Once feedback is saved, hide the progress bar and enable the submit button
+                    progressBar.setVisibility(View.GONE);
+                    btnSubmitFeedback.setEnabled(true);
+                })
+                .addOnFailureListener(e -> {
+                    // Failed to save feedback
+                    showSnackbar(getString(R.string.failed_to_submit_feedback));
 
-                        // Attempt to submit any offline feedback data
-                        submitOfflineFeedback();
-                    })
-                    .addOnFailureListener(e -> {
-                        // Failed to save feedback
-                        showSnackbar(getString(R.string.failed_to_submit_feedback));
+                    // Once feedback submission has failed, hide the progress bar and enable the submit button
+                    progressBar.setVisibility(View.GONE);
+                    btnSubmitFeedback.setEnabled(true);
+                });
 
-                        // Once feedback submission has failed, hide the progress bar and enable the submit button
-                        progressBar.setVisibility(View.GONE);
-                        btnSubmitFeedback.setEnabled(true);
-
-                        // Save the feedback data to the offline list
-                        offlineFeedbackList.add(feedback);
-
-                        // Show a toast or snackbar to inform the user that the feedback is saved offline
-                        Toast.makeText(getActivity(), R.string.feedback_saved_offline, Toast.LENGTH_SHORT).show();
-                    });
-        } else {
-            // If there is no internet connection, save the feedback data to the offline list
-            offlineFeedbackList.add(feedback);
-
-            // Show a toast or snackbar to inform the user that the feedback is saved offline
-            Toast.makeText(getActivity(), R.string.feedback_saved_offline, Toast.LENGTH_SHORT).show();
-        }
     }
 
 
@@ -211,33 +184,4 @@ public class FeedbackFragment extends Fragment {
         Snackbar.make(getView(), message, Snackbar.LENGTH_SHORT).show();
     }
 
-    // Method to submit offline feedback data
-    public void submitOfflineFeedback() {
-        if (!offlineFeedbackList.isEmpty()) {
-            // Iterate through the offlineFeedbackList and attempt to submit each feedback
-            for (Feedback feedback : offlineFeedbackList) {
-                // Attempt to save feedback to Firestore
-                saveFeedbackToFirestore(feedback);
-            }
-            // Clear the list after submission
-            offlineFeedbackList.clear();
-        }
-    }
-
-    private boolean checkInternetConnection() {
-        // Get the ConnectivityManager from the system service
-        ConnectivityManager connectivityManager = (ConnectivityManager) getActivity().getSystemService(Context.CONNECTIVITY_SERVICE);
-
-        // Check if the ConnectivityManager is not null
-        if (connectivityManager != null) {
-            // Get the active network information
-            NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
-
-            // Check if the network is connected and available
-            return activeNetworkInfo != null && activeNetworkInfo.isConnected();
-        }
-
-        // Return false if the ConnectivityManager is null (unable to check connectivity)
-        return false;
-    }
 }

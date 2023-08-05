@@ -179,10 +179,19 @@ public class PetProfileFragment extends Fragment {
                                             String breed = breedEditText.getText().toString();
 
                                             // Update the TextViews with the edited information
+                                            // Update the TextViews with the edited information
                                             nameTextView.setText(name);
                                             ageTextView.setText(String.valueOf(age));
                                             colorTextView.setText(color);
                                             breedTextView.setText(breed);
+
+                                            // Save the edited information in SharedPreferences
+                                            SharedPreferences.Editor editor = sharedPreferences.edit();
+                                            editor.putString(getString(R.string.name_key), name);
+                                            editor.putString(getString(R.string.age_key), String.valueOf(age));
+                                            editor.putString(getString(R.string.color_key), color);
+                                            editor.putString(getString(R.string.breed_key), breed);
+                                            editor.apply();
 
                                             // Create a Map with the edited data
                                             Map<String, Object> editedData = new HashMap<>();
@@ -190,6 +199,7 @@ public class PetProfileFragment extends Fragment {
                                             editedData.put("petAge", age);
                                             editedData.put("petColor", color);
                                             editedData.put("petBreed", breed);
+
 
                                             // Update any entry in the "pet_info" collection with the edited data
                                             db.collection("pet_info")
@@ -308,49 +318,80 @@ public class PetProfileFragment extends Fragment {
     }
 
     private void readPetInfoFromFirestore() {
-        db.collection("pet_info")
-                .limit(1) // Limit to one result, you can remove this to get all documents
-                .get()
-                .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
-                    @Override
-                    public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
-                        // Check if any documents exist in the query result
-                        if (!queryDocumentSnapshots.isEmpty()) {
-                            // Get the first document in the result
-                            DocumentSnapshot documentSnapshot = queryDocumentSnapshots.getDocuments().get(0);
+        // Check if the device is online
+        if (Utils.isNetworkAvailable(requireContext())) {
+            db.collection("pet_info")
+                    .limit(1) // Limit to one result, you can remove this to get all documents
+                    .get()
+                    .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+                        @Override
+                        public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
+                            // Check if any documents exist in the query result
+                            if (!queryDocumentSnapshots.isEmpty()) {
+                                // Get the first document in the result
+                                DocumentSnapshot documentSnapshot = queryDocumentSnapshots.getDocuments().get(0);
 
-                            String name = documentSnapshot.getString("petName");
-                            Long ageLong = documentSnapshot.getLong("petAge");
-                            String color = documentSnapshot.getString("petColor");
-                            String breed = documentSnapshot.getString("petBreed");
+                                String name = documentSnapshot.getString("petName");
+                                Long ageLong = documentSnapshot.getLong("petAge");
+                                String color = documentSnapshot.getString("petColor");
+                                String breed = documentSnapshot.getString("petBreed");
 
-                            int age = (ageLong != null) ? ageLong.intValue() : 0;
+                                int age = (ageLong != null) ? ageLong.intValue() : 0;
 
-                            // Update the TextViews with the retrieved pet information
-                            if (name != null && !name.isEmpty()) {
-                                nameTextView.setText(name);
+                                // Update the TextViews with the retrieved pet information
+                                if (name != null && !name.isEmpty()) {
+                                    nameTextView.setText(name);
+                                }
+                                // ageTextView expects an int, so no need to check for null here
+                                ageTextView.setText(String.valueOf(age));
+                                if (color != null && !color.isEmpty()) {
+                                    colorTextView.setText(color);
+                                }
+                                if (breed != null && !breed.isEmpty()) {
+                                    breedTextView.setText(breed);
+                                }
+
+                                // Save the retrieved pet information in SharedPreferences
+                                SharedPreferences.Editor editor = sharedPreferences.edit();
+                                editor.putString(getString(R.string.name_key), name);
+                                editor.putString(getString(R.string.age_key), String.valueOf(age));
+                                editor.putString(getString(R.string.color_key), color);
+                                editor.putString(getString(R.string.breed_key), breed);
+                                editor.apply();
+                            } else {
+                                // The collection is empty, handle the case where there are no entries
+                                Toast.makeText(requireContext(), "No pet info found in the database", Toast.LENGTH_SHORT).show();
                             }
-                            // ageTextView expects an int, so no need to check for null here
-                            ageTextView.setText(String.valueOf(age));
-                            if (color != null && !color.isEmpty()) {
-                                colorTextView.setText(color);
-                            }
-                            if (breed != null && !breed.isEmpty()) {
-                                breedTextView.setText(breed);
-                            }
-                        } else {
-                            // The collection is empty, handle the case where there are no entries
-                            Toast.makeText(requireContext(), "No pet info found in the database", Toast.LENGTH_SHORT).show();
                         }
-                    }
-                })
-                .addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception e) {
-                        // Show a toast message to indicate failure
-                        Toast.makeText(requireContext(), "Failed to retrieve pet info", Toast.LENGTH_SHORT).show();
-                    }
-                });
+                    })
+                    .addOnFailureListener(new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception e) {
+                            // Show a toast message to indicate failure
+                            Toast.makeText(requireContext(), "Failed to retrieve pet info", Toast.LENGTH_SHORT).show();
+                        }
+                    });
+        } else {
+            // Device is offline, use the stored data from SharedPreferences
+            String name = sharedPreferences.getString(getString(R.string.name_key), "");
+            String age = sharedPreferences.getString(getString(R.string.age_key), "");
+            String color = sharedPreferences.getString(getString(R.string.color_key), "");
+            String breed = sharedPreferences.getString(getString(R.string.breed_key), "");
+
+            // Update the TextViews with the stored pet information if available
+            if (!name.isEmpty()) {
+                nameTextView.setText(name);
+            }
+            if (!age.isEmpty()) {
+                ageTextView.setText(age);
+            }
+            if (!color.isEmpty()) {
+                colorTextView.setText(color);
+            }
+            if (!breed.isEmpty()) {
+                breedTextView.setText(breed);
+            }
+        }
     }
 
 
