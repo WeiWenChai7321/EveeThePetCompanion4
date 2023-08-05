@@ -226,5 +226,6 @@
     <string name="image_upload_failed">Image upload failed</string>
     <string name="move_forward">Moving forward</string>
     <string name="move_backward">Moving backward</string>
+    <string name="move_left">Moving left</string>
 
 </resources>
