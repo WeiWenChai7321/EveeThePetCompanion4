@@ -289,7 +289,7 @@ public class PetProfileFragment extends Fragment {
             @Override
             public void onFailure(@NonNull Exception e) {
                 // Image retrieval failed, show a toast or handle the error
-                Toast.makeText(requireContext(), R.string.failed_retrieve_petinfo, Toast.LENGTH_SHORT).show();
+                Toast.makeText(requireContext(), "Failed to retrieve pet profile pic", Toast.LENGTH_SHORT).show();
             }
         });
     }
@@ -368,7 +368,7 @@ public class PetProfileFragment extends Fragment {
                         @Override
                         public void onFailure(@NonNull Exception e) {
                             // Show a toast message to indicate failure
-                            Toast.makeText(requireContext(), "Failed to retrieve pet info", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(requireContext(), R.string.failed_retrieve_petinfo, Toast.LENGTH_SHORT).show();
                         }
                     });
         } else {
