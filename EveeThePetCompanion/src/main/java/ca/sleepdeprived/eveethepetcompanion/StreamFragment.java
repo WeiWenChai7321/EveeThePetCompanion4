@@ -10,7 +10,6 @@ import android.Manifest;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.view.LayoutInflater;
@@ -20,13 +19,11 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.Toast;
-
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
-
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -36,7 +33,7 @@ import com.google.firebase.storage.UploadTask;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.hardware.Camera;
-
+import com.google.android.material.snackbar.Snackbar;
 import java.io.ByteArrayOutputStream;
 
 public class StreamFragment extends Fragment implements SurfaceHolder.Callback {
@@ -46,7 +43,7 @@ public class StreamFragment extends Fragment implements SurfaceHolder.Callback {
     private ImageButton btnLineFollowing;
     private ImageButton btnTreat;
     private ImageButton btnPicture;
-
+    private Snackbar uploadingSnackbar;
     private ImageButton btnArrowUp;
     private ImageButton btnArrowDown;
     private ImageButton btnArrowLeft;
@@ -451,6 +448,10 @@ public class StreamFragment extends Fragment implements SurfaceHolder.Callback {
             // Convert the byte array to a Bitmap
             Bitmap bitmap = BitmapFactory.decodeByteArray(data, 0, data.length);
 
+            // Show Snackbar to indicate uploading is in progress
+            uploadingSnackbar = Snackbar.make(streamView, R.string.uploading_photo, Snackbar.LENGTH_INDEFINITE);
+            uploadingSnackbar.show();
+
             // Save the captured image to Firebase Storage
             savePictureToStorage(bitmap);
 
@@ -486,6 +487,7 @@ public class StreamFragment extends Fragment implements SurfaceHolder.Callback {
             @Override
             public void onComplete(@NonNull Task<UploadTask.TaskSnapshot> task) {
                 if (task.isSuccessful()) {
+                    uploadingSnackbar.dismiss();
                     Toast.makeText(getActivity(), R.string.pic_captured_uploaded, Toast.LENGTH_LONG).show();
                 } else {
                     showToast(getString(R.string.failed_to_upload_picture));

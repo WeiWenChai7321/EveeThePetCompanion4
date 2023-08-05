@@ -232,5 +232,6 @@
     <string name="turn_right">Turning right</string>
     <string name="pic_captured_uploaded">Picture captured and uploaded to Firebase Storage</string>
     <string name="space">" "</string>
+    <string name="uploading_photo">Uploading photo... Please stay on this page</string>
 
 </resources>
