@@ -216,5 +216,6 @@
         <string name="failed_to_upload_picture">Échec du téléchargement de l\'image</string>
         <string name="screen_capture_uploaded_to_firebase_storage">Capture d\'écran téléchargée sur Firebase Storage</string>
         <string name="failed_to_upload_screen_capture">Échec du téléchargement de la capture d\'écran</string>
+        <string name="failed_retrieve_petinfo">Échec de la récupération des informations sur l\'animal de compagnie</string>
 
 </resources>
