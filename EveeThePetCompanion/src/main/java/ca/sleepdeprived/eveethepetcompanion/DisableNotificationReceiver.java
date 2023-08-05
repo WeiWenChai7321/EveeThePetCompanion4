@@ -15,7 +15,6 @@ import android.preference.PreferenceManager;
 import androidx.core.app.NotificationManagerCompat;
 
 public class DisableNotificationReceiver extends BroadcastReceiver {
-    private static final String EXTRA_NOTIFICATION_ID = "notificationid";
 
     @Override
     public void onReceive(Context context, Intent intent) {
