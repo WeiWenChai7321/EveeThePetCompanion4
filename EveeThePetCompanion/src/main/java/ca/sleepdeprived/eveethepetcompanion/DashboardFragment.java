@@ -362,7 +362,7 @@ public class DashboardFragment extends Fragment {
                     if (googleAccountName != null && !googleAccountName.isEmpty() && view != null) { // Check if the view is not null
                         TextView dashboardTitleTextView = view.findViewById(R.id.dashboard_title);
                         if (dashboardTitleTextView != null) {
-                            String greeting = getString(R.string.hi) + " " + googleAccountName;
+                            String greeting = getString(R.string.hi) + getString(R.string.space) + googleAccountName;
                             dashboardTitleTextView.setText(greeting);
                         }
                     }
@@ -379,7 +379,7 @@ public class DashboardFragment extends Fragment {
                             if (firstName != null && !firstName.isEmpty() && view != null) {
                                 TextView dashboardTitleTextView = view.findViewById(R.id.dashboard_title);
                                 if (dashboardTitleTextView != null) {
-                                    String greeting = getString(R.string.hi) + " " + firstName;
+                                    String greeting = getString(R.string.hi) + getString(R.string.space) + firstName;
                                     dashboardTitleTextView.setText(greeting);
                                 }
                             }

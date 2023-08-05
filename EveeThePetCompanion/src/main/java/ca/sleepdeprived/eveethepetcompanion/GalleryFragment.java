@@ -142,7 +142,7 @@ public class GalleryFragment extends Fragment {
         int lastSlashIndex = imagePath.lastIndexOf(File.separator);
         if (lastSlashIndex != -1) {
             String imageName = imagePath.substring(lastSlashIndex + 1);
-            String toastMessage = getString(R.string.image_saved) + " " + imageName;
+            String toastMessage = getString(R.string.image_saved) + getString(R.string.space) + imageName;
             Toast.makeText(requireContext(), toastMessage, Toast.LENGTH_SHORT).show();
         }
     }
