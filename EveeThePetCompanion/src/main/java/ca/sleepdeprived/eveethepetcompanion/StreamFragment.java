@@ -35,6 +35,7 @@ import android.view.SurfaceView;
 import android.hardware.Camera;
 import com.google.android.material.snackbar.Snackbar;
 import java.io.ByteArrayOutputStream;
+import java.util.List;
 
 public class StreamFragment extends Fragment implements SurfaceHolder.Callback {
     private SurfaceView streamView;
@@ -60,12 +61,12 @@ public class StreamFragment extends Fragment implements SurfaceHolder.Callback {
     private static final int LONG_PRESS_DURATION = 3000; // 3 seconds
     private boolean treatButtonLongPressed = false;
     private Handler handler = new Handler();
-    private boolean isRecording = false;
     private boolean hasPermission = false;
 
     private FirebaseFirestore firestore;
     private Toast currentToast;
     private StorageReference storageReference;
+    private boolean isCameraPreviewing = false;
     private boolean turningLeft = false;
     private boolean turningRight = false;
 
@@ -306,61 +307,42 @@ public class StreamFragment extends Fragment implements SurfaceHolder.Callback {
     }
 
     private void startCameraPreview() {
-        // Open the camera and start the preview when the surface is created
         try {
             camera = Camera.open();
+
+            // Get the supported preview sizes of the camera
+            Camera.Parameters parameters = camera.getParameters();
+            List<Camera.Size> supportedSizes = parameters.getSupportedPreviewSizes();
+
+            // Set the optimal preview size based on the device's current orientation
+            int width = streamView.getWidth();
+            int height = streamView.getHeight();
+            Camera.Size optimalSize = getOptimalPreviewSize(supportedSizes, width, height);
+            parameters.setPreviewSize(optimalSize.width, optimalSize.height);
+
+            // Apply the parameters and start the preview
+            camera.setParameters(parameters);
             camera.setPreviewDisplay(streamView.getHolder());
-
-            // Set the camera orientation and other configuration if needed
-
             camera.startPreview();
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
+
 
     @Override
     public void surfaceCreated(SurfaceHolder holder) {
-        // Open the camera when the surface is created
         try {
             camera = Camera.open();
             camera.setPreviewDisplay(holder);
-
-            // Set the camera orientation
-            int rotation = getActivity().getWindowManager().getDefaultDisplay().getRotation();
-            int degrees = 0;
-            switch (rotation) {
-                case Surface.ROTATION_0:
-                    degrees = 0;
-                    break;
-                case Surface.ROTATION_90:
-                    degrees = 90;
-                    break;
-                case Surface.ROTATION_180:
-                    degrees = 180;
-                    break;
-                case Surface.ROTATION_270:
-                    degrees = 270;
-                    break;
-            }
-
-            int result;
-            Camera.CameraInfo info = new Camera.CameraInfo();
-            Camera.getCameraInfo(0, info);
-            if (info.facing == Camera.CameraInfo.CAMERA_FACING_FRONT) {
-                result = (info.orientation + degrees) % 360;
-                result = (360 - result) % 360;  // compensate the mirror
-            } else {
-                // back-facing
-                result = (info.orientation - degrees + 360) % 360;
-            }
-            camera.setDisplayOrientation(result);
-
+            setCameraOrientation(); // Set camera orientation here
             camera.startPreview();
+            isCameraPreviewing = true;
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
+
 
 
     @Override
@@ -368,40 +350,13 @@ public class StreamFragment extends Fragment implements SurfaceHolder.Callback {
         if (camera != null) {
             try {
                 camera.stopPreview();
+                Camera.Parameters parameters = camera.getParameters();
+                List<Camera.Size> supportedSizes = parameters.getSupportedPreviewSizes();
+                Camera.Size optimalSize = getOptimalPreviewSize(supportedSizes, width, height);
+                parameters.setPreviewSize(optimalSize.width, optimalSize.height);
+                camera.setParameters(parameters);
                 camera.setPreviewDisplay(holder);
-                Camera.CameraInfo info = new Camera.CameraInfo();
-                Camera.getCameraInfo(0, info);
-                int rotation = getActivity().getWindowManager().getDefaultDisplay().getRotation();
-                int degrees = 0;
-                switch (rotation) {
-                    case Surface.ROTATION_0:
-                        degrees = 0;
-                        break;
-                    case Surface.ROTATION_90:
-                        degrees = 90;
-                        break;
-                    case Surface.ROTATION_180:
-                        degrees = 180;
-                        break;
-                    case Surface.ROTATION_270:
-                        degrees = 270;
-                        break;
-                }
-                int result;
-                if (info.facing == Camera.CameraInfo.CAMERA_FACING_FRONT) {
-                    result = (info.orientation + degrees) % 360;
-                    result = (360 - result) % 360;  // compensate the mirror
-                } else {
-                    result = (info.orientation - degrees + 360) % 360;
-                }
-
-                // Add this block to handle the orientation for portrait mode
-                int cameraRotation = getActivity().getWindowManager().getDefaultDisplay().getRotation();
-                if (cameraRotation == Surface.ROTATION_0 || cameraRotation == Surface.ROTATION_180) {
-                    result = (result + 90) % 360;
-                }
-
-                camera.setDisplayOrientation(result);
+                setCameraOrientation(); // Set camera orientation here as well
                 camera.startPreview();
             } catch (Exception e) {
                 e.printStackTrace();
@@ -409,11 +364,14 @@ public class StreamFragment extends Fragment implements SurfaceHolder.Callback {
         }
     }
 
+
     @Override
     public void surfaceDestroyed(SurfaceHolder holder) {
-        // Release the camera when the surface is destroyed
         if (camera != null) {
-            camera.stopPreview();
+            if (isCameraPreviewing) {
+                camera.stopPreview();
+                isCameraPreviewing = false;
+            }
             camera.release();
             camera = null;
         }
@@ -503,22 +461,11 @@ public class StreamFragment extends Fragment implements SurfaceHolder.Callback {
     }
 
     @Override
-    public void onDestroy() {
-        super.onDestroy();
-        if (camera != null) {
-            camera.stopPreview();
-            camera.release();
-            camera = null;
-        }
-    }
-
-    @Override
     public void onPause() {
         super.onPause();
-        if (camera != null) {
+        if (camera != null && isCameraPreviewing) {
             camera.stopPreview();
-            camera.release();
-            camera = null;
+            isCameraPreviewing = false;
         }
     }
 
@@ -526,20 +473,132 @@ public class StreamFragment extends Fragment implements SurfaceHolder.Callback {
     public void onResume() {
         super.onResume();
         if (camera == null) {
-            // Check if the CAMERA permission is granted, if not request it
             if (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
-                // You can show a rationale for needing the permission if desired
                 if (ActivityCompat.shouldShowRequestPermissionRationale(requireActivity(), Manifest.permission.CAMERA)) {
-                    // Show a dialog or explanation to the user why you need the permission
                 }
-
-                // Request the permission
                 ActivityCompat.requestPermissions(requireActivity(), new String[]{Manifest.permission.CAMERA}, YOUR_PERMISSION_REQUEST_CODE);
             } else {
-                // The permission is already granted, start the camera preview
                 startCameraPreview();
             }
+        } else if (!isCameraPreviewing) {
+            camera.startPreview();
+            isCameraPreviewing = true;
         }
     }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        if (camera != null) {
+            if (isCameraPreviewing) {
+                camera.stopPreview();
+                isCameraPreviewing = false;
+            }
+            camera.release();
+            camera = null;
+        }
+    }
+
+    private void setCameraOrientation() {
+        if (camera == null) {
+            return;
+        }
+
+        int rotation = getActivity().getWindowManager().getDefaultDisplay().getRotation();
+        int degrees = 0;
+        switch (rotation) {
+            case Surface.ROTATION_0:
+                degrees = 0;
+                break;
+            case Surface.ROTATION_90:
+                degrees = 90;
+                break;
+            case Surface.ROTATION_180:
+                degrees = 180;
+                break;
+            case Surface.ROTATION_270:
+                degrees = 270;
+                break;
+        }
+
+        Camera.CameraInfo info = new Camera.CameraInfo();
+        Camera.getCameraInfo(0, info);
+        int result;
+        if (info.facing == Camera.CameraInfo.CAMERA_FACING_FRONT) {
+            result = (info.orientation + degrees) % 360;
+            result = (360 - result) % 360;  // compensate the mirror
+        } else {
+            result = (info.orientation - degrees + 360) % 360;
+        }
+        camera.setDisplayOrientation(result);
+    }
+
+    private Camera.Size getOptimalPreviewSize(List<Camera.Size> sizes, int width, int height) {
+        final double ASPECT_TOLERANCE = 0.1;
+        double targetRatio = (double) width / height;
+
+        if (sizes == null) return null;
+
+        Camera.Size optimalSize = null;
+        double minDiff = Double.MAX_VALUE;
+
+        int targetHeight = height;
+
+        for (Camera.Size size : sizes) {
+            double ratio = (double) size.width / size.height;
+            if (Math.abs(ratio - targetRatio) > ASPECT_TOLERANCE) continue;
+            if (Math.abs(size.height - targetHeight) < minDiff) {
+                optimalSize = size;
+                minDiff = Math.abs(size.height - targetHeight);
+            }
+        }
+
+        if (optimalSize == null) {
+            minDiff = Double.MAX_VALUE;
+            for (Camera.Size size : sizes) {
+                if (Math.abs(size.height - targetHeight) < minDiff) {
+                    optimalSize = size;
+                    minDiff = Math.abs(size.height - targetHeight);
+                }
+            }
+        }
+
+        return optimalSize;
+    }
+
+    private void setCameraDisplayOrientation(Camera camera) {
+        if (camera == null) return;
+
+        Camera.CameraInfo info = new Camera.CameraInfo();
+        Camera.getCameraInfo(0, info);
+        int rotation = getActivity().getWindowManager().getDefaultDisplay().getRotation();
+        int degrees = 0;
+        switch (rotation) {
+            case Surface.ROTATION_0:
+                degrees = 0;
+                break;
+            case Surface.ROTATION_90:
+                degrees = 90;
+                break;
+            case Surface.ROTATION_180:
+                degrees = 180;
+                break;
+            case Surface.ROTATION_270:
+                degrees = 270;
+                break;
+        }
+
+        int result;
+        if (info.facing == Camera.CameraInfo.CAMERA_FACING_FRONT) {
+            result = (info.orientation + degrees) % 360;
+            result = (360 - result) % 360;  // compensate the mirror
+        } else {
+            result = (info.orientation - degrees + 360) % 360;
+        }
+
+        camera.setDisplayOrientation(result);
+    }
+
+
 
 }

@@ -74,15 +74,20 @@ public class GalleryFragment extends Fragment {
         downloadAllButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                requestWriteExternalStoragePermission();
+                if (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                        == PackageManager.PERMISSION_GRANTED) {
+                    // Permission already granted
+                    hasPermission = true;
+                    showToast(getString(R.string.permissiongranted));
+                    downloadAllImages();
+                } else {
+                    // Permission not granted, ask for permission
+                    hasPermission = false;
+                    requestPermissions(new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
+                            REQUEST_PERMISSION_WRITE_EXTERNAL_STORAGE);
+                }
             }
         });
-
-        if (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.WRITE_EXTERNAL_STORAGE)
-                != PackageManager.PERMISSION_GRANTED) {
-            requestPermissions(new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
-                    REQUEST_PERMISSION_WRITE_EXTERNAL_STORAGE);
-        }
 
         // Load images from Firebase Storage
         loadImagesFromFirebaseStorage();
