@@ -157,29 +157,19 @@ public class PetProfileFragment extends Fragment {
                     public void onClick(DialogInterface dialog, int which) {
                         // Get the updated text from the EditText views
                         String name = nameEditText.getText().toString();
-                        String ageString = ageEditText.getText().toString();
+                        int age = Integer.parseInt(ageEditText.getText().toString());
                         String color = colorEditText.getText().toString();
                         String breed = breedEditText.getText().toString();
 
-                        // Validate age as a number
-                        int age = 0;
-                        try {
-                            age = Integer.parseInt(ageString);
-                        } catch (NumberFormatException e) {
-                            // Handle the case where age is not a valid number
-                            Toast.makeText(requireContext(), R.string.invalid_age, Toast.LENGTH_SHORT).show();
-                            return;
-                        }
-
                         // Update the TextViews with the edited information
                         nameTextView.setText(name);
-                        ageTextView.setText(String.valueOf(age)); // Set the parsed age as an integer
+                        ageTextView.setText(String.valueOf(age));
                         colorTextView.setText(color);
                         breedTextView.setText(breed);
 
                         // Update the Firestore database with the edited information
                         String userId = auth.getCurrentUser().getUid();
-                        DocumentReference docRef = db.collection("users").document(userId).collection("pet_info").document();
+                        DocumentReference docRef = db.collection("pet_info").document(userId);
 
                         // Create a Map with the edited data
                         Map<String, Object> editedData = new HashMap<>();
@@ -287,48 +277,45 @@ public class PetProfileFragment extends Fragment {
     }
 
     private void readPetInfoFromFirestore() {
-        // Query to retrieve any document from the "pet_info" collection
-        db.collection("pet_info")
-                .get()
-                .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
-                    @Override
-                    public void onSuccess(QuerySnapshot querySnapshot) {
-                        if (!querySnapshot.isEmpty()) {
-                            // Get the first document from the query result
-                            DocumentSnapshot documentSnapshot = querySnapshot.getDocuments().get(0);
+        String userId = auth.getCurrentUser().getUid();
+        DocumentReference docRef = db.collection("pet_info").document(userId);
 
-                            String name = documentSnapshot.getString("petName");
-                            String age = documentSnapshot.getString("petAge");
-                            String color = documentSnapshot.getString("petColor");
-                            String breed = documentSnapshot.getString("petBreed");
+        docRef.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+            @Override
+            public void onSuccess(DocumentSnapshot documentSnapshot) {
+                if (documentSnapshot.exists()) {
+                    String name = documentSnapshot.getString("petName");
+                    Long age = documentSnapshot.getLong("petAge"); // Use getLong for integer fields
+                    String color = documentSnapshot.getString("petColor");
+                    String breed = documentSnapshot.getString("petBreed");
 
-                            // Update the TextViews with the retrieved pet information
-                            if (name != null && !name.isEmpty()) {
-                                nameTextView.setText(name);
-                            }
-                            if (age != null && !age.isEmpty()) {
-                                ageTextView.setText(age);
-                            }
-                            if (color != null && !color.isEmpty()) {
-                                colorTextView.setText(color);
-                            }
-                            if (breed != null && !breed.isEmpty()) {
-                                breedTextView.setText(breed);
-                            }
-                        } else {
-                            // The "pet_info" collection is empty, show a message or handle accordingly
-                            Toast.makeText(requireContext(), R.string.pet_info_retrieval_failed, Toast.LENGTH_SHORT).show();
-                        }
+                    // Update the TextViews with the retrieved pet information
+                    if (name != null && !name.isEmpty()) {
+                        nameTextView.setText(name);
                     }
-                })
-                .addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception e) {
-                        // Show a toast message to indicate failure
-                        Toast.makeText(requireContext(), R.string.pet_info_retrieval_failed, Toast.LENGTH_SHORT).show();
+                    if (age != null) {
+                        ageTextView.setText(String.valueOf(age));
                     }
-                });
+                    if (color != null && !color.isEmpty()) {
+                        colorTextView.setText(color);
+                    }
+                    if (breed != null && !breed.isEmpty()) {
+                        breedTextView.setText(breed);
+                    }
+                } else {
+                    // The document does not exist, show a message or handle accordingly
+                    Toast.makeText(requireContext(), R.string.pet_info_retrieval_failed, Toast.LENGTH_SHORT).show();
+                }
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                // Show a toast message to indicate failure
+                Toast.makeText(requireContext(), R.string.pet_info_retrieval_failed, Toast.LENGTH_SHORT).show();
+            }
+        });
     }
+
 
     private void uploadImageToFirebaseStorage(Uri imageUri) {
         // Get the storage reference for the image
