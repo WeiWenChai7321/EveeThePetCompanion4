@@ -223,5 +223,6 @@
         <string name="image_upload_failed">Le téléchargement de l\'image a échoué</string>
         <string name="move_forward">Aller de l\'avant</string>
         <string name="move_backward">Revenir en arrière</string>
+        <string name="move_left">Déplacement vers la gauche</string>
 
 </resources>
