@@ -29,6 +29,14 @@ public class StreamFragment extends Fragment {
     private ImageButton btnTreat;
     private ImageButton btnRecord;
     private ImageButton btnPicture;
+
+    private ImageButton btnArrowUp;
+    private ImageButton btnArrowDown;
+    private ImageButton btnArrowLeft;
+    private ImageButton btnArrowRight;
+
+    private ImageButton btnLookLeft;
+    private ImageButton btnLookRight;
     private int treatCount = 30; // The initial treat count, change it to any desired value
     private final int MAX_TREATS = 30; // Maximum number of treats
     private boolean obstacleAvoidanceEnabled = false;
@@ -36,6 +44,9 @@ public class StreamFragment extends Fragment {
     private static final int LONG_PRESS_DURATION = 3000; // 3 seconds
     private boolean treatButtonLongPressed = false;
     private Handler handler = new Handler();
+
+    private boolean turningLeft = false;
+    private boolean turningRight = false;
 
     @Nullable
     @Override
@@ -47,6 +58,12 @@ public class StreamFragment extends Fragment {
         btnTreat = view.findViewById(R.id.btn_treat);
         btnRecord = view.findViewById(R.id.btn_record);
         btnPicture = view.findViewById(R.id.btn_picture);
+        btnArrowUp = view.findViewById(R.id.btn_arrow_up);
+        btnArrowDown = view.findViewById(R.id.btn_arrow_down);
+        btnArrowLeft = view.findViewById(R.id.btn_arrow_left);
+        btnArrowRight = view.findViewById(R.id.btn_arrow_right);
+        btnLookLeft = view.findViewById(R.id.btn_look_left);
+        btnLookRight = view.findViewById(R.id.btn_look_right);
 
         btnObstacleAvoidance.setColorFilter(ContextCompat.getColor(requireContext(), android.R.color.white));
         btnLineFollowing.setColorFilter(ContextCompat.getColor(requireContext(), android.R.color.white));
@@ -138,6 +155,87 @@ public class StreamFragment extends Fragment {
             }
         });
 
+        btnArrowUp.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                if (event.getAction() == MotionEvent.ACTION_DOWN) {
+                    // Start moving forward logic and show the toast
+                    Toast.makeText(getActivity(), "Moving forward", Toast.LENGTH_SHORT).show();
+                } else if (event.getAction() == MotionEvent.ACTION_UP) {
+                    // Stop moving forward logic and remove the toast (if required)
+                }
+                return true;
+            }
+        });
+
+        btnArrowDown.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                if (event.getAction() == MotionEvent.ACTION_DOWN) {
+                    // Start moving backward logic and show the toast
+                    Toast.makeText(getActivity(), "Moving backward", Toast.LENGTH_SHORT).show();
+                } else if (event.getAction() == MotionEvent.ACTION_UP) {
+                    // Stop moving backward logic and remove the toast (if required)
+                }
+                return true;
+            }
+        });
+
+        btnArrowLeft.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                if (event.getAction() == MotionEvent.ACTION_DOWN) {
+                    // Start moving left logic and show the toast
+                    Toast.makeText(getActivity(), "Moving left", Toast.LENGTH_SHORT).show();
+                } else if (event.getAction() == MotionEvent.ACTION_UP) {
+                    // Stop moving left logic and remove the toast (if required)
+                }
+                return true;
+            }
+        });
+
+        btnArrowRight.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                if (event.getAction() == MotionEvent.ACTION_DOWN) {
+                    // Start moving right logic and show the toast
+                    Toast.makeText(getActivity(), "Moving right", Toast.LENGTH_SHORT).show();
+                } else if (event.getAction() == MotionEvent.ACTION_UP) {
+                    // Stop moving right logic and remove the toast (if required)
+                }
+                return true;
+            }
+        });
+
+        btnLookLeft.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                if (event.getAction() == MotionEvent.ACTION_DOWN) {
+                    // Start turning left logic and show the toast
+                    turningLeft = true;
+                    Toast.makeText(getActivity(), "Turning left", Toast.LENGTH_SHORT).show();
+                } else if (event.getAction() == MotionEvent.ACTION_UP || event.getAction() == MotionEvent.ACTION_CANCEL) {
+                    // Stop turning left logic and remove the toast
+                    turningLeft = false;
+                }
+                return true;
+            }
+        });
+
+        btnLookRight.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                if (event.getAction() == MotionEvent.ACTION_DOWN) {
+                    // Start turning right logic and show the toast
+                    turningRight = true;
+                    Toast.makeText(getActivity(), "Turning right", Toast.LENGTH_SHORT).show();
+                } else if (event.getAction() == MotionEvent.ACTION_UP || event.getAction() == MotionEvent.ACTION_CANCEL) {
+                    // Stop turning right logic and remove the toast
+                    turningRight = false;
+                }
+                return true;
+            }
+        });
         return view;
     }
 
