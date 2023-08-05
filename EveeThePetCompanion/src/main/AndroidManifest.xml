@@ -20,6 +20,10 @@
         android:theme="@style/Theme.BottomNavigationView">
 
         <activity
+            android:name=".MainActivity"
+            android:configChanges="orientation|screenSize" />
+
+        <activity
             android:name="ca.sleepdeprived.eveethepetcompanion.SplashActivity"
             android:exported="true">
             <intent-filter>
@@ -31,10 +35,7 @@
 
         <activity android:name="ca.sleepdeprived.eveethepetcompanion.LoginActivity" />
         <activity android:name="ca.sleepdeprived.eveethepetcompanion.RegisterActivity" />
-        <activity android:name="ca.sleepdeprived.eveethepetcompanion.MainActivity" />
         <receiver android:name=".DisableNotificationReceiver" />
-
-
     </application>
 
 </manifest>
