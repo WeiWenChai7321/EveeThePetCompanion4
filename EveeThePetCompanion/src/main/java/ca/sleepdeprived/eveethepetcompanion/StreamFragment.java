@@ -367,21 +367,48 @@ public class StreamFragment extends Fragment implements SurfaceHolder.Callback {
 
     @Override
     public void surfaceChanged(SurfaceHolder holder, int format, int width, int height) {
-        // Handle surface changes, if needed
-        // Restart the preview after surface changes (e.g., during screen rotation)
         if (camera != null) {
             try {
                 camera.stopPreview();
                 camera.setPreviewDisplay(holder);
 
-                // Set the camera orientation and other configuration if needed
+                // Set the camera orientation based on the device orientation
+                Camera.CameraInfo info = new Camera.CameraInfo();
+                Camera.getCameraInfo(0, info);
+                int rotation = getActivity().getWindowManager().getDefaultDisplay().getRotation();
+                int degrees = 0;
+                switch (rotation) {
+                    case Surface.ROTATION_0:
+                        degrees = 0;
+                        break;
+                    case Surface.ROTATION_90:
+                        degrees = 90;
+                        break;
+                    case Surface.ROTATION_180:
+                        degrees = 180;
+                        break;
+                    case Surface.ROTATION_270:
+                        degrees = 270;
+                        break;
+                }
 
+                int result;
+                if (info.facing == Camera.CameraInfo.CAMERA_FACING_FRONT) {
+                    result = (info.orientation + degrees) % 360;
+                    result = (360 - result) % 360;  // compensate the mirror
+                } else {
+                    // back-facing
+                    result = (info.orientation - degrees + 360) % 360;
+                }
+
+                camera.setDisplayOrientation(result);
                 camera.startPreview();
             } catch (Exception e) {
                 e.printStackTrace();
             }
         }
     }
+
 
 
     @Override
