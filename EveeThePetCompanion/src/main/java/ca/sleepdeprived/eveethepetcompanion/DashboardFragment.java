@@ -84,8 +84,6 @@ public class DashboardFragment extends Fragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_dashboard, container, false);
-        this.view = view;
-
         remindersLayout = view.findViewById(R.id.reminders_card);
         editReminderEditText = view.findViewById(R.id.edit_text_reminder);
         editReminderEditText.setVisibility(View.GONE); // Initially hide the EditText
@@ -127,9 +125,9 @@ public class DashboardFragment extends Fragment {
             return false;
         });
 
-
         return view;
     }
+
 
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
@@ -145,8 +143,6 @@ public class DashboardFragment extends Fragment {
         // Set the flag to false to indicate that this is not the initial creation of the fragment
         isInitialCreate = false;
     }
-
-
 
 
     @Override
@@ -203,13 +199,15 @@ public class DashboardFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-
         if (isAdded()) {
             fetchUserNameFromDatabase();
         }
-        updateUIWithExistingReminders();
+        // Assign the 'view' parameter to the instance variable to access it later in other methods
+        this.view = view;
+        // Call loadImagesFromFirebaseStorage after initializing 'recentImagesLayout' and 'view'
         loadImagesFromFirebaseStorage();
     }
+
 
     private void removeReminderDelayed(CheckBox checkBox) {
 
@@ -378,7 +376,7 @@ public class DashboardFragment extends Fragment {
                     .addOnSuccessListener(documentSnapshot -> {
                         if (isAdded() && documentSnapshot.exists() && getContext() != null) { // Check if fragment is attached and context is not null before proceeding
                             String firstName = documentSnapshot.getString(getContext().getString(R.string.firstname));
-                            if (firstName != null && !firstName.isEmpty() && view != null) { // Check if the view is not null
+                            if (firstName != null && !firstName.isEmpty() && view != null) {
                                 TextView dashboardTitleTextView = view.findViewById(R.id.dashboard_title);
                                 if (dashboardTitleTextView != null) {
                                     String greeting = getString(R.string.hi) + " " + firstName;
@@ -397,11 +395,16 @@ public class DashboardFragment extends Fragment {
     }
 
     private void loadImagesFromFirebaseStorage() {
-        StorageReference storageRef = FirebaseStorage.getInstance().getReference().child("recent_images");
+        if (view == null || getContext() == null) {
+            // Fragment view is not available or context is null, do not proceed
+            return;
+        }
 
+        StorageReference storageRef = FirebaseStorage.getInstance().getReference().child("photos");
         storageRef.listAll().addOnSuccessListener(listResult -> {
             List<StorageReference> items = listResult.getItems();
-            int numImagesToDisplay = Math.min(items.size(), 7); // Get the minimum of 7 and the number of items in the list
+            int numImagesToDisplay = Math.min(items.size(), 7);
+            Log.d("DashboardFragment", "Number of images to display: " + numImagesToDisplay);
 
             LinearLayout recentImagesLayout = view.findViewById(R.id.recent_images_layout);
             recentImagesLayout.removeAllViews(); // Clear existing images if any
@@ -410,15 +413,18 @@ public class DashboardFragment extends Fragment {
                 StorageReference item = items.get(i);
                 item.getDownloadUrl().addOnSuccessListener(uri -> {
                     String imageUrl = uri.toString();
+                    Log.d("DashboardFragment", "Image URL: " + imageUrl);
                     ImageView imageView = createImageView(imageUrl);
-                    addImageViewToRecentLayout(imageView); // Add the ImageView to the recent layout
+                    if (imageView != null) {
+                        addImageViewToRecentLayout(imageView);
+                    } else {
+                        Log.e("DashboardFragment", "Image creation failed.");
+                    }
                 }).addOnFailureListener(exception -> {
-                    // Handle the failure, if any.
                     Log.e("DashboardFragment", "Error downloading image: " + exception.getMessage());
                 });
             }
         }).addOnFailureListener(exception -> {
-            // Handle the failure, if any.
             Log.e("DashboardFragment", "Error listing images: " + exception.getMessage());
         });
     }
@@ -434,10 +440,18 @@ public class DashboardFragment extends Fragment {
         layoutParams.setMargins(margin, 0, margin, 0);
 
         imageView.setLayoutParams(layoutParams);
-        recentImagesLayout.addView(imageView);
+        if (recentImagesLayout != null) {
+            recentImagesLayout.addView(imageView);
+        } else {
+            // Handle the error, log or throw an exception
+        }
     }
 
     private ImageView createImageView(String imageUrl) {
+        if (!isAdded()) {
+            // Fragment is not attached, do not proceed
+            return null;
+        }
         ImageView imageView = new ImageView(requireContext());
         LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(
                 getResources().getDimensionPixelSize(R.dimen.recent_image_width),
@@ -449,21 +463,20 @@ public class DashboardFragment extends Fragment {
         imageView.setLayoutParams(layoutParams);
         imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
 
-        // You can use any image loading library or method here to load the image into the ImageView.
-        // For example, you can use Glide or Picasso.
-        // For simplicity, I'll assume you have a method to load the image into the ImageView directly.
-        // Replace 'loadImageIntoImageView' with the actual method to load the image.
         loadImageIntoImageView(imageUrl, imageView);
 
         return imageView;
     }
 
     private void loadImageIntoImageView(String imageUrl, ImageView imageView) {
-        // Use any image loading library or method here to load the image into the ImageView.
-        // For example, you can use Glide or Picasso.
-        // Replace 'Glide' with the actual library you're using.
-        Glide.with(this).load(imageUrl).into(imageView);
+        // Use Glide to load the image into the ImageView with rotation transformation
+        Glide.with(this)
+                .asBitmap()
+                .load(imageUrl)
+                .transform(new RotateTransformation(90)) // Specify the rotation angle (90 degrees in this case)
+                .into(imageView);
     }
+
 
 
 }
