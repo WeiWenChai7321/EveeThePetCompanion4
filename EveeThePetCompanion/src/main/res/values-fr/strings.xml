@@ -218,5 +218,6 @@
         <string name="failed_to_upload_screen_capture">Échec du téléchargement de la capture d\'écran</string>
         <string name="failed_retrieve_petinfo">Échec de la récupération des informations sur l\'animal de compagnie</string>
         <string name="failed_retrieve_pet_profilepic">Échec de la récupération de la photo de profil de l\'animal</string>
+        <string name="no_pet_found">Aucune information sur les animaux n\'a été trouvée dans la base de données</string>
 
 </resources>
