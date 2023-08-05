@@ -417,7 +417,7 @@ public class PetProfileFragment extends Fragment {
                                         .into(petDisplayPic);
 
                                 // Show a toast message to indicate successful update
-                                Toast.makeText(requireContext(), "Updated profile picture", Toast.LENGTH_SHORT).show();
+                                Toast.makeText(requireContext(), R.string.updated_profilepic, Toast.LENGTH_SHORT).show();
                             }
                         });
                     }
