@@ -360,7 +360,7 @@ public class PetProfileFragment extends Fragment {
                                 editor.apply();
                             } else {
                                 // The collection is empty, handle the case where there are no entries
-                                Toast.makeText(requireContext(), "No pet info found in the database", Toast.LENGTH_SHORT).show();
+                                Toast.makeText(requireContext(), R.string.no_pet_found, Toast.LENGTH_SHORT).show();
                             }
                         }
                     })

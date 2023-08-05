@@ -221,5 +221,6 @@
     <string name="failed_to_upload_screen_capture">Failed to upload screen capture</string>
     <string name="failed_retrieve_petinfo">Failed to retrieve pet info</string>
     <string name="failed_retrieve_pet_profilepic">Failed to retrieve pet profile pic</string>
+    <string name="no_pet_found">No pet info found in the database</string>
 
 </resources>
