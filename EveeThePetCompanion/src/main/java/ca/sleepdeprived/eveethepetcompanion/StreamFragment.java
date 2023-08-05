@@ -488,7 +488,7 @@ public class StreamFragment extends Fragment implements SurfaceHolder.Callback {
                 if (task.isSuccessful()) {
                     Toast.makeText(getActivity(), R.string.pic_captured_uploaded, Toast.LENGTH_LONG).show();
                 } else {
-                    showToast("Failed to upload picture");
+                    showToast(getString(R.string.failed_to_upload_picture));
                 }
             }
         });
