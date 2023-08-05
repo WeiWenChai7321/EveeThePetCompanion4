@@ -219,6 +219,6 @@
     <string name="failed_to_upload_picture">Failed to upload picture</string>
     <string name="screen_capture_uploaded_to_firebase_storage">Screen capture uploaded to Firebase Storage</string>
     <string name="failed_to_upload_screen_capture">Failed to upload screen capture</string>
-
+    <string name="failed_retrieve_petinfo">Failed to retrieve pet info</string>
 
 </resources>
