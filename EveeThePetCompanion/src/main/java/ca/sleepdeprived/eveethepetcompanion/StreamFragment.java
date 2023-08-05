@@ -33,14 +33,11 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
-import android.media.MediaRecorder;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.hardware.Camera;
-import android.view.SurfaceView;
 
 import java.io.ByteArrayOutputStream;
-import java.io.File;
 
 public class StreamFragment extends Fragment implements SurfaceHolder.Callback {
     private SurfaceView streamView;
