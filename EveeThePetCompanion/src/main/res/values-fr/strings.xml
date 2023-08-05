@@ -224,5 +224,6 @@
         <string name="move_forward">Aller de l\'avant</string>
         <string name="move_backward">Revenir en arrière</string>
         <string name="move_left">Déplacement vers la gauche</string>
+        <string name="move_right">Aller dans le bon sens</string>
 
 </resources>
