@@ -71,6 +71,7 @@ public class DashboardFragment extends Fragment {
         sharedPreferences = requireActivity().getPreferences(Context.MODE_PRIVATE);
         savedReminders = new HashSet<>();
         readExistingReminders();
+        loadReminders();
     }
 
     // Refactored code in onCreateView()
@@ -136,6 +137,7 @@ public class DashboardFragment extends Fragment {
                 }
             }
         }
+        loadReminders();
         isInitialCreate = false;
     }
 
@@ -279,6 +281,7 @@ public class DashboardFragment extends Fragment {
                 .addOnFailureListener(e -> {
                     // Error handling
                 });
+        saveReminders();
         updateNoRemindersVisibility();
     }
 
@@ -320,8 +323,42 @@ public class DashboardFragment extends Fragment {
                             Log.e(getString(R.string.dashboardfragment), getString(R.string.error_retrieving_reminders) + e.getMessage());
                         });
             }
+            saveReminders();
             updateNoRemindersVisibility();
         }, 5000);
+    }
+
+    // Method to save reminders using SharedPreferences
+    private void saveReminders() {
+        if (getContext() == null) {
+            return;
+        }
+
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.clear();
+
+        // Convert savedReminders to a Set of strings (reminderTexts) to save in SharedPreferences
+        Set<String> reminderTexts = new HashSet<>();
+        for (Reminder reminder : savedReminders) {
+            reminderTexts.add(reminder.getReminderText());
+        }
+
+        editor.putStringSet("reminder_texts", reminderTexts);
+        editor.apply();
+    }
+
+    // Method to load reminders from SharedPreferences
+    private void loadReminders() {
+        if (getContext() == null) {
+            return;
+        }
+
+        Set<String> reminderTexts = sharedPreferences.getStringSet("reminder_texts", new HashSet<>());
+        savedReminders.clear();
+        for (String reminderText : reminderTexts) {
+            savedReminders.add(new Reminder(reminderText));
+        }
+        updateUIWithExistingReminders();
     }
 
     // Method to show the soft keyboard
