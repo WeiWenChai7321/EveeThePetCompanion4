@@ -129,6 +129,27 @@ public class PetProfileFragment extends Fragment {
         // Read pet information from Firestore
         readPetInfoFromFirestore();
 
+        // Read pet information from SharedPreferences and update the TextViews
+        if (!Utils.isNetworkAvailable(requireContext())) {
+            String name = sharedPreferences.getString(getString(R.string.name_key), "");
+            String age = sharedPreferences.getString(getString(R.string.age_key), "");
+            String color = sharedPreferences.getString(getString(R.string.color_key), "");
+            String breed = sharedPreferences.getString(getString(R.string.breed_key), "");
+
+            if (!name.isEmpty()) {
+                nameTextView.setText(name);
+            }
+            if (!age.isEmpty()) {
+                ageTextView.setText(age);
+            }
+            if (!color.isEmpty()) {
+                colorTextView.setText(color);
+            }
+            if (!breed.isEmpty()) {
+                breedTextView.setText(breed);
+            }
+        }
+
         return view;
     }
 
@@ -221,8 +242,44 @@ public class PetProfileFragment extends Fragment {
                                                     });
                                         }
                                     })
+                                    // Inside editPetInfo() method, after setting the positive button click listener
                                     .setNegativeButton(R.string.cancel, null)
                                     .show();
+
+                                    // Save the edited data in SharedPreferences
+                                    SharedPreferences.Editor editor = sharedPreferences.edit();
+                                    editor.putString(getString(R.string.name_key), name);
+                                    editor.putString(getString(R.string.age_key), String.valueOf(age));
+                                    editor.putString(getString(R.string.color_key), color);
+                                    editor.putString(getString(R.string.breed_key), breed);
+                                    editor.apply();
+
+                                    // Create a Map with the edited data
+                                    Map<String, Object> editedData = new HashMap<>();
+                                    editedData.put("petName", name);
+                                    editedData.put("petAge", age);
+                                    editedData.put("petColor", color);
+                                    editedData.put("petBreed", breed);
+
+                                    // Update any entry in the "pet_info" collection with the edited data
+                                    db.collection("pet_info")
+                                            .document(documentSnapshot.getId())
+                                            .update(editedData)
+                                            .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                @Override
+                                                public void onSuccess(Void aVoid) {
+                                                    // Show a toast message to indicate successful editing
+                                                    Toast.makeText(requireContext(), R.string.pet_info_updated, Toast.LENGTH_SHORT).show();
+                                                }
+                                            })
+                                            .addOnFailureListener(new OnFailureListener() {
+                                                @Override
+                                                public void onFailure(@NonNull Exception e) {
+                                                    // Show a toast message to indicate failure
+                                                    Toast.makeText(requireContext(), R.string.pet_info_update_failed, Toast.LENGTH_SHORT).show();
+                                                }
+                                            });
+
                         } else {
                             // The collection is empty, handle the case where there are no entries
                             Toast.makeText(requireContext(), "No pet info found in the database", Toast.LENGTH_SHORT).show();
@@ -245,24 +302,29 @@ public class PetProfileFragment extends Fragment {
         super.onResume();
         isEditMode = sharedPreferences.getBoolean(getString(R.string.is_edit_mode_key), false);
 
-        // Retrieve the stored pet information from SharedPreferences
-        String name = sharedPreferences.getString(getString(R.string.name_key), "");
-        String age = sharedPreferences.getString(getString(R.string.age_key), "");
-        String color = sharedPreferences.getString(getString(R.string.color_key), "");
-        String breed = sharedPreferences.getString(getString(R.string.breed_key), "");
+        // Check if the device is online
+        if (Utils.isNetworkAvailable(requireContext())) {
+            // Read pet information from Firestore
+            readPetInfoFromFirestore();
+        } else {
+            // Read pet information from SharedPreferences and update the TextViews
+            String name = sharedPreferences.getString(getString(R.string.name_key), "");
+            String age = sharedPreferences.getString(getString(R.string.age_key), "");
+            String color = sharedPreferences.getString(getString(R.string.color_key), "");
+            String breed = sharedPreferences.getString(getString(R.string.breed_key), "");
 
-        // Update the TextViews with the stored pet information if available
-        if (!name.isEmpty()) {
-            nameTextView.setText(name);
-        }
-        if (!age.isEmpty()) {
-            ageTextView.setText(age);
-        }
-        if (!color.isEmpty()) {
-            colorTextView.setText(color);
-        }
-        if (!breed.isEmpty()) {
-            breedTextView.setText(breed);
+            if (!name.isEmpty()) {
+                nameTextView.setText(name);
+            }
+            if (!age.isEmpty()) {
+                ageTextView.setText(age);
+            }
+            if (!color.isEmpty()) {
+                colorTextView.setText(color);
+            }
+            if (!breed.isEmpty()) {
+                breedTextView.setText(breed);
+            }
         }
 
         // Fetch the current pet_profile_pic from Firebase Storage and load it into the ImageButton
@@ -393,8 +455,6 @@ public class PetProfileFragment extends Fragment {
             }
         }
     }
-
-
 
     private void uploadImageToFirebaseStorage(Uri imageUri) {
         // Get the storage reference for the image
