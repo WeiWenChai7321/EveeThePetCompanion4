@@ -1,0 +1,154 @@
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/scrollView"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="36dp">
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/pet_info_card"
+            android:layout_width="394dp"
+            android:layout_height="128dp"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginStart="@dimen/margin_8"
+            android:layout_marginEnd="@dimen/margin_8"
+            android:layout_weight="4"
+            android:background="@drawable/card_background"
+            android:orientation="horizontal"
+            android:padding="@dimen/padding_8">
+
+            <ImageButton
+                android:id="@+id/pet_display_pic"
+                android:layout_width="97dp"
+                android:layout_height="95dp"
+                android:layout_gravity="center_horizontal"
+                android:background="@android:color/transparent"
+                android:onClick="selectImageFromGallery"
+                android:scaleType="centerCrop" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="97dp"
+                android:layout_marginStart="@dimen/margin_8"
+                android:layout_weight="1"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/nameTextView"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/margin_8"
+                    android:text="@string/petname"
+                    android:textSize="18sp"
+                    android:textStyle="bold" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:layout_marginTop="@dimen/margin_4">
+
+                    <TextView
+                        android:id="@+id/ageLabelTextView"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/age"
+                        android:textSize="12sp"
+                        android:textStyle="bold"
+                        android:layout_marginEnd="@dimen/margin_4" />
+
+                    <TextView
+                        android:id="@+id/ageTextView"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/age_placeholder"
+                        android:hint="@string/age_placeholder"
+                        android:textSize="12sp"
+                        android:inputType="number" />
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:layout_marginTop="@dimen/margin_4">
+
+                    <TextView
+                        android:id="@+id/colorLabelTextView"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/colour"
+                        android:textSize="12sp"
+                        android:textStyle="bold"
+                        android:layout_marginEnd="@dimen/margin_4" />
+
+                    <TextView
+                        android:id="@+id/colorTextView"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/color_placeholder"
+                        android:hint="@string/color_placeholder"
+                        android:textSize="12sp" />
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:layout_marginTop="@dimen/margin_4">
+
+                    <TextView
+                        android:id="@+id/breedLabelTextView"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/breed"
+                        android:textSize="12sp"
+                        android:textStyle="bold"
+                        android:layout_marginEnd="@dimen/margin_4" />
+
+                    <TextView
+                        android:id="@+id/breedTextView"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/breed_placeholder"
+                        android:hint="@string/breed_placeholder"
+                        android:textSize="12sp" />
+
+                </LinearLayout>
+
+            </LinearLayout>
+        </LinearLayout>
+
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_gravity="center_horizontal">
+
+            <Button
+                android:id="@+id/editButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="16dp"
+                android:text="@string/edit" />
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+</ScrollView>

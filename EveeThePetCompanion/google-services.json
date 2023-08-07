@@ -1,0 +1,68 @@
+{
+  "project_info": {
+    "project_number": "176257204062",
+    "project_id": "evee-the-pet-companion",
+    "storage_bucket": "evee-the-pet-companion.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:176257204062:android:f3617e748e5b0b873419cf",
+        "android_client_info": {
+          "package_name": "ca.sleepdeprived.eveethepetcompanion"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "176257204062-fb8uv4iv5sdmsr8c9i6kv1c5sj6bsmca.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBkl049JDb-JWbJcla134RJjfNZhY_tOVk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "176257204062-fb8uv4iv5sdmsr8c9i6kv1c5sj6bsmca.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:176257204062:android:bc77d281e8f895e23419cf",
+        "android_client_info": {
+          "package_name": "tes.fsd.sofdu"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "176257204062-fb8uv4iv5sdmsr8c9i6kv1c5sj6bsmca.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBkl049JDb-JWbJcla134RJjfNZhY_tOVk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "176257204062-fb8uv4iv5sdmsr8c9i6kv1c5sj6bsmca.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

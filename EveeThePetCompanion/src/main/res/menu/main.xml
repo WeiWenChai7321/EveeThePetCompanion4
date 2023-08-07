@@ -1,0 +1,28 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <item
+        android:id="@+id/action_help"
+        android:orderInCategory="1"
+        android:title="@string/action_help"
+        app:showAsAction="never" />
+
+    <item
+        android:id="@+id/action_petprofile"
+        android:orderInCategory="3"
+        android:title="@string/action_petprofile"
+        android:icon="@drawable/petprofilewhite"
+        app:showAsAction="always|withText"/>
+
+    <item
+        android:id="@+id/action_settings"
+        android:orderInCategory="4"
+        android:title="@string/action_settings"
+        app:showAsAction="never"/>
+
+    <item
+        android:id="@+id/action_feedback"
+        android:orderInCategory="5"
+        android:title="@string/action_feedback"
+        app:showAsAction="never"/>
+</menu>

@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/nav_dashboard"
+        android:icon="@drawable/ic_baseline_home_24"
+        android:title="@string/dashboard_fragment"/>
+
+    <item
+        android:id="@+id/nav_stream"
+        android:icon="@drawable/livestream"
+        android:title="@string/stream_fragment"/>
+
+    <item
+        android:id="@+id/nav_gallery"
+        android:icon="@drawable/gallery"
+        android:title="@string/gallery_fragment"/>
+
+</menu>
