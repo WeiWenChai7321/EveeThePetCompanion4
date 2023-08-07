@@ -165,12 +165,6 @@ public class PetProfileFragment extends Fragment {
                             // Get the first document in the result
                             DocumentSnapshot documentSnapshot = queryDocumentSnapshots.getDocuments().get(0);
 
-                            // Retrieve the pet information from the document
-                            String name = documentSnapshot.getString("petName");
-                            int age = documentSnapshot.getLong("petAge").intValue();
-                            String color = documentSnapshot.getString("petColor");
-                            String breed = documentSnapshot.getString("petBreed");
-
                             // Inflate the dialog_pet_info_edit.xml layout
                             View dialogView = LayoutInflater.from(requireContext()).inflate(R.layout.dialog_pet_info_edit, null);
 
@@ -179,6 +173,12 @@ public class PetProfileFragment extends Fragment {
                             EditText ageEditText = dialogView.findViewById(R.id.ageEditText);
                             EditText colorEditText = dialogView.findViewById(R.id.colorEditText);
                             EditText breedEditText = dialogView.findViewById(R.id.breedEditText);
+
+                            // Retrieve the pet information from the document
+                            String name = documentSnapshot.getString("petName");
+                            int age = documentSnapshot.getLong("petAge").intValue();
+                            String color = documentSnapshot.getString("petColor");
+                            String breed = documentSnapshot.getString("petBreed");
 
                             // Set the initial text for the EditText views with the retrieved data
                             nameEditText.setText(name);
@@ -200,7 +200,6 @@ public class PetProfileFragment extends Fragment {
                                             String breed = breedEditText.getText().toString();
 
                                             // Update the TextViews with the edited information
-                                            // Update the TextViews with the edited information
                                             nameTextView.setText(name);
                                             ageTextView.setText(String.valueOf(age));
                                             colorTextView.setText(color);
@@ -221,8 +220,7 @@ public class PetProfileFragment extends Fragment {
                                             editedData.put("petColor", color);
                                             editedData.put("petBreed", breed);
 
-
-                                            // Update any entry in the "pet_info" collection with the edited data
+                                            // Update the "pet_info" document with the edited data
                                             db.collection("pet_info")
                                                     .document(documentSnapshot.getId())
                                                     .update(editedData)
@@ -242,44 +240,8 @@ public class PetProfileFragment extends Fragment {
                                                     });
                                         }
                                     })
-                                    // Inside editPetInfo() method, after setting the positive button click listener
                                     .setNegativeButton(R.string.cancel, null)
                                     .show();
-
-                                    // Save the edited data in SharedPreferences
-                                    SharedPreferences.Editor editor = sharedPreferences.edit();
-                                    editor.putString(getString(R.string.name_key), name);
-                                    editor.putString(getString(R.string.age_key), String.valueOf(age));
-                                    editor.putString(getString(R.string.color_key), color);
-                                    editor.putString(getString(R.string.breed_key), breed);
-                                    editor.apply();
-
-                                    // Create a Map with the edited data
-                                    Map<String, Object> editedData = new HashMap<>();
-                                    editedData.put("petName", name);
-                                    editedData.put("petAge", age);
-                                    editedData.put("petColor", color);
-                                    editedData.put("petBreed", breed);
-
-                                    // Update any entry in the "pet_info" collection with the edited data
-                                    db.collection("pet_info")
-                                            .document(documentSnapshot.getId())
-                                            .update(editedData)
-                                            .addOnSuccessListener(new OnSuccessListener<Void>() {
-                                                @Override
-                                                public void onSuccess(Void aVoid) {
-                                                    // Show a toast message to indicate successful editing
-                                                    Toast.makeText(requireContext(), R.string.pet_info_updated, Toast.LENGTH_SHORT).show();
-                                                }
-                                            })
-                                            .addOnFailureListener(new OnFailureListener() {
-                                                @Override
-                                                public void onFailure(@NonNull Exception e) {
-                                                    // Show a toast message to indicate failure
-                                                    Toast.makeText(requireContext(), R.string.pet_info_update_failed, Toast.LENGTH_SHORT).show();
-                                                }
-                                            });
-
                         } else {
                             // The collection is empty, handle the case where there are no entries
                             Toast.makeText(requireContext(), "No pet info found in the database", Toast.LENGTH_SHORT).show();
@@ -294,7 +256,6 @@ public class PetProfileFragment extends Fragment {
                     }
                 });
     }
-
 
 
     @Override
