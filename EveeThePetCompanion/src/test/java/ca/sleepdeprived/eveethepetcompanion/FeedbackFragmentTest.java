@@ -16,7 +16,10 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.robolectric.RobolectricTestRunner;
+<<<<<<< HEAD
 import org.robolectric.shadows.ShadowToast;
+=======
+>>>>>>> master
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;

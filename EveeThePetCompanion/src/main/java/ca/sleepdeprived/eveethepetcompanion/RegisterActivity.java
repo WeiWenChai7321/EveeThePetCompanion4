@@ -101,7 +101,11 @@ public class RegisterActivity extends AppCompatActivity {
         return true;
     }
 
+<<<<<<< HEAD
     private boolean isValidPassword(String password) {
+=======
+    public static boolean isValidPassword(String password) {
+>>>>>>> master
         if (password.length() < 6) return false;
         if (!password.matches(".*[A-Z].*")) return false; // Check for an uppercase letter
         if (!password.matches(".*[0-9].*")) return false; // Check for a digit

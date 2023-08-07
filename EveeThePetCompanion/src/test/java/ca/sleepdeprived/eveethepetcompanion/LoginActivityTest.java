@@ -14,6 +14,7 @@ import static org.junit.Assert.assertTrue;
 public class LoginActivityTest {
 
     @Test
+<<<<<<< HEAD
     public void isValidEmail_CorrectFormat_ReturnsTrue() {
         assertTrue(LoginActivity.isValidEmail("example@gmail.com"));
     }
@@ -21,6 +22,15 @@ public class LoginActivityTest {
     @Test
     public void isValidEmail_IncorrectFormat_ReturnsFalse() {
         assertFalse(LoginActivity.isValidEmail("examplegmail.com"));
+=======
+    public void isValidPassword_OnlyUpperCaseAndSpecialChar_ReturnsTrue() {
+        assertTrue(LoginActivity.isValidPassword("ABC@1234"));
+    }
+
+    @Test
+    public void isValidPassword_Empty_ReturnsFalse() {
+        assertFalse(LoginActivity.isValidPassword(""));
+>>>>>>> master
     }
 
     @Test
@@ -47,4 +57,8 @@ public class LoginActivityTest {
     public void isValidPassword_LessThanSixChars_ReturnsFalse() {
         assertFalse(LoginActivity.isValidPassword("Ab@1"));
     }
+<<<<<<< HEAD
+=======
+
+>>>>>>> master
 }
