@@ -118,10 +118,6 @@ public class SettingsFragment extends Fragment {
                             }
                         }
                     }
-<<<<<<< HEAD
-
-=======
->>>>>>> master
                     // User not signed in with Google or no user, proceed with email update
                     updateEmailInFirestore(updatedEmail);
 
@@ -138,10 +134,6 @@ public class SettingsFragment extends Fragment {
                     isSaveButton = !isSaveButton;
                 } else {
                     // If the EditText is currently disabled, it means the user clicked on "Update"
-<<<<<<< HEAD
-
-=======
->>>>>>> master
                     // Enable the EditText
                     emailEditText.setEnabled(true);
                     emailEditText.requestFocus(); // Set the cursor focus to the EditText
