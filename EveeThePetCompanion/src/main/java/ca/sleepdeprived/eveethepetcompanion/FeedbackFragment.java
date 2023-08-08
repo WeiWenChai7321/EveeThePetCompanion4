@@ -59,7 +59,7 @@ public class FeedbackFragment extends Fragment {
 
     //Moved the logic of submitting feedback to a separate method onSubmitFeedback() for better readability and code organization.
     //Was previously under btnSubmitFeedback.setonClickListener
-    private void onSubmitFeedback() {
+    public void onSubmitFeedback() {
         // Get the user input
         String name = editName.getText().toString();
         String phone = editPhone.getText().toString();
@@ -117,14 +117,19 @@ public class FeedbackFragment extends Fragment {
         }, 2000);  // 2000 milliseconds = 2 seconds
     }
 
-    private boolean isValidPhoneNumber(String phoneNumber) {
+    public boolean isValidPhoneNumber(String phoneNumber) {
         String phoneNumberPattern = "\\d{3}\\d{3}\\d{4}";
         return phoneNumber.matches(phoneNumberPattern);
     }
 
-    private boolean isValidEmail(String email) {
-        // Use the built-in Patterns class to validate the email format
-        return Patterns.EMAIL_ADDRESS.matcher(email).matches();
+    public boolean isValidEmail(String email) {
+        return isValidEmailFormat(email);
+    }
+
+    protected boolean isValidEmailFormat(String email) {
+        // Use a regular expression pattern for email validation
+        String emailPattern = "[a-zA-Z0-9._-]+@[a-z]+\\.+[a-z]+";
+        return email.matches(emailPattern);
     }
 
     private void saveFeedbackToFirestore(Feedback feedback) {
